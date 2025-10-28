@@ -7,7 +7,7 @@
 - Kiểm tra xem bạn đã có repo cục bộ chưa
 		git status
 - Nếu đã có repo nhưng chưa đồng bộ code mới
-                git fetch origin
+                //git fetch origin// 
                 git pull origin main
 - Sau đó vào thư mục được tạo sẵn trên laptop
 		git add .
