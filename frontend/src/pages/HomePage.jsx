@@ -6,56 +6,74 @@ import CategoryTabs from "../components/CategoryTabs";
 export default function HomePage() {
   const [activeCat, setActiveCat] = useState("all");
   const [products, setProducts] = useState([]);
+  const [newProducts, setNewProducts] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Lấy toàn bộ sản phẩm
-  const fetchAll = async () => {
-    setLoading(true);
-    try {
-      const { data } = await productService.getAll();
-      setProducts(data);
-    } catch (error) {
-      console.error("Lỗi khi tải sản phẩm:", error);
-    }
-    setLoading(false);
-  };
+  useEffect(() => {
+    (async () => {
+      try {
+        const [{ data: news }, { data: best }] = await Promise.all([
+          // Chỗ này là chỉnh số lượng Sản phẩm mới và Best Seller
+          productService.getNew(3),
+          productService.getBestSellers(3),
+        ]);
+        setNewProducts(news);
+        setBestSellers(best);
+      } catch (err) {
+        console.error("Lỗi khi tải New/Best:", err);
+      }
+    })();
+  }, []);
 
-  //  Lấy sản phẩm theo category ID
   const fetchByCat = async (catId) => {
-    if (catId === "all") return fetchAll();
     setLoading(true);
     try {
-      const { data } = await productService.getByCategory(catId);
+      const { data } =
+        catId === "all"
+          ? await productService.getAll()
+          : await productService.getByCategory(catId);
       setProducts(data);
-    } catch (error) {
-      console.error("Lỗi khi tải sản phẩm theo danh mục:", error);
+    } catch (err) {
+      console.error(err);
     }
     setLoading(false);
   };
 
-  // Chạy khi khởi tạo & khi đổi danh mục
   useEffect(() => {
     fetchByCat(activeCat);
   }, [activeCat]);
 
   return (
     <div style={{ padding: 24 }}>
-      <h1 style={{ textAlign: "center", marginTop: 6 }}>🛍️ Danh sách sản phẩm</h1>
+      {/* Section: New Products */}
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ color: "#111827", marginBottom: 12 }}>✨ New Products</h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+          {newProducts.map((p) => (
+            <ProductCard key={p._id} product={p} />
+          ))}
+        </div>
+      </section>
 
+      {/* Section: Best Sellers */}
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ color: "#111827", marginBottom: 12 }}>🔥 Best Sellers</h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+          {bestSellers.map((p) => (
+            <ProductCard key={p._id} product={p} />
+          ))}
+        </div>
+      </section>
+
+      {/* Section: Categories */}
+      <h2 style={{ textAlign: "center", marginTop: 10 }}>🛍️ Danh sách sản phẩm</h2>
       <CategoryTabs active={activeCat} onChange={setActiveCat} />
 
       {loading ? (
         <p style={{ textAlign: "center" }}>Đang tải...</p>
-      ) : products.length === 0 ? (
-        <p style={{ textAlign: "center" }}>Không có sản phẩm.</p>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
           {products.map((p) => (
             <ProductCard key={p._id} product={p} />
           ))}

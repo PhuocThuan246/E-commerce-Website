@@ -23,7 +23,7 @@ export default function AdminDashboard() {
     },
     {
       title: "Người dùng",
-      color: "#f59e0b",
+      color: "#14a248ff",
       icon: "👥",
       link: "/admin/users",
     },

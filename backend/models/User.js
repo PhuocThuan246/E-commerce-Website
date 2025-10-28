@@ -6,10 +6,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   address: String,
   password: String,
-  role: { type: String, enum: ["user", "admin"], default: "user" }, // thêm dòng này
+  role: { type: String, enum: ["user", "admin"], default: "user" },
+  isBanned: { type: Boolean, default: false }, 
 });
 
-// Hash password trước khi lưu
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);

@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 
 
 // =============================
-// Đăng ký tài khoản
+// Đăng ký tài khoản (nâng cấp guest -> user thật)
 // =============================
 exports.register = async (req, res) => {
   try {
@@ -18,15 +18,27 @@ exports.register = async (req, res) => {
     let user = await User.findOne({ email });
 
     if (!user) {
+      // Tạo mới bình thường
       user = await User.create({
         fullName,
         email,
         address,
-        password, // Không hash ở đây nữa
+        password, // pre('save') sẽ hash
       });
+    } else {
+      // "Nâng cấp" tài khoản guest: cập nhật thông tin + set password nếu có
+      user.fullName = fullName ?? user.fullName;
+      user.address  = address  ?? user.address;
+
+      // Nếu tài khoản từng tạo auto (password rỗng/null) hoặc user vừa nhập mật khẩu mới
+      if (password && password.trim().length > 0) {
+        user.password = password; // pre('save') sẽ hash
+      }
+
+      await user.save(); // chạy pre('save')
     }
 
-    // Gán order/cart nếu có
+    // Liên kết đơn/giỏ của session guest về user
     if (sessionId) {
       await Order.updateMany({ sessionId, userId: null }, { $set: { userId: user._id } });
       await Cart.updateMany({ sessionId, userId: null }, { $set: { userId: user._id } });
@@ -51,6 +63,7 @@ exports.register = async (req, res) => {
   }
 };
 
+
 // =============================
 // Đăng nhập
 // =============================
@@ -61,6 +74,13 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user)
       return res.status(400).json({ message: "Email chưa được đăng ký" });
+
+    // CHẶN ĐĂNG NHẬP NẾU BỊ KHÓA
+    if (user.isBanned) {
+      return res.status(403).json({
+        message: "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên!",
+      });
+    }
 
     // Nếu user có mật khẩu, kiểm tra bcrypt
     if (user.password) {
@@ -92,7 +112,7 @@ exports.login = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         address: user.address,
-        role: user.role, // thêm dòng này
+        role: user.role,
       },
     });
 
@@ -101,6 +121,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Lỗi server khi đăng nhập" });
   }
 };
+
 
 // =============================
 // Hồ sơ người dùng

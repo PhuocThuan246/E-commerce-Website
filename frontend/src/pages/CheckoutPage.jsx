@@ -235,6 +235,7 @@ export default function CheckoutPage() {
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
+            required
             style={inputStyle}
           />
           <textarea

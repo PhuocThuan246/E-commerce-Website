@@ -5,12 +5,16 @@ const {
   getProductsByCategory,
   getProductById,
   updateVariantStock,
+  getNewProducts,
+  getBestSellers,
 } = require("../controllers/productController");
 
-// /api/products
 router.get("/", getAllProducts);
 router.get("/category/:categoryId", getProductsByCategory);
-router.get("/detail/:id", getProductById)
+router.get("/detail/:id", getProductById);
 router.put("/update-stock", updateVariantStock);
+
+router.get("/new", getNewProducts);
+router.get("/best-sellers", getBestSellers);
 
 module.exports = router;

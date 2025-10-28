@@ -11,13 +11,14 @@ const variantSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
   name: String,
   category: {
-    type: mongoose.Schema.Types.ObjectId, // dùng ObjectId để liên kết Category
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: true,
   },
   description: String,
   image: String,
   variants: [variantSchema],
-});
+}, { timestamps: true }); // createdAt
+
 
 module.exports = mongoose.model("Product", productSchema);

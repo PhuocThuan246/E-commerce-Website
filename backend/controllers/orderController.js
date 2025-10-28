@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
-const User = require("../models/User"); // thêm dòng này
+const User = require("../models/User"); 
 
 // ==============================
 // TẠO ĐƠN HÀNG (Guest hoặc Logged-in)
@@ -10,27 +10,17 @@ const User = require("../models/User"); // thêm dòng này
 const createOrder = async (req, res) => {
   try {
     const sessionId = req.headers["x-session-id"];
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
-
     const { name, phone, email, address, selectedItems } = req.body;
 
-    // Xác định userId nếu có token
-    let userId = null;
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        userId = decoded.id;
-      } catch {
-        return res.status(401).json({ message: "Token không hợp lệ" });
-      }
-    }
 
+    // Không cần token nữa
+    let userId = null;
+    // Lấy giỏ hàng
     const cart = await Cart.findOne({ sessionId }).populate("items.product");
     if (!cart || cart.items.length === 0)
       return res.status(400).json({ message: "Giỏ hàng trống!" });
 
-    // Lọc sản phẩm
+    // Lọc sản phẩm được chọn
     const itemsToOrder =
       selectedItems && selectedItems.length > 0
         ? cart.items.filter((i) => selectedItems.includes(i._id.toString()))
@@ -44,9 +34,7 @@ const createOrder = async (req, res) => {
         return res.status(400).json({ message: "Biến thể không tồn tại" });
 
       if (variant.stock < item.quantity)
-        return res
-          .status(400)
-          .json({ message: `${variant.name} đã hết hàng` });
+        return res.status(400).json({ message: `${variant.name} đã hết hàng` });
 
       variant.stock -= item.quantity;
       orderItems.push({
@@ -59,12 +47,27 @@ const createOrder = async (req, res) => {
       await product.save();
     }
 
-    // Nếu chưa login nhưng email trùng user → gắn userId
+    // ==============================
+    // Nếu chưa có userId → kiểm tra email để tạo tài khoản tự động
+    // ==============================
     if (!userId && email) {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) userId = existingUser._id;
+      let user = await User.findOne({ email });
+      if (!user) {
+        user = await User.create({
+          fullName: name,
+          email,
+          address,
+          password: "", // khách vãng lai không cần mật khẩu
+          role: "user",
+        });
+        console.log("Đã tạo tài khoản tự động cho khách:", email);
+      }
+      userId = user._id;
     }
 
+    // ==============================
+    // Tạo đơn hàng
+    // ==============================
     const order = await Order.create({
       userId: userId || null,
       sessionId,
@@ -73,12 +76,15 @@ const createOrder = async (req, res) => {
       total: orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
     });
 
+    console.log("Đơn hàng đã được tạo:", order._id);
     res.json({ success: true, order });
   } catch (err) {
-    console.error(err);
+    console.error("Lỗi khi tạo đơn hàng:", err);
     res.status(500).json({ message: "Lỗi khi tạo đơn hàng!" });
   }
 };
+
+
 
 // ==============================
 // LẤY DANH SÁCH ĐƠN HÀNG (user hoặc guest)
@@ -117,7 +123,7 @@ const getOrders = async (req, res) => {
       return res.status(400).json({ message: "Thiếu session ID hoặc email" });
     }
 
-    console.log("🧾 Lọc đơn hàng với điều kiện:", query);
+    console.log("Lọc đơn hàng với điều kiện:", query);
 
     const orders = await Order.find(query)
       .populate("items.product")
