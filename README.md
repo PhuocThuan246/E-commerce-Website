@@ -1,5 +1,5 @@
 # E-commerce-Website
-# Xóa local: git reset --hard
+Xóa local: git reset --hard
 # Tải bản mới: git pull origin main
 - Tạo dự án trong github web
 - Vào thư mục trên máy tính gõ
