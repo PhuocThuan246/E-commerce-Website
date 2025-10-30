@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import adminProductService from "../services/adminProductService";
+import { SERVER_URL } from "../../services/api";  // thêm dòng này để dùng SERVER_URL
 
 export default function VariantModal({ product, onClose, onRefresh }) {
   const parseDigits = (val) => {
@@ -17,45 +18,50 @@ export default function VariantModal({ product, onClose, onRefresh }) {
     image: "",
   });
   const [editVariant, setEditVariant] = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState(null); // hộp thoại xác nhận xóa
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   // ===============================
-  // Lưu / Cập nhật (cập nhật UI ngay)
+  // Lưu / Cập nhật (upload ảnh)
   // ===============================
   const handleSave = async () => {
     try {
-      if (!form.name.trim()) return toast.warning("⚠️ Nhập tên biến thể!");
-      const payload = {
-        name: form.name.trim(),
-        sku: form.sku.trim(),
-        price: parseDigits(form.price),
-        stock: parseDigits(form.stock),
-        image: form.image.trim(),
-      };
+      if (!form.name.trim()) return toast.warning("Nhập tên biến thể!");
 
+      const formData = new FormData();
+      formData.append("name", form.name.trim());
+      formData.append("sku", form.sku.trim());
+      formData.append("price", parseDigits(form.price));
+      formData.append("stock", parseDigits(form.stock));
+      if (form.image) formData.append("image", form.image); // gửi file thật
+
+      let updatedVariant;
       if (editVariant) {
-        const { data: updated } = await adminProductService.updateVariant(
+        const { data } = await adminProductService.updateVariant(
           product._id,
           editVariant._id,
-          payload
+          formData
         );
+        updatedVariant = data;
         setVariants((prev) =>
-          prev.map((v) => (v._id === updated._id ? updated : v))
+          prev.map((v) => (v._id === data._id ? data : v))
         );
         toast.success("Đã cập nhật biến thể");
       } else {
-        const { data: created } = await adminProductService.addVariant(
+        const { data } = await adminProductService.addVariant(
           product._id,
-          payload
+          formData
         );
-        setVariants((prev) => [...prev, created]);
+        updatedVariant = data;
+        setVariants((prev) => [...prev, data]);
         toast.success("Đã thêm biến thể mới");
       }
 
+      // reset form
       setForm({ name: "", sku: "", price: "", stock: "", image: "" });
       setEditVariant(null);
       onRefresh && onRefresh();
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Lỗi khi lưu biến thể");
     }
   };
@@ -64,7 +70,7 @@ export default function VariantModal({ product, onClose, onRefresh }) {
   // Xóa biến thể
   // ===============================
   const handleDelete = async (variantId, name) => {
-    setConfirmDelete(null); // đóng modal
+    setConfirmDelete(null);
     try {
       await adminProductService.removeVariant(product._id, variantId);
       setVariants((prev) => prev.filter((v) => v._id !== variantId));
@@ -85,7 +91,8 @@ export default function VariantModal({ product, onClose, onRefresh }) {
       sku: v.sku || "",
       price: String(v.price ?? ""),
       stock: String(v.stock ?? ""),
-      image: v.image || "",
+      image: "", // reset — vì nếu không chọn ảnh mới, giữ ảnh cũ khi hiển thị
+      oldImage: v.image || "", // thêm trường tạm để hiển thị ảnh cũ
     });
   };
 
@@ -94,7 +101,7 @@ export default function VariantModal({ product, onClose, onRefresh }) {
   // ===============================
   const handleCancelEdit = () => {
     setEditVariant(null);
-    setForm({ name: "", sku: "", price: "", stock: "", image: "" });
+    setForm({ name: "", sku: "", price: "", stock: "", image: "", oldImage: "" });
   };
 
   return (
@@ -142,7 +149,11 @@ export default function VariantModal({ product, onClose, onRefresh }) {
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <img
-                    src={v.image || "/no-image.png"}
+                    src={
+                      v.image
+                        ? `${SERVER_URL}${v.image}`
+                        : "/no-image.png"
+                    } // hiển thị đúng ảnh từ server
                     alt={v.name}
                     width={50}
                     height={50}
@@ -175,7 +186,7 @@ export default function VariantModal({ product, onClose, onRefresh }) {
                     ✏️
                   </button>
                   <button
-                    onClick={() => setConfirmDelete(v)} // hiển thị modal xác nhận
+                    onClick={() => setConfirmDelete(v)}
                     style={{
                       background: "#ef4444",
                       color: "white",
@@ -193,7 +204,7 @@ export default function VariantModal({ product, onClose, onRefresh }) {
           </ul>
         )}
 
-        {/* FORM THÊM / SỬA BIẾN THỂ */}
+        {/* FORM THÊM / SỬA */}
         <h4 style={{ marginTop: 20, borderTop: "1px solid #e5e7eb", paddingTop: 10 }}>
           {editVariant ? "✏️ Chỉnh sửa biến thể" : "➕ Thêm biến thể mới"}
         </h4>
@@ -223,10 +234,7 @@ export default function VariantModal({ product, onClose, onRefresh }) {
             placeholder="Giá (₫)"
             value={form.price}
             onChange={(e) =>
-              setForm({
-                ...form,
-                price: e.target.value.replace(/[^\d]/g, ""),
-              })
+              setForm({ ...form, price: e.target.value.replace(/[^\d]/g, "") })
             }
           />
           <input
@@ -234,23 +242,24 @@ export default function VariantModal({ product, onClose, onRefresh }) {
             placeholder="Tồn kho"
             value={form.stock}
             onChange={(e) =>
-              setForm({
-                ...form,
-                stock: e.target.value.replace(/[^\d]/g, ""),
-              })
+              setForm({ ...form, stock: e.target.value.replace(/[^\d]/g, "") })
             }
           />
           <input
-            type="text"
-            placeholder="Link ảnh biến thể"
-            value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
+            type="file"
+            accept="image/*"
+            onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
           />
 
-          {form.image && (
+          {/* Ảnh preview */}
+          {(form.image || form.oldImage) && (
             <div style={{ textAlign: "center", marginTop: 6 }}>
               <img
-                src={form.image}
+                src={
+                  form.image
+                    ? URL.createObjectURL(form.image) // ảnh mới đang chọn
+                    : `${SERVER_URL}${form.oldImage}` // ảnh cũ đang có
+                }
                 alt="Preview"
                 width={100}
                 height={100}
@@ -313,7 +322,8 @@ export default function VariantModal({ product, onClose, onRefresh }) {
         </button>
       </div>
 
-      {/* Hộp thoại xác nhận xoá */}
+
+      {/* MODAL XÁC NHẬN XÓA BIẾN THỂ */}
       {confirmDelete && (
         <div
           style={{
@@ -336,16 +346,13 @@ export default function VariantModal({ product, onClose, onRefresh }) {
               borderRadius: 12,
               boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
               textAlign: "center",
-              width: 350,
+              width: 340,
             }}
           >
-            <h3 style={{ marginBottom: 10 }}>Xác nhận xóa</h3>
+            <h3 style={{ marginBottom: 10 }}>Xác nhận xóa biến thể</h3>
             <p style={{ marginBottom: 20 }}>
               Bạn có chắc muốn xóa biến thể{" "}
-              <strong style={{ color: "#ef4444" }}>
-                {confirmDelete.name}
-              </strong>{" "}
-              không?
+              <strong style={{ color: "#ef4444" }}>{confirmDelete.name}</strong>?
             </p>
 
             <div style={{ display: "flex", justifyContent: "space-around" }}>

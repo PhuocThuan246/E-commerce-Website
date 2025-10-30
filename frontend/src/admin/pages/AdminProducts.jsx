@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import adminProductService from "../services/adminProductService";
 import adminCategoryService from "../services/adminCategoryService";
 import VariantModal from "../components/VariantModal";
+import { SERVER_URL } from "../../services/api";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -13,6 +14,7 @@ export default function AdminProducts() {
     description: "",
     image: "",
   });
+  const [imagePreview, setImagePreview] = useState(""); // <--- thêm để hiển thị ảnh xem trước
   const [editId, setEditId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -35,20 +37,31 @@ export default function AdminProducts() {
     fetchData();
   }, []);
 
+  // ===============================
+  // THÊM / SỬA SẢN PHẨM
+  // ===============================
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.category)
       return toast.warning("Vui lòng nhập tên và danh mục!");
 
     try {
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("category", form.category);
+      formData.append("description", form.description);
+      if (form.image instanceof File) formData.append("image", form.image);
+
       if (editId) {
-        await adminProductService.update(editId, form);
+        await adminProductService.update(editId, formData);
         toast.success("Đã cập nhật sản phẩm!");
       } else {
-        await adminProductService.create(form);
+        await adminProductService.create(formData);
         toast.success("Đã thêm sản phẩm!");
       }
+
       setForm({ name: "", category: "", description: "", image: "" });
+      setImagePreview("");
       setEditId(null);
       setShowForm(false);
       fetchData();
@@ -68,6 +81,9 @@ export default function AdminProducts() {
     }
   };
 
+  // ===============================
+  // CHỈNH SỬA
+  // ===============================
   const handleEdit = (product) => {
     setForm({
       name: product.name,
@@ -75,16 +91,39 @@ export default function AdminProducts() {
       description: product.description || "",
       image: product.image || "",
     });
+    setImagePreview(`${SERVER_URL}${product.image}`); // hiển thị ảnh cũ
     setEditId(product._id);
     setShowForm(true);
   };
 
   const cancelEdit = () => {
     setForm({ name: "", category: "", description: "", image: "" });
+    setImagePreview("");
     setEditId(null);
     setShowForm(false);
   };
 
+  // ===============================
+  // XỬ LÝ ẢNH XEM TRƯỚC
+  // ===============================
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setForm({ ...form, image: file });
+    const previewURL = URL.createObjectURL(file);
+    setImagePreview(previewURL);
+  };
+
+  // Dọn URL tạm khi component unmount
+  useEffect(() => {
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
+
+  // ===============================
+  // GIAO DIỆN
+  // ===============================
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto" }}>
       <h2 style={{ marginBottom: 24, color: "#111827" }}>📦 Quản lý sản phẩm</h2>
@@ -140,12 +179,27 @@ export default function AdminProducts() {
               </option>
             ))}
           </select>
-          <input
-            placeholder="Link ảnh"
-            value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
-            style={{ padding: 10, borderRadius: 6, border: "1px solid #d1d5db" }}
-          />
+
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+
+          {/* ẢNH XEM TRƯỚC */}
+          {imagePreview && (
+            <div style={{ textAlign: "center", marginTop: 10 }}>
+              <p style={{ color: "#6b7280", fontSize: 14 }}>Ảnh xem trước:</p>
+              <img
+                src={imagePreview}
+                alt="Preview"
+                style={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: 8,
+                  objectFit: "cover",
+                  border: "1px solid #d1d5db",
+                }}
+              />
+            </div>
+          )}
+
           <textarea
             placeholder="Mô tả sản phẩm"
             value={form.description}
@@ -194,7 +248,7 @@ export default function AdminProducts() {
         </form>
       )}
 
-      {/* BẢNG */}
+      {/* BẢNG DANH SÁCH */}
       <div
         style={{
           background: "white",
@@ -241,7 +295,7 @@ export default function AdminProducts() {
                 <td style={{ padding: 10 }}>{p.category?.name}</td>
                 <td style={{ padding: 10 }}>
                   <img
-                    src={p.image}
+                    src={p.image ? `${SERVER_URL}${p.image}` : "/no-image.png"}
                     alt={p.name}
                     width={60}
                     height={60}

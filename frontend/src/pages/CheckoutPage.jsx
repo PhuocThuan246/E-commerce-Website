@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import cartService from "../services/cartService";
 import orderService from "../services/orderService";
 import { toast } from "react-toastify";
+import { SERVER_URL } from "../services/api";
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState(null);
@@ -13,10 +14,14 @@ export default function CheckoutPage() {
     email: "",
     address: "",
   });
+
   const navigate = useNavigate();
   const location = useLocation();
   const selectedItems = location.state?.selectedItems || [];
 
+  // ===============================
+  // Tải giỏ hàng
+  // ===============================
   const loadCart = async () => {
     try {
       const { data } = await cartService.getCart();
@@ -52,9 +57,15 @@ export default function CheckoutPage() {
     loadCart();
   }, []);
 
+  // ===============================
+  // Thay đổi input
+  // ===============================
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  // ===============================
+  // Xử lý đặt hàng
+  // ===============================
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.phone || !form.address) {
@@ -93,6 +104,9 @@ export default function CheckoutPage() {
     transition: "border 0.2s",
   };
 
+  // ===============================
+  // Giao diện
+  // ===============================
   return (
     <div
       style={{
@@ -135,49 +149,57 @@ export default function CheckoutPage() {
           🛍️ Sản phẩm bạn đã chọn
         </h3>
 
-        {cart.items.map((i) => (
-          <div
-            key={i._id}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "10px 0",
-              borderBottom: "1px solid #f1f5f9",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <img
-                src={i.variant?.image || i.product.image}
-                alt={i.product.name}
-                width="60"
-                height="60"
-                style={{
-                  borderRadius: 8,
-                  objectFit: "cover",
-                  border: "1px solid #e5e7eb",
-                }}
-              />
-              <div>
-                <p style={{ margin: 0, fontWeight: 500 }}>{i.product.name}</p>
-                {i.variant && (
-                  <small style={{ color: "#6b7280" }}>
-                    Biến thể: {i.variant.name}
-                  </small>
-                )}
-                <br />
-                <small style={{ color: "#6b7280" }}>x {i.quantity}</small>
-              </div>
-            </div>
+        {cart.items.map((i) => {
+          const image = i.variant?.image
+            ? `${SERVER_URL}${i.variant.image}`
+            : i.product?.image
+            ? `${SERVER_URL}${i.product.image}`
+            : "/no-image.png";
 
-            <strong style={{ color: "#111827" }}>
-              {(
-                (i.variant?.price || i.product.price || 0) * i.quantity
-              ).toLocaleString()}{" "}
-              ₫
-            </strong>
-          </div>
-        ))}
+          return (
+            <div
+              key={i._id}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px 0",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <img
+                  src={image}
+                  alt={i.product.name}
+                  width="60"
+                  height="60"
+                  style={{
+                    borderRadius: 8,
+                    objectFit: "cover",
+                    border: "1px solid #e5e7eb",
+                  }}
+                />
+                <div>
+                  <p style={{ margin: 0, fontWeight: 500 }}>{i.product.name}</p>
+                  {i.variant && (
+                    <small style={{ color: "#6b7280" }}>
+                      Biến thể: {i.variant.name}
+                    </small>
+                  )}
+                  <br />
+                  <small style={{ color: "#6b7280" }}>x {i.quantity}</small>
+                </div>
+              </div>
+
+              <strong style={{ color: "#111827" }}>
+                {(
+                  (i.variant?.price || i.product.price || 0) * i.quantity
+                ).toLocaleString()}{" "}
+                ₫
+              </strong>
+            </div>
+          );
+        })}
 
         <h3
           style={{

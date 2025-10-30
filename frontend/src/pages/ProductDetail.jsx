@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import productService from "../services/productService";
 import cartService from "../services/cartService";
+import { SERVER_URL } from "../services/api";
+
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -87,7 +89,13 @@ export default function ProductDetail() {
           }}
         >
           <img
-            src={selectedVariant?.image || product.image}
+            src={
+              selectedVariant?.image
+                ? `${SERVER_URL}${selectedVariant.image}`
+                : product.image
+                ? `${SERVER_URL}${product.image}`
+                : "/no-image.png"
+            }
             alt={product.name}
             style={{
               width: "100%",

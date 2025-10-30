@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import cartService from "../services/cartService";
 import { toast } from "react-toastify";
+import { SERVER_URL } from "../services/api";
+
+
 
 export default function CartPage() {
   const [cart, setCart] = useState(null);
@@ -123,7 +126,12 @@ export default function CartPage() {
             );
 
           const image =
-            variant?.image || product?.image || "https://via.placeholder.com/100";
+            variant?.image
+              ? `${SERVER_URL}${variant.image}`
+              : product?.image
+              ? `${SERVER_URL}${product.image}`
+              : "/no-image.png";
+
           const price = variant?.price || product?.price || 0;
           const stock = variant?.stock ?? product?.stock ?? 0;
           const outOfStock = stock <= 0;

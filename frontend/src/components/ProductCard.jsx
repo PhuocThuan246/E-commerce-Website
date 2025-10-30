@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { SERVER_URL } from "../services/api";
+
 
 export default function ProductCard({ product }) {
   // Lấy giá rẻ nhất trong danh sách biến thể
@@ -44,7 +46,7 @@ export default function ProductCard({ product }) {
         }}
       >
         <img
-          src={product.image}
+          src={product.image ? `${SERVER_URL}${product.image}` : "/no-image.png"}
           alt={product.name}
           width="200"
           height="200"
