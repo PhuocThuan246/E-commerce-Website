@@ -270,6 +270,111 @@ const getBrandsByCategory = async (req, res) => {
   }
 };
 
+// ===================================================
+// 💬 Bình luận (KHÔNG yêu cầu đăng nhập) — Realtime
+// ===================================================
+// 💬 Bình luận (KHÔNG yêu cầu đăng nhập)
+// ⛔ Nếu đã đăng nhập mà không chọn sao → không cho bình luận thuần.
+const addComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, comment } = req.body;
+
+    if (!comment || !comment.trim()) {
+      return res.status(400).json({ message: "Vui lòng nhập bình luận!" });
+    }
+
+    // ✅ Nếu có Authorization header (tức là đã đăng nhập)
+    //    => Không cho gửi bình luận thuần, bắt buộc dùng /ratings
+    const authHeader = req.headers.authorization || "";
+    if (authHeader.startsWith("Bearer ")) {
+      return res
+        .status(400)
+        .json({ message: "Bạn đã đăng nhập, vui lòng chọn số sao để đánh giá!" });
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+    }
+
+    const newComment = {
+      name: name?.trim() || "Khách ẩn danh",
+      comment: comment.trim(),
+      rating: 0,
+      createdAt: new Date(),
+    };
+
+    product.reviews.push(newComment);
+    await product.save();
+
+    const io = req.app.get("io");
+    io.to(`product:${id}`).emit("comment:new", { productId: id, comment: newComment });
+
+    return res.json({ message: "Đã thêm bình luận!", comment: newComment });
+  } catch (err) {
+    console.error("❌ Lỗi khi thêm bình luận:", err);
+    return res.status(500).json({ message: "Lỗi server khi thêm bình luận" });
+  }
+};
+
+
+// ===================================================
+// ⭐ Đánh giá sao (YÊU CẦU đăng nhập) — Realtime
+// ===================================================
+const addRating = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, name, comment } = req.body;
+
+    // YÊU CẦU đăng nhập: req.user được gắn từ middleware auth
+    const userId = req.user?._id;
+    if (!userId) return res.status(401).json({ message: "Cần đăng nhập để đánh giá!" });
+
+    if (!rating || rating < 1 || rating > 5)
+      return res.status(400).json({ message: "Điểm đánh giá không hợp lệ!" });
+
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+
+    product.reviews.push({
+      user: userId,
+      name: name?.trim() || "Người dùng",
+      rating: Number(rating),
+      comment: comment?.trim() || "",
+      createdAt: new Date(),
+    });
+
+    const total = product.reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+    product.ratingCount = product.reviews.length;
+    product.ratingAverage = Number((total / product.ratingCount).toFixed(1));
+
+    await product.save();
+
+    // 🔔 realtime
+    const io = req.app.get("io");
+    io.to(`product:${id}`).emit("rating:new", {
+      productId: id,
+      ratingAverage: product.ratingAverage,
+      ratingCount: product.ratingCount,
+    });
+    io.emit("rating:new", {
+      productId: id,
+      ratingAverage: product.ratingAverage,
+      ratingCount: product.ratingCount,
+    });
+
+    res.json({
+      message: "Đã đánh giá sản phẩm!",
+      ratingAverage: product.ratingAverage,
+      ratingCount: product.ratingCount,
+    });
+  } catch (err) {
+    console.error("❌ Lỗi khi thêm đánh giá:", err);
+    res.status(500).json({ message: "Lỗi server khi thêm đánh giá" });
+  }
+};
+
 // ================================
 // ✅ Xuất module
 // ================================
@@ -283,4 +388,8 @@ module.exports = {
   getCatalogProducts,
   getFilterMeta,
   getBrandsByCategory,
+
+  // mới thêm:
+  addComment,
+  addRating,
 };

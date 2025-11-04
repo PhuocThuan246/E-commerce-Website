@@ -6,49 +6,45 @@ export default function ProductCard({ product }) {
   // 🧮 Xử lý hiển thị giá tiền
   let priceDisplay = "Liên hệ";
 
-if (product.variants && product.variants.length > 0) {
-  // lấy danh sách giá hợp lệ > 0
-  const prices = product.variants
-    .map((v) => Number(v.price))
-    .filter((p) => !isNaN(p) && p > 0);
-  if (prices.length > 0) {
-    const minPrice = Math.min(...prices);
-    priceDisplay = `${minPrice.toLocaleString("vi-VN")} ₫`;
+  if (product.variants && product.variants.length > 0) {
+    const prices = product.variants
+      .map((v) => Number(v.price))
+      .filter((p) => !isNaN(p) && p > 0);
+    if (prices.length > 0) {
+      const minPrice = Math.min(...prices);
+      priceDisplay = `${minPrice.toLocaleString("vi-VN")} ₫`;
+    }
+  } else if (
+    product.effectivePrice !== undefined &&
+    !isNaN(Number(product.effectivePrice))
+  ) {
+    const price = Number(product.effectivePrice);
+    priceDisplay = price > 0 ? `${price.toLocaleString("vi-VN")} ₫` : "Liên hệ";
+  } else if (
+    product.price !== undefined &&
+    product.price !== null &&
+    !isNaN(Number(product.price))
+  ) {
+    const price = Number(product.price);
+    priceDisplay = price > 0 ? `${price.toLocaleString("vi-VN")} ₫` : "Liên hệ";
   }
-} else if (
-  product.effectivePrice !== undefined &&
-  !isNaN(Number(product.effectivePrice))
-) {
-  // ✅ dùng effectivePrice (API /products/search trả về)
-  const price = Number(product.effectivePrice);
-  priceDisplay =
-    price > 0 ? `${price.toLocaleString("vi-VN")} ₫` : "Liên hệ";
-} else if (
-  product.price !== undefined &&
-  product.price !== null &&
-  !isNaN(Number(product.price))
-) {
-  // fallback nếu có price
-  const price = Number(product.price);
-  priceDisplay =
-    price > 0 ? `${price.toLocaleString("vi-VN")} ₫` : "Liên hệ";
-}
 
-
-  // 🏷️ Lấy tên danh mục (nếu có populate)
+  // 🏷️ Tên danh mục
   const categoryName =
     (typeof product.category === "object" && product.category?.name) ||
     product.categoryName ||
     product.category ||
     "Không rõ danh mục";
 
+  // ⭐ Rating trung bình (hiển thị tối đa 5 sao)
+  const rating = Number(product.ratingAverage || 0);
+  const filledStars = Math.round(rating);
+  const stars = Array.from({ length: 5 }, (_, i) => i < filledStars);
+
   return (
     <Link
       to={`/product/${product._id}`}
-      style={{
-        textDecoration: "none",
-        color: "inherit",
-      }}
+      style={{ textDecoration: "none", color: "inherit" }}
     >
       <div
         style={{
@@ -78,6 +74,7 @@ if (product.variants && product.variants.length > 0) {
           height="200"
           style={{ borderRadius: 8, objectFit: "cover" }}
         />
+
         <h3
           style={{
             margin: "10px 0 4px",
@@ -92,6 +89,38 @@ if (product.variants && product.variants.length > 0) {
         <p style={{ margin: 0, color: "#6b7280", fontSize: 14 }}>
           {categoryName}
         </p>
+
+        {/* ⭐ Hiển thị số sao trung bình */}
+        <div
+          style={{
+            marginTop: 4,
+            marginBottom: 4,
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+          }}
+        >
+          {stars.map((filled, i) => (
+            <span
+              key={i}
+              style={{
+                color: filled ? "#facc15" : "#e5e7eb",
+                fontSize: 15,
+              }}
+            >
+              ★
+            </span>
+          ))}
+          <span
+            style={{
+              fontSize: 13,
+              color: "#6b7280",
+              marginLeft: 4,
+            }}
+          >
+            ({rating.toFixed(1)})
+          </span>
+        </div>
 
         {/* ✅ Giá hiển thị an toàn */}
         <p

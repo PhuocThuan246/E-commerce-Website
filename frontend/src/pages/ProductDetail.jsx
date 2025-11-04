@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { io } from "socket.io-client"; // ✅ thêm socket
 import productService from "../services/productService";
 import cartService from "../services/cartService";
-import reviewService from "../services/reviewService"; // ✅ thêm import
-import { SERVER_URL } from "../services/api";
+import reviewService from "../services/reviewService";
+import api, { SERVER_URL } from "../services/api";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -13,13 +14,16 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  // 💬 Đánh giá
+  // 💬 Đánh giá / Bình luận
   const [reviews, setReviews] = useState([]);
   const [reviewForm, setReviewForm] = useState({
     name: "",
     comment: "",
     rating: 0,
   });
+
+  // 🔌 SocketIO client
+  const [socket, setSocket] = useState(null);
 
   // 📦 Lấy thông tin sản phẩm
   useEffect(() => {
@@ -56,6 +60,33 @@ export default function ProductDetail() {
 
   useEffect(() => {
     fetchReviews();
+  }, [id]);
+
+  // 🔌 Kết nối Socket.IO
+  useEffect(() => {
+    const s = io(api.defaults.baseURL);
+    s.emit("product:join", id);
+
+    s.on("comment:new", (payload) => {
+      if (payload.productId === id) {
+        setReviews((prev) => [...prev, payload.comment]);
+      }
+    });
+
+    s.on("rating:new", (payload) => {
+      if (payload.productId === id) {
+        setProduct((prev) => ({
+          ...prev,
+          ratingAverage: payload.ratingAverage,
+          ratingCount: payload.ratingCount,
+        }));
+      }
+    });
+
+    setSocket(s);
+    return () => {
+      s.disconnect();
+    };
   }, [id]);
 
   if (loading)
@@ -105,20 +136,44 @@ export default function ProductDetail() {
     }
   };
 
-  // 💬 Gửi đánh giá
+  // 💬 Gửi bình luận hoặc đánh giá
   const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    if (!reviewForm.comment) return toast.warning("Vui lòng nhập nội dung!");
-    if (!reviewForm.rating) return toast.warning("Vui lòng chọn số sao!");
-    try {
-      await reviewService.addReview(id, reviewForm);
-      toast.success("Cảm ơn bạn đã đánh giá sản phẩm!");
-      setReviewForm({ name: "", comment: "", rating: 0 });
-      fetchReviews();
-    } catch (err) {
-      toast.error("Không thể gửi đánh giá!");
+  e.preventDefault();
+  if (!reviewForm.comment.trim()) {
+    toast.warning("Vui lòng nhập nội dung!");
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+
+  try {
+    // 🛑 ĐÃ ĐĂNG NHẬP nhưng rating = 0 -> không cho gửi bình luận thuần
+    if (token && reviewForm.rating === 0) {
+      toast.warning("Vui lòng chọn số sao để đánh giá!");
+      return;
     }
-  };
+
+    // ⭐ Có rating > 0 -> gửi /ratings + token
+    if (reviewForm.rating > 0) {
+      await api.post(`/products/${id}/ratings`, reviewForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Đã gửi đánh giá!");
+    } else {
+      // 💬 Chưa đăng nhập -> bình luận thường
+      await api.post(`/products/${id}/comments`, {
+        name: reviewForm.name,
+        comment: reviewForm.comment,
+      });
+      toast.success("Đã gửi bình luận!");
+    }
+
+    setReviewForm({ name: "", comment: "", rating: 0 });
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Lỗi khi gửi bình luận/đánh giá!");
+  }
+};
+
 
   return (
     <div style={{ padding: "40px 20px", maxWidth: 1100, margin: "0 auto" }}>
@@ -155,8 +210,8 @@ export default function ProductDetail() {
               selectedVariant?.image
                 ? `${SERVER_URL}${selectedVariant.image}`
                 : product.image
-                ? `${SERVER_URL}${product.image}`
-                : "/no-image.png"
+                  ? `${SERVER_URL}${product.image}`
+                  : "/no-image.png"
             }
             alt={product.name}
             style={{
@@ -180,7 +235,7 @@ export default function ProductDetail() {
           <p style={{ marginBottom: 10 }}>
             ⭐ <strong>{product.ratingAverage || 0}</strong> / 5{" "}
             <small style={{ color: "#6b7280" }}>
-              ({reviews.length} đánh giá)
+              ({product.ratingCount || reviews.length} đánh giá)
             </small>
           </p>
 
@@ -265,7 +320,9 @@ export default function ProductDetail() {
               />
               <button
                 onClick={() =>
-                  setQuantity(Math.min(selectedVariant?.stock || 1, quantity + 1))
+                  setQuantity(
+                    Math.min(selectedVariant?.stock || 1, quantity + 1)
+                  )
                 }
                 style={{
                   width: 36,
@@ -318,7 +375,7 @@ export default function ProductDetail() {
       <div style={{ marginTop: 60 }}>
         <h2 style={{ fontSize: 22, marginBottom: 16 }}>💬 Nhận xét & Đánh giá</h2>
 
-        {/* Form gửi đánh giá */}
+        {/* Form gửi bình luận / đánh giá */}
         <form
           onSubmit={handleReviewSubmit}
           style={{
@@ -355,7 +412,7 @@ export default function ProductDetail() {
           ></textarea>
 
           <div>
-            <label>Chấm sao:</label>
+            <label>Chấm sao (đăng nhập để gửi):</label>
             {[1, 2, 3, 4, 5].map((s) => (
               <span
                 key={s}
@@ -385,17 +442,17 @@ export default function ProductDetail() {
               fontWeight: 600,
             }}
           >
-            Gửi đánh giá
+            Gửi
           </button>
         </form>
 
         {/* Danh sách đánh giá */}
         {reviews.length === 0 ? (
-          <p style={{ color: "#6b7280" }}>Chưa có đánh giá nào.</p>
+          <p style={{ color: "#6b7280" }}>Chưa có bình luận nào.</p>
         ) : (
-          reviews.map((r) => (
+          reviews.map((r, i) => (
             <div
-              key={r._id}
+              key={i}
               style={{
                 background: "white",
                 padding: 12,

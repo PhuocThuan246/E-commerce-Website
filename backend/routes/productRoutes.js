@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
+const { protect: auth } = require("../middlewares/authMiddleware");
 
 const {
   getAllProducts,
@@ -13,6 +14,8 @@ const {
   getCatalogProducts,
   getFilterMeta,
   getBrandsByCategory, // ✅ thêm controller brand
+  addComment,          // ✅ mới
+  addRating,           // ✅ mới
 } = require("../controllers/productController");
 
 // ==============================
@@ -26,6 +29,15 @@ router.get("/filter-meta", getFilterMeta);
 
 // ✅ API lấy danh sách thương hiệu theo danh mục (hover sidebar)
 router.get("/brands/:categoryId", getBrandsByCategory);
+
+// ==============================
+// 💬 Bình luận & ⭐ Đánh giá (realtime)
+// ==============================
+// Không cần đăng nhập để bình luận
+router.post("/:id/comments", addComment);
+
+// Bắt buộc đăng nhập để đánh giá sao
+router.post("/:id/ratings", auth, addRating);
 
 // ==============================
 // 📦 Danh mục sản phẩm (phân trang & sắp xếp cơ bản)
@@ -101,7 +113,7 @@ router.get("/catalog-basic", async (req, res) => {
 });
 
 // ==============================
-// 💬 Thêm nhận xét / đánh giá sao
+// 💬 (giữ nguyên route cũ nếu FE đang dùng)
 // ==============================
 router.post("/:id/reviews", async (req, res) => {
   try {
@@ -129,6 +141,10 @@ router.post("/:id/reviews", async (req, res) => {
     product.ratingAverage = (total / product.reviews.length).toFixed(1);
 
     await product.save();
+
+    // phát realtime cho tương thích
+    const io = req.app.get("io");
+    io.emit("review:new", { productId: req.params.id, review: newReview });
 
     res.json({
       message: "Đã thêm đánh giá!",

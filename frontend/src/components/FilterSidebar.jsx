@@ -1,131 +1,179 @@
-// src/components/FilterSidebar.jsx
-import { useEffect, useState } from "react";
-
-const RATINGS = [4.5, 4, 3.5, 3];
+import React, { useEffect, useState } from "react";
 
 export default function FilterSidebar({
-  brandsOptions = [],
-  initial = {},
+  brands = [],
+  selectedBrands = [],
+  setSelectedBrands,
+  minPrice,
+  maxPrice,
+  setMinPrice,
+  setMaxPrice,
+  rating,
+  setRating,
   onApply,
+  onReset,
 }) {
-  const [brands, setBrands] = useState(initial.brand?.split(",") || []);
-  const [minPrice, setMinPrice] = useState(initial.minPrice || "");
-  const [maxPrice, setMaxPrice] = useState(initial.maxPrice || "");
-  const [minRating, setMinRating] = useState(initial.minRating || "");
+  const [tempRating, setTempRating] = useState(rating || 0);
 
-  useEffect(() => {
-    setBrands(initial.brand?.split(",") || []);
-    setMinPrice(initial.minPrice || "");
-    setMaxPrice(initial.maxPrice || "");
-    setMinRating(initial.minRating || "");
-  }, [initial]);
+  // Danh sách lựa chọn sao
+  const ratingOptions = [
+    { value: 4.5, label: "Từ 4.5★ trở lên" },
+    { value: 4, label: "Từ 4★ trở lên" },
+    { value: 3.5, label: "Từ 3.5★ trở lên" },
+    { value: 3, label: "Từ 3★ trở lên" },
+    { value: 0, label: "Bỏ lọc rating" },
+  ];
 
-  const toggleBrand = (b) => {
-    setBrands((prev) =>
-      prev.includes(b) ? prev.filter((x) => x !== b) : [...prev, b]
-    );
+  const handleBrandChange = (brand) => {
+    if (selectedBrands.includes(brand)) {
+      setSelectedBrands(selectedBrands.filter((b) => b !== brand));
+    } else {
+      setSelectedBrands([...selectedBrands, brand]);
+    }
   };
 
-  const apply = () => {
-    onApply?.({
-      brand: brands.length ? brands : undefined,
-      minPrice: minPrice || undefined,
-      maxPrice: maxPrice || undefined,
-      minRating: minRating || undefined,
-      page: 1, // reset trang
-    });
+  const handleApply = () => {
+    setRating(tempRating);
+    onApply();
   };
 
-  const clear = () => {
-    setBrands([]);
+  const handleReset = () => {
+    setSelectedBrands([]);
     setMinPrice("");
     setMaxPrice("");
-    setMinRating("");
-    onApply?.({
-      brand: undefined,
-      minPrice: undefined,
-      maxPrice: undefined,
-      minRating: undefined,
-      page: 1,
-    });
+    setTempRating(0);
+    setRating(0);
+    onReset();
   };
 
   return (
-    <aside className="fs-card">
-      <h3 className="fs-title">Bộ lọc</h3>
+    <div
+      style={{
+        background: "#fff",
+        padding: 16,
+        borderRadius: 10,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        fontSize: 14,
+        color: "#374151",
+      }}
+    >
+      <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Bộ lọc</h3>
 
-      {/* Thương hiệu * bắt buộc */}
-      <div className="fs-block">
-        <div className="fs-label">Thương hiệu *</div>
-        <div className="fs-brand-list">
-          {brandsOptions.map((b) => (
-            <label key={b} className="fs-check">
-              <input
-                type="checkbox"
-                checked={brands.includes(b)}
-                onChange={() => toggleBrand(b)}
-              />
-              <span>{b}</span>
-            </label>
-          ))}
-          {!brandsOptions.length && (
-            <div className="fs-empty">Chưa có dữ liệu thương hiệu</div>
-          )}
-        </div>
+      {/* ====== Thương hiệu ====== */}
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ fontWeight: 600 }}>Thương hiệu *</label>
+        {brands.length === 0 ? (
+          <p style={{ color: "#9ca3af", marginTop: 4 }}>
+            Chưa có dữ liệu thương hiệu
+          </p>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+              marginTop: 6,
+              maxHeight: 140,
+              overflowY: "auto",
+            }}
+          >
+            {brands.map((brand) => (
+              <label key={brand}>
+                <input
+                  type="checkbox"
+                  checked={selectedBrands.includes(brand)}
+                  onChange={() => handleBrandChange(brand)}
+                />{" "}
+                {brand}
+              </label>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Giá * bắt buộc (Min/Max) */}
-      <div className="fs-block">
-        <div className="fs-label">Giá *</div>
-        <div className="fs-row">
+      {/* ====== Giá ====== */}
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ fontWeight: 600 }}>Giá *</label>
+        <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
           <input
             type="number"
-            className="fs-input"
             placeholder="Min"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
+            style={{
+              width: "100%",
+              padding: 6,
+              borderRadius: 6,
+              border: "1px solid #d1d5db",
+            }}
           />
           <input
             type="number"
-            className="fs-input"
             placeholder="Max"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
+            style={{
+              width: "100%",
+              padding: 6,
+              borderRadius: 6,
+              border: "1px solid #d1d5db",
+            }}
           />
         </div>
       </div>
 
-      {/* Rating (tiêu chí thứ 3) */}
-      <div className="fs-block">
-        <div className="fs-label">Xếp hạng</div>
-        <div className="fs-radio-col">
-          {RATINGS.map((r) => (
-            <label key={r} className="fs-radio">
-              <input
-                name="rating"
-                type="radio"
-                checked={String(minRating) === String(r)}
-                onChange={() => setMinRating(r)}
-              />
-              <span>Từ {r}★ trở lên</span>
-            </label>
+      {/* ====== Xếp hạng ====== */}
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ fontWeight: 600 }}>Xếp hạng</label>
+        <div style={{ marginTop: 6 }}>
+          {ratingOptions.map((opt) => (
+            <div key={opt.value} style={{ marginTop: 4 }}>
+              <label>
+                <input
+                  type="radio"
+                  name="rating"
+                  value={opt.value}
+                  checked={tempRating === opt.value}
+                  onChange={() => setTempRating(opt.value)}
+                />{" "}
+                {opt.label}
+              </label>
+            </div>
           ))}
-          <label className="fs-radio">
-            <input
-              name="rating"
-              type="radio"
-              checked={!minRating}
-              onChange={() => setMinRating("")}
-            />
-            <span>Bỏ lọc rating</span>
-          </label>
         </div>
       </div>
 
-      <div className="fs-actions">
-        <button onClick={apply} className="btn-primary w-50">Áp dụng</button>
-        <button onClick={clear} className="btn-ghost w-50">Xoá lọc</button>
+      {/* ====== Nút hành động ====== */}
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
+          onClick={handleApply}
+          style={{
+            background: "#2563eb",
+            color: "white",
+            border: "none",
+            borderRadius: 6,
+            padding: "6px 12px",
+            cursor: "pointer",
+            flex: 1,
+          }}
+        >
+          Áp dụng
+        </button>
+        <button
+          onClick={handleReset}
+          style={{
+            background: "#f3f4f6",
+            color: "#111827",
+            border: "1px solid #d1d5db",
+            borderRadius: 6,
+            padding: "6px 12px",
+            cursor: "pointer",
+            flex: 1,
+          }}
+        >
+          Xóa lọc
+        </button>
       </div>
-    </aside>
+    </div>
   );
 }

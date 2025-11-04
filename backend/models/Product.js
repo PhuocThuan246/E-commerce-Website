@@ -22,7 +22,7 @@ const reviewSchema = new mongoose.Schema(
       required: false,
     },
     name: String,
-    rating: { type: Number, required: true, min: 1, max: 5 },
+    rating: { type: Number, min: 0, max: 5, default: 0 },
     comment: String,
     createdAt: { type: Date, default: Date.now },
   },

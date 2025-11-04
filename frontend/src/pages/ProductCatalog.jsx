@@ -11,7 +11,7 @@ export default function ProductCatalog() {
   const [brand, setBrand] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [rating, setRating] = useState("");
+  const [rating, setRating] = useState(0);
   const [sort, setSort] = useState("default");
 
   // ✅ Phân trang client
@@ -20,7 +20,7 @@ export default function ProductCatalog() {
 
   const [brandOptions, setBrandOptions] = useState([]);
 
-  // ✅ Lấy toàn bộ sản phẩm từ DB (giống homepage)
+  // ✅ Lấy toàn bộ sản phẩm từ DB
   useEffect(() => {
     (async () => {
       try {
@@ -48,7 +48,8 @@ export default function ProductCatalog() {
       const priceMatch =
         (!minPrice || price >= parseFloat(minPrice)) &&
         (!maxPrice || price <= parseFloat(maxPrice));
-      const ratingMatch = rating ? p.rating >= parseInt(rating) : true;
+      // ⭐ Lọc theo số sao trung bình
+      const ratingMatch = rating ? (p.ratingAverage || 0) >= parseFloat(rating) : true;
       return nameMatch && brandMatch && priceMatch && ratingMatch;
     })
     .sort((a, b) => {
@@ -66,7 +67,7 @@ export default function ProductCatalog() {
       }
     });
 
-  // ✅ Phân trang (client-side)
+  // ✅ Phân trang client-side
   const totalPages = Math.ceil(filteredProducts.length / limit);
   const startIndex = (page - 1) * limit;
   const currentPageProducts = filteredProducts.slice(
@@ -74,7 +75,7 @@ export default function ProductCatalog() {
     startIndex + limit
   );
 
-  // Reset page nếu lọc thay đổi
+  // Reset page nếu filter thay đổi
   useEffect(() => {
     setPage(1);
   }, [search, brand, minPrice, maxPrice, rating, sort]);
@@ -94,7 +95,7 @@ export default function ProductCatalog() {
         🛒 Danh sách sản phẩm
       </h2>
 
-      {/* Bộ lọc (giống homepage) */}
+      {/* Bộ lọc */}
       <div
         style={{
           display: "flex",
@@ -145,6 +146,7 @@ export default function ProductCatalog() {
           )}
         </select>
 
+        {/* 💰 Giá */}
         <div>
           <input
             type="number"
@@ -162,6 +164,7 @@ export default function ProductCatalog() {
           />
         </div>
 
+        {/* ⭐ Lọc theo sao */}
         <select
           value={rating}
           onChange={(e) => setRating(e.target.value)}
@@ -172,11 +175,14 @@ export default function ProductCatalog() {
           }}
         >
           <option value="">Tất cả xếp hạng</option>
+          <option value="5">⭐ 5 sao </option>
           <option value="4">⭐ 4 sao trở lên</option>
           <option value="3">⭐ 3 sao trở lên</option>
           <option value="2">⭐ 2 sao trở lên</option>
+          <option value="1">⭐ 1 sao trở lên</option>
         </select>
 
+        {/* 🔽 Sắp xếp */}
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
