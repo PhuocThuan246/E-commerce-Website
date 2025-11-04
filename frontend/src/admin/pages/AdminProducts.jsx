@@ -11,10 +11,11 @@ export default function AdminProducts() {
   const [form, setForm] = useState({
     name: "",
     category: "",
+    brand: "", // ✅ thêm brand vào form
     description: "",
     image: "",
   });
-  const [imagePreview, setImagePreview] = useState(""); // <--- thêm để hiển thị ảnh xem trước
+  const [imagePreview, setImagePreview] = useState("");
   const [editId, setEditId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -49,6 +50,7 @@ export default function AdminProducts() {
       const formData = new FormData();
       formData.append("name", form.name);
       formData.append("category", form.category);
+      formData.append("brand", form.brand); // ✅ gửi brand lên server
       formData.append("description", form.description);
       if (form.image instanceof File) formData.append("image", form.image);
 
@@ -60,7 +62,13 @@ export default function AdminProducts() {
         toast.success("Đã thêm sản phẩm!");
       }
 
-      setForm({ name: "", category: "", description: "", image: "" });
+      setForm({
+        name: "",
+        category: "",
+        brand: "",
+        description: "",
+        image: "",
+      });
       setImagePreview("");
       setEditId(null);
       setShowForm(false);
@@ -88,16 +96,17 @@ export default function AdminProducts() {
     setForm({
       name: product.name,
       category: product.category?._id || "",
+      brand: product.brand || "", // ✅ nạp lại brand khi edit
       description: product.description || "",
       image: product.image || "",
     });
-    setImagePreview(`${SERVER_URL}${product.image}`); // hiển thị ảnh cũ
+    setImagePreview(`${SERVER_URL}${product.image}`);
     setEditId(product._id);
     setShowForm(true);
   };
 
   const cancelEdit = () => {
-    setForm({ name: "", category: "", description: "", image: "" });
+    setForm({ name: "", category: "", brand: "", description: "", image: "" });
     setImagePreview("");
     setEditId(null);
     setShowForm(false);
@@ -114,7 +123,6 @@ export default function AdminProducts() {
     setImagePreview(previewURL);
   };
 
-  // Dọn URL tạm khi component unmount
   useEffect(() => {
     return () => {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
@@ -128,7 +136,6 @@ export default function AdminProducts() {
     <div style={{ maxWidth: 1100, margin: "0 auto" }}>
       <h2 style={{ marginBottom: 24, color: "#111827" }}>📦 Quản lý sản phẩm</h2>
 
-      {/* Nút toggle form */}
       <button
         onClick={() => setShowForm(!showForm)}
         style={{
@@ -161,12 +168,15 @@ export default function AdminProducts() {
             boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
           }}
         >
+          {/* TÊN SẢN PHẨM */}
           <input
             placeholder="Tên sản phẩm"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             style={{ padding: 10, borderRadius: 6, border: "1px solid #d1d5db" }}
           />
+
+          {/* DANH MỤC */}
           <select
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -180,6 +190,15 @@ export default function AdminProducts() {
             ))}
           </select>
 
+          {/* ✅ THƯƠNG HIỆU */}
+          <input
+            placeholder="Thương hiệu (VD: Apple, Samsung...)"
+            value={form.brand}
+            onChange={(e) => setForm({ ...form, brand: e.target.value })}
+            style={{ padding: 10, borderRadius: 6, border: "1px solid #d1d5db" }}
+          />
+
+          {/* ẢNH */}
           <input type="file" accept="image/*" onChange={handleImageChange} />
 
           {/* ẢNH XEM TRƯỚC */}
@@ -200,6 +219,7 @@ export default function AdminProducts() {
             </div>
           )}
 
+          {/* MÔ TẢ */}
           <textarea
             placeholder="Mô tả sản phẩm"
             value={form.description}
@@ -213,6 +233,7 @@ export default function AdminProducts() {
             }}
           ></textarea>
 
+          {/* NÚT LƯU */}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
             <button
               type="submit"
@@ -248,7 +269,7 @@ export default function AdminProducts() {
         </form>
       )}
 
-      {/* BẢNG DANH SÁCH */}
+      {/* BẢNG SẢN PHẨM */}
       <div
         style={{
           background: "white",
@@ -261,19 +282,21 @@ export default function AdminProducts() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead style={{ background: "#f3f4f6" }}>
             <tr>
-              {["Tên", "Danh mục", "Ảnh", "Biến thể", "Thao tác"].map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    padding: "12px 8px",
-                    textAlign: "left",
-                    borderBottom: "1px solid #e5e7eb",
-                    color: "#374151",
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
+              {["Tên", "Danh mục", "Thương hiệu", "Ảnh", "Biến thể", "Thao tác"].map(
+                (h) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: "12px 8px",
+                      textAlign: "left",
+                      borderBottom: "1px solid #e5e7eb",
+                      color: "#374151",
+                    }}
+                  >
+                    {h}
+                  </th>
+                )
+              )}
             </tr>
           </thead>
           <tbody>
@@ -293,6 +316,7 @@ export default function AdminProducts() {
               >
                 <td style={{ padding: 10 }}>{p.name}</td>
                 <td style={{ padding: 10 }}>{p.category?.name}</td>
+                <td style={{ padding: 10 }}>{p.brand || "—"}</td>
                 <td style={{ padding: 10 }}>
                   <img
                     src={p.image ? `${SERVER_URL}${p.image}` : "/no-image.png"}

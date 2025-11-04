@@ -97,6 +97,7 @@ export default function Header() {
           gap: 24,
         }}
       >
+        {/* Trang chủ */}
         <Link
           to="/"
           style={{
@@ -107,6 +108,18 @@ export default function Header() {
           Trang chủ
         </Link>
 
+        {/* ✅ Mục mới: SẢN PHẨM */}
+        <Link
+          to="/products"
+          style={{
+            ...linkStyle,
+            ...(location.pathname.startsWith("/products") ? activeStyle : {}),
+          }}
+        >
+          Sản phẩm
+        </Link>
+
+        {/* Đơn hàng */}
         <Link
           to="/orders"
           style={{
@@ -116,8 +129,6 @@ export default function Header() {
         >
           Đơn hàng
         </Link>
-
-       
 
         {/* Khu vực user */}
         {user ? (
@@ -148,7 +159,7 @@ export default function Header() {
           </div>
         )}
 
-         {/* Giỏ hàng */}
+        {/* Giỏ hàng */}
         <Link
           to="/cart"
           style={{
