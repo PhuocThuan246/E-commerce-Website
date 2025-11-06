@@ -1,226 +1,175 @@
 const Product = require("../../models/Product");
-const fs = require("fs");
-const path = require("path");
 
-// ============================
-// LẤY TOÀN BỘ SẢN PHẨM (ADMIN)
-// ============================
-const getAll = async (req, res) => {
+// ==============================
+// 📦 LẤY TOÀN BỘ SẢN PHẨM
+// ==============================
+exports.getAll = async (req, res) => {
   try {
-    const products = await Product.find().populate("category", "name");
+    const products = await Product.find()
+      .populate("category", "name")
+      .sort({ createdAt: -1 });
+
     res.json(products);
   } catch (err) {
+    console.error("❌ Lỗi khi lấy sản phẩm:", err);
     res.status(500).json({ message: "Lỗi server khi lấy sản phẩm" });
   }
 };
 
-// ============================
-// TẠO SẢN PHẨM MỚI (ADMIN)
-// ============================
-const create = async (req, res) => {
+// ==============================
+// ➕ THÊM SẢN PHẨM
+// ==============================
+exports.create = async (req, res) => {
   try {
-    const { name, category, description } = req.body;
+    const { name, category, description, price, brand } = req.body; // ✅ thêm brand
 
     if (!name || !category)
-      return res.status(400).json({ message: "Thiếu tên hoặc danh mục" });
+      return res.status(400).json({ message: "Thiếu tên hoặc danh mục!" });
 
-    let imagePath = "";
-    if (req.file) {
-      // Nếu có upload ảnh
-      imagePath = `/uploads/${req.file.filename}`; // URL tương đối
-    }
-
-    const newProduct = await Product.create({
+    const product = new Product({
       name,
       category,
+      brand: brand?.trim() || "Unknown", // ✅ lưu brand
       description,
-      image: imagePath,
-      variants: [],
+      price: price ? Number(price) : 0,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
     });
 
-    res.status(201).json(newProduct);
+    await product.save();
+    res.status(201).json({ message: "Đã thêm sản phẩm mới!", product });
   } catch (err) {
-    console.error("Lỗi khi tạo sản phẩm:", err);
-    res.status(500).json({ message: "Lỗi khi tạo sản phẩm" });
+    console.error("❌ Lỗi khi thêm sản phẩm:", err);
+    res.status(500).json({ message: "Lỗi server khi thêm sản phẩm" });
   }
 };
 
-
-// ============================
-// CẬP NHẬT SẢN PHẨM (ADMIN)
-// ============================
-const update = async (req, res) => {
+// ==============================
+// ✏️ CẬP NHẬT SẢN PHẨM
+// ==============================
+exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, category, description } = req.body;
+    const { name, category, description, price, brand } = req.body; // ✅ thêm brand
 
-    const updateData = { name, category, description };
+    const updateData = {
+      name,
+      category,
+      brand: brand?.trim() || "Unknown", // ✅ cập nhật brand
+      description,
+      price: price ? Number(price) : 0,
+    };
+
     if (req.file) {
       updateData.image = `/uploads/${req.file.filename}`;
     }
 
-    const updated = await Product.findByIdAndUpdate(id, updateData, { new: true });
+    const updated = await Product.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
     if (!updated)
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
 
-    res.json(updated);
+    res.json({ message: "Đã cập nhật sản phẩm!", product: updated });
   } catch (err) {
-    res.status(500).json({ message: "Lỗi khi cập nhật sản phẩm" });
+    console.error("❌ Lỗi khi cập nhật sản phẩm:", err);
+    res.status(500).json({ message: "Lỗi server khi cập nhật sản phẩm" });
   }
 };
 
-
-// ============================
-// XÓA SẢN PHẨM (ADMIN)
-// ============================
-const remove = async (req, res) => {
+// ==============================
+// 🗑️ XÓA SẢN PHẨM
+// ==============================
+exports.remove = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deleted = await Product.findByIdAndDelete(id);
-
+    const deleted = await Product.findByIdAndDelete(req.params.id);
     if (!deleted)
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
 
-    // Xóa ảnh sản phẩm chính (nếu có)
-    if (deleted.image) {
-      const mainImagePath = path.join(__dirname, "../../public", deleted.image);
-      if (fs.existsSync(mainImagePath)) {
-        fs.unlinkSync(mainImagePath);
-      }
-    }
-
-    // Xóa ảnh của các biến thể (nếu có)
-    if (deleted.variants && deleted.variants.length > 0) {
-      for (const variant of deleted.variants) {
-        if (variant.image) {
-          const variantImagePath = path.join(__dirname, "../../public", variant.image);
-          if (fs.existsSync(variantImagePath)) {
-            fs.unlinkSync(variantImagePath);
-          }
-        }
-      }
-    }
-
-    res.json({ success: true, message: "Đã xóa sản phẩm và tất cả ảnh liên quan" });
+    res.json({ message: "Đã xóa sản phẩm!", product: deleted });
   } catch (err) {
-    console.error("Lỗi khi xóa sản phẩm:", err);
-    res.status(500).json({ message: "Lỗi khi xóa sản phẩm" });
+    console.error("❌ Lỗi khi xóa sản phẩm:", err);
+    res.status(500).json({ message: "Lỗi server khi xóa sản phẩm" });
   }
 };
 
+// =========================================================
+// 🧩 QUẢN LÝ BIẾN THỂ (Variant)
+// =========================================================
 
-
-
-// ============================
-// THÊM BIẾN THỂ (CÓ ẢNH)
-// ============================
-const addVariant = async (req, res) => {
+// ➕ Thêm biến thể mới
+exports.addVariant = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, sku, price, stock } = req.body;
 
     const product = await Product.findById(id);
-    if (!product) return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+    if (!product)
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
 
-    // Nếu có upload ảnh
-    let imagePath = "";
-    if (req.file) {
-      imagePath = `/uploads/${req.file.filename}`;
-    }
-
-    const variant = {
+    const newVariant = {
       name,
       sku,
       price: Number(price) || 0,
       stock: Number(stock) || 0,
-      image: imagePath,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
     };
 
-    product.variants.push(variant);
+    product.variants.push(newVariant);
     await product.save();
 
-    const newVariant = product.variants[product.variants.length - 1];
-    res.status(201).json(newVariant);
+    res.status(201).json({ message: "Đã thêm biến thể mới!", product });
   } catch (err) {
-    console.error("Lỗi khi thêm biến thể:", err);
-    res.status(500).json({ message: "Lỗi khi thêm biến thể" });
+    console.error("❌ Lỗi khi thêm biến thể:", err);
+    res.status(500).json({ message: "Lỗi server khi thêm biến thể" });
   }
 };
 
-
-// ============================
-// CẬP NHẬT BIẾN THỂ (CÓ ẢNH)
-// ============================
-const updateVariant = async (req, res) => {
+// ✏️ Cập nhật biến thể
+exports.updateVariant = async (req, res) => {
   try {
     const { id, variantId } = req.params;
     const { name, sku, price, stock } = req.body;
 
     const product = await Product.findById(id);
-    if (!product) return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+    if (!product)
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
 
-    const v = product.variants.id(variantId);
-    if (!v) return res.status(404).json({ message: "Không tìm thấy biến thể" });
+    const variant = product.variants.id(variantId);
+    if (!variant)
+      return res.status(404).json({ message: "Không tìm thấy biến thể!" });
 
-    // Nếu upload ảnh mới, xóa ảnh cũ
-    if (req.file) {
-      if (v.image) {
-        const oldPath = path.join(__dirname, "../../public", v.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
-      v.image = `/uploads/${req.file.filename}`;
-    }
+    variant.name = name || variant.name;
+    variant.sku = sku || variant.sku;
+    variant.price = Number(price) || variant.price;
+    variant.stock = Number(stock) || variant.stock;
 
-    if (name !== undefined) v.name = name;
-    if (sku !== undefined) v.sku = sku;
-    if (price !== undefined) v.price = Number(price) || 0;
-    if (stock !== undefined) v.stock = Number(stock) || 0;
+    if (req.file) variant.image = `/uploads/${req.file.filename}`;
 
     await product.save();
-    res.json(v);
+    res.json({ message: "Đã cập nhật biến thể!", product });
   } catch (err) {
-    console.error("Lỗi khi cập nhật biến thể:", err);
-    res.status(500).json({ message: "Lỗi khi cập nhật biến thể" });
+    console.error("❌ Lỗi khi cập nhật biến thể:", err);
+    res.status(500).json({ message: "Lỗi server khi cập nhật biến thể" });
   }
 };
 
-
-// ============================
-// XÓA BIẾN THỂ (XÓA ẢNH LUÔN)
-// ============================
-const removeVariant = async (req, res) => {
+// 🗑️ Xóa biến thể
+exports.removeVariant = async (req, res) => {
   try {
     const { id, variantId } = req.params;
     const product = await Product.findById(id);
     if (!product)
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
 
-    const v = product.variants.id(variantId);
-    if (!v)
-      return res.status(404).json({ message: "Không tìm thấy biến thể" });
-
-    // Xóa ảnh biến thể nếu có
-    if (v.image) {
-      const imgPath = path.join(__dirname, "../../public", v.image);
-      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
-    }
-
-    // Xóa biến thể
-    if (typeof v.deleteOne === "function") {
-      // Mongoose 6/7
-      v.deleteOne();
-    } else {
-      // fallback (Mongoose 5)
-      product.variants.pull({ _id: variantId });
-    }
+    product.variants = product.variants.filter(
+      (v) => v._id.toString() !== variantId
+    );
 
     await product.save();
-    res.json({ success: true, message: "Đã xóa biến thể và ảnh" });
+    res.json({ message: "Đã xóa biến thể!", product });
   } catch (err) {
-    console.error("Lỗi khi xóa biến thể:", err);
-    res.status(500).json({ message: "Lỗi khi xóa biến thể" });
+    console.error("❌ Lỗi khi xóa biến thể:", err);
+    res.status(500).json({ message: "Lỗi server khi xóa biến thể" });
   }
 };
-
-
-module.exports = { getAll, create, update, remove, addVariant, removeVariant, updateVariant };

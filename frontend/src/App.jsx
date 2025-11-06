@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 
 // Trang khách hàng
 import HomePage from "./pages/HomePage";
+import ProductCatalog from "./pages/ProductCatalog"; // ✅ thêm dòng này
 import ProductDetail from "./pages/ProductDetail";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
@@ -14,7 +15,8 @@ import SuccessPage from "./pages/SuccessPage";
 import OrdersPage from "./pages/OrdersPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import NotFound from "./pages/NotFound"; // thêm dòng này
+import NotFound from "./pages/NotFound";
+
 // Trang quản trị
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
@@ -23,7 +25,6 @@ import AdminCategories from "./admin/pages/AdminCategories";
 import AdminOrders from "./admin/pages/AdminOrders";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminUsers from "./admin/pages/AdminUsers";
-
 
 export default function App() {
   return (
@@ -38,6 +39,9 @@ export default function App() {
               <main style={{ minHeight: "80vh", paddingBottom: 40 }}>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
+                  {/* ✅ Thêm route cho trang danh mục sản phẩm */}
+                  <Route path="/products" element={<ProductCatalog />} />
+
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/checkout" element={<CheckoutPage />} />
@@ -67,7 +71,7 @@ export default function App() {
           <Route path="categories" element={<AdminCategories />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
-          <Route path="*" element={<NotFound />} /> 
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>

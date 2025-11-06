@@ -1,4 +1,5 @@
 # E-commerce-Website
+link : https://github.com/PhuocThuan246/E-commerce-Website
 Xóa local: git reset --hard
 # Tải bản mới: git pull origin main
 - Tạo dự án trong github web
@@ -14,3 +15,9 @@ Xóa local: git reset --hard
 		git commit -m "name code push"
 		git push
 
+<<<<<<< HEAD
+=======
+
+-- 23:05 - 04/11/2025
+Phúc - cập nhật 3. Product manager
+>>>>>>> 31e7004601a796503a497abeed604f3755f40c51
