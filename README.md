@@ -13,3 +13,4 @@ Xóa local: git reset --hard
 		git add .
 		git commit -m "name code push"
 		git push
+
