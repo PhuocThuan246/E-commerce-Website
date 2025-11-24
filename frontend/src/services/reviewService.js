@@ -1,9 +1,9 @@
 import api from "./api";
 
-// ✅ Thống nhất endpoint đúng với backend của bạn
+// SỬA ĐÚNG ENDPOINT LẤY REVIEW
 const reviewService = {
   // Lấy danh sách review / bình luận theo sản phẩm
-  getByProduct: (productId) => api.get(`/products/${productId}`),
+  getByProduct: (productId) => api.get(`/products/${productId}/reviews`),
 
   // Gửi bình luận (không cần đăng nhập)
   addComment: (productId, data) =>

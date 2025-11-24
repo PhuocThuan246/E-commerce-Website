@@ -201,7 +201,12 @@ export default function ProductDetail() {
       }
 
       // Reset form
-      setReviewForm({ name: "", comment: "", rating: 0 });
+      setReviewForm((prev) => ({
+        ...prev,
+        comment: "",
+        rating: 0,
+      }));
+
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Lỗi khi gửi bình luận/đánh giá!"
@@ -460,20 +465,25 @@ export default function ProductDetail() {
 
           <div>
             <label>Chấm sao (đăng nhập để gửi):</label>
-            {[1, 2, 3, 4, 5].map((s) => (
-              <span
-                key={s}
-                style={{
-                  fontSize: 22,
-                  color: reviewForm.rating >= s ? "#facc15" : "#d1d5db",
-                  cursor: "pointer",
-                  marginLeft: 6,
-                }}
-                onClick={() => setReviewForm({ ...reviewForm, rating: s })}
-              >
-                ★
-              </span>
-            ))}
+              {[1, 2, 3, 4, 5].map((s) => (
+                <span
+                  key={s}
+                  style={{
+                    fontSize: 22,
+                    color: reviewForm.rating >= s ? "#facc15" : "#d1d5db",
+                    cursor: "pointer",
+                    marginLeft: 6,
+                  }}
+                  onClick={() => {
+                    setReviewForm((prev) => ({
+                      ...prev,
+                      rating: prev.rating === s ? 0 : s, // ✅ bấm lại thì xoá sao
+                    }));
+                  }}
+                >
+                  ★
+                </span>
+              ))}
           </div>
 
           <button

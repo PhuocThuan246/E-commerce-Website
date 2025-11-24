@@ -16,7 +16,12 @@ import OrdersPage from "./pages/OrdersPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
-
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AccountLayout from "./pages/account/AccountLayout";
+import ProfilePage from "./pages/account/ProfilePage";
+import AddressPage from "./pages/account/AddressPage";
+import ChangePasswordPage from "./pages/account/ChangePasswordPage";
 // Trang quản trị
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
@@ -39,7 +44,7 @@ export default function App() {
               <main style={{ minHeight: "80vh", paddingBottom: 40 }}>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
-                  {/* ✅ Thêm route cho trang danh mục sản phẩm */}
+                  {/* Thêm route cho trang danh mục sản phẩm */}
                   <Route path="/products" element={<ProductCatalog />} />
 
                   <Route path="/product/:id" element={<ProductDetail />} />
@@ -49,7 +54,22 @@ export default function App() {
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/login" element={<LoginPage />} />
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage/>} />
                   <Route path="*" element={<NotFound />} />
+                  <Route
+                    path="/account/*"
+                    element={
+                      <ProtectedRoute>
+                        <AccountLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="addresses" element={<AddressPage />} />
+                    <Route path="change-password" element={<ChangePasswordPage />} />
+                  </Route>
+
                 </Routes>
               </main>
               <Footer />

@@ -1,25 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import cartService from "../services/cartService";
 
 export default function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [user, setUser] = useState(null);
-  const location = useLocation();
+  const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
+  const menuRef = useRef();
 
-  // Lấy thông tin giỏ hàng
   const fetchCartCount = async () => {
     try {
       const { data } = await cartService.getCart();
       const total = data.items.reduce((sum, item) => sum + item.quantity, 0);
       setCartCount(total);
-    } catch (err) {
-      console.error("Lỗi khi tải số lượng giỏ hàng:", err);
-    }
+    } catch {}
   };
 
-  // Lấy thông tin user từ localStorage
   const fetchUser = () => {
     const storedUser = localStorage.getItem("user");
     setUser(storedUser ? JSON.parse(storedUser) : null);
@@ -28,172 +25,193 @@ export default function Header() {
   useEffect(() => {
     fetchCartCount();
     fetchUser();
-
     window.addEventListener("cartUpdated", fetchCartCount);
     window.addEventListener("storage", fetchUser);
-
     return () => {
       window.removeEventListener("cartUpdated", fetchCartCount);
       window.removeEventListener("storage", fetchUser);
     };
   }, []);
 
-  const handleLogout = () => {
+  useEffect(() => {
+    const close = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, []);
+
+  const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    navigate("/login");
+    setShowMenu(false);
+    navigate("/");
   };
 
-  // CSS style chung
-  const linkStyle = {
-    textDecoration: "none",
-    color: "white",
-    fontWeight: 500,
-    transition: "color 0.2s",
-  };
-
-  const activeStyle = {
-    color: "#60a5fa",
-    fontWeight: 600,
-  };
+  const firstChar = (user?.fullName || user?.name || "U")[0].toUpperCase();
 
   return (
-    <header
-      style={{
-        background: "#111827",
-        color: "white",
-        padding: "14px 40px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
-        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-      }}
-    >
-      {/* Logo */}
-      <Link
-        to="/"
-        style={{
-          textDecoration: "none",
-          color: "white",
-          fontSize: 24,
-          fontWeight: 700,
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
-        🛍️ <span style={{ color: "#60a5fa" }}>E-Shop</span>
-      </Link>
+    <header style={styles.header}>
+      <Link to="/" style={styles.logo}>E-Shop</Link>
 
-      {/* Navigation */}
-      <nav
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 24,
-        }}
-      >
-        {/* Trang chủ */}
-        <Link
-          to="/"
-          style={{
-            ...linkStyle,
-            ...(location.pathname === "/" ? activeStyle : {}),
-          }}
-        >
-          Trang chủ
-        </Link>
+      <nav style={styles.nav}>
+        <Link to="/" style={styles.link}>Trang chủ</Link>
+        <Link to="/products" style={styles.link}>Sản phẩm</Link>
 
-        {/* ✅ Mục mới: SẢN PHẨM */}
-        <Link
-          to="/products"
-          style={{
-            ...linkStyle,
-            ...(location.pathname.startsWith("/products") ? activeStyle : {}),
-          }}
-        >
-          Sản phẩm
-        </Link>
 
-        {/* Đơn hàng */}
-        <Link
-          to="/orders"
-          style={{
-            ...linkStyle,
-            ...(location.pathname === "/orders" ? activeStyle : {}),
-          }}
-        >
-          Đơn hàng
-        </Link>
-
-        {/* Khu vực user */}
         {user ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ color: "#9ca3af" }}>👋 {user.fullName || user.name}</span>
-            <button
-              onClick={handleLogout}
-              style={{
-                background: "#ef4444",
-                color: "white",
-                border: "none",
-                borderRadius: 6,
-                padding: "6px 12px",
-                cursor: "pointer",
-              }}
-            >
-              Đăng xuất
-            </button>
+          <div style={{ position: "relative" }} ref={menuRef}>
+            <div style={styles.userBox} onClick={() => setShowMenu(!showMenu)}>
+              <div style={styles.avatar}>{firstChar}</div>
+              <span style={styles.username}>{user.fullName || user.name}</span>
+            </div>
+
+            {showMenu && (
+              <div style={styles.dropdown}>
+                <Link to="/account/profile" style={styles.menuItem}>Tài khoản của tôi</Link>
+                <Link to="/orders" style={styles.menuItem}>Đơn hàng</Link>
+                <div onClick={logout} style={{ ...styles.menuItem, color: "#ef4444" }}>
+                  Đăng xuất
+                </div>
+              </div>
+            )}
           </div>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <Link to="/login" style={linkStyle}>
-              Đăng nhập
-            </Link>
-            <Link to="/register" style={linkStyle}>
-              Đăng ký
-            </Link>
-          </div>
+          <>
+            <Link to="/login" style={styles.link}>Đăng nhập</Link>
+            <Link to="/register" style={styles.link}>Đăng ký</Link>
+          </>
         )}
 
-        {/* Giỏ hàng */}
         <Link
           to="/cart"
-          style={{
-            textDecoration: "none",
-            background: "#2563eb",
-            color: "white",
-            padding: "8px 14px",
-            borderRadius: 8,
-            fontWeight: 600,
-            position: "relative",
-            transition: "background 0.2s",
+          style={styles.cart}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#1f2937";
           }}
-          onMouseOver={(e) => (e.target.style.background = "#1d4ed8")}
-          onMouseOut={(e) => (e.target.style.background = "#2563eb")}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "#111827";
+          }}
         >
-          🛒 Giỏ hàng{" "}
+          <span style={{ fontSize: 18 }}>🛒</span>
+          Giỏ hàng
           {cartCount > 0 && (
-            <span
-              style={{
-                background: "red",
-                color: "white",
-                borderRadius: "50%",
-                padding: "2px 8px",
-                fontSize: 12,
-                position: "absolute",
-                top: "-6px",
-                right: "-10px",
-              }}
-            >
-              {cartCount}
-            </span>
+            <span style={styles.badge}>{cartCount}</span>
           )}
         </Link>
+
+
+
       </nav>
     </header>
   );
 }
+
+const styles = {
+  header: {
+    background: "rgba(255,255,255,0.75)",
+    backdropFilter: "blur(14px)",
+    padding: "16px 60px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "sticky",
+    top: 0,
+    zIndex: 1000,
+    borderBottom: "1px solid #e5e7eb"
+  },
+  logo: {
+    fontSize: 22,
+    fontWeight: 800,
+    textDecoration: "none",
+    color: "#111827",
+    letterSpacing: 1
+  },
+  nav: {
+    display: "flex",
+    alignItems: "center",
+    gap: 26
+  },
+  link: {
+    textDecoration: "none",
+    color: "#374151",
+    fontWeight: 600,
+  },
+  userBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    cursor: "pointer",
+  },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: "50%",
+    background: "linear-gradient(135deg,#0f172a,#475569)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "white",
+    fontWeight: 700,
+    fontSize: 16
+  },
+  username: {
+    color: "#111827",
+    fontWeight: 600
+  },
+  dropdown: {
+    position: "absolute",
+    top: "130%",
+    right: 0,
+    background: "white",
+    borderRadius: 12,
+    boxShadow: "0 10px 25px rgba(0,0,0,0.12)",
+    minWidth: 220,
+    overflow: "hidden"
+  },
+  menuItem: {
+    padding: "14px 18px",
+    display: "block",
+    textDecoration: "none",
+    color: "#111827",
+    cursor: "pointer",
+    borderBottom: "1px solid #f3f4f6"
+  },
+  cart: {
+    textDecoration: "none",
+    background: "#111827",
+    color: "white",
+    padding: "8px 18px",
+    borderRadius: 999,
+    fontWeight: 600,
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    transition: "all 0.25s ease",
+  },
+
+  badge: {
+    background: "#ef4444",
+    color: "white",
+    borderRadius: "50%",
+    minWidth: 18,
+    height: 18,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 11,
+    fontWeight: 700,
+    position: "absolute",
+    top: "-6px",
+    right: "-6px",
+    border: "2px solid white"
+  }
+
+
+
+};
