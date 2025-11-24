@@ -19,3 +19,4 @@ Xóa local: git reset --hard
 -- 23:05 - 04/11/2025
 Phúc - cập nhật 3. Product manager
 Phúc - cập nhật thêm websocket và tự động lấy tên người dùng bình luận khi đăng nhập
+Thuận - quản lý hồ sơ người dùng, quản lý nhiều địa chỉ, quên mật khẩu
