@@ -111,6 +111,14 @@ export default function LoginPage() {
             Đăng nhập
           </button>
         </div>
+        <div style={{ textAlign: "center", marginTop: 10 }}>
+          <Link
+            to="/forgot-password"
+            style={{ color: "#2563eb", textDecoration: "none", fontWeight: 500 }}
+          >
+            Quên mật khẩu?
+          </Link>
+        </div>
 
         <p
           style={{

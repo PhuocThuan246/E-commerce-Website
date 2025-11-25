@@ -52,18 +52,37 @@ const createOrder = async (req, res) => {
     // ==============================
     if (!userId && email) {
       let user = await User.findOne({ email });
+
       if (!user) {
         user = await User.create({
           fullName: name,
           email,
-          address,
-          password: "", // khách vãng lai không cần mật khẩu
+          password: "",
           role: "user",
+          addresses: []
         });
-        console.log("Đã tạo tài khoản tự động cho khách:", email);
       }
+
+      // Lưu địa chỉ giao hàng vào danh sách địa chỉ
+      const newAddress = {
+        fullName: name,
+        phone,
+        city: address.split(",").slice(-1)[0]?.trim(),
+        ward: address.split(",").slice(-2)[0]?.trim(),
+        street: address.split(",").slice(0, -2).join(",").trim(),
+        isDefault: user.addresses.length === 0
+      };
+
+      // chỉ thêm nếu địa chỉ chưa tồn tại
+      const exists = user.addresses.some(a => a.street === newAddress.street);
+      if (!exists) {
+        user.addresses.push(newAddress);
+        await user.save();
+      }
+
       userId = user._id;
     }
+
 
     // ==============================
     // Tạo đơn hàng
@@ -91,41 +110,29 @@ const createOrder = async (req, res) => {
 // ==============================
 const getOrders = async (req, res) => {
   try {
-    const sessionId = req.headers["x-session-id"];
     const authHeader = req.headers.authorization;
     const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
 
-    let email = null;
+    if (!token) {
+      return res.status(401).json({ message: "Vui lòng đăng nhập để xem đơn hàng" });
+    }
+
     let userId = null;
+    let email = null;
 
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
-        if (user) {
-          userId = user._id;
-          email = user.email;
-        }
-      } catch {
-        return res.status(401).json({ message: "Token không hợp lệ" });
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        return res.status(401).json({ message: "Người dùng không tồn tại" });
       }
+      userId = user._id;
+      email = user.email;
+    } catch {
+      return res.status(401).json({ message: "Token không hợp lệ" });
     }
 
-    let query = {};
-
-    if (email) {
-      // Ưu tiên lọc theo email đăng nhập
-      query = { "customer.email": email };
-    } else if (sessionId) {
-      // Nếu chưa login, dùng sessionId
-      query = { sessionId };
-    } else {
-      return res.status(400).json({ message: "Thiếu session ID hoặc email" });
-    }
-
-    console.log("Lọc đơn hàng với điều kiện:", query);
-
-    const orders = await Order.find(query)
+    const orders = await Order.find({ "customer.email": email })
       .populate("items.product")
       .sort({ createdAt: -1 });
 
@@ -135,6 +142,7 @@ const getOrders = async (req, res) => {
     res.status(500).json({ message: "Lỗi khi lấy danh sách đơn hàng!" });
   }
 };
+
 
 
 module.exports = { createOrder, getOrders };

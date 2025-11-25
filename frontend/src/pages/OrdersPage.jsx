@@ -6,24 +6,52 @@ import { toast } from "react-toastify";
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setIsLoggedIn(false);
+      setLoading(false);
+      return;
+    }
+
     async function fetchOrders() {
       try {
         const { data } = await orderService.getOrders();
         setOrders(data);
       } catch (err) {
         console.error(err);
-        toast.error("Lỗi khi tải danh sách đơn hàng!");
+
+        if (err.response?.status === 401) {
+          setIsLoggedIn(false);
+        } else {
+          toast.error("Lỗi khi tải danh sách đơn hàng!");
+        }
       } finally {
         setLoading(false);
       }
     }
+
     fetchOrders();
   }, []);
 
+
+
   if (loading)
     return <p style={{ textAlign: "center", marginTop: 50 }}>Đang tải...</p>;
+  
+  if (!isLoggedIn)
+  return (
+    <div style={{ textAlign: "center", marginTop: 60 }}>
+      <h2 style={{ color: "#dc2626" }}>🔒 Vui lòng đăng nhập để xem đơn hàng!</h2>
+      <p style={{ color: "#6b7280", marginTop: 8 }}>
+        Bạn cần đăng nhập để xem lịch sử đơn hàng của mình.
+      </p>
+    </div>
+  );
 
   if (orders.length === 0)
     return (

@@ -4,10 +4,12 @@ import cartService from "../services/cartService";
 import orderService from "../services/orderService";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../services/api";
+import api from "../services/api";
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -15,38 +17,21 @@ export default function CheckoutPage() {
     address: "",
   });
 
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
   const selectedItems = location.state?.selectedItems || [];
 
   // ===============================
-  // Tải giỏ hàng
+  // Load CART
   // ===============================
   const loadCart = async () => {
     try {
       const { data } = await cartService.getCart();
-
-      // Lọc sản phẩm được chọn
-      let filteredItems = data.items;
-      if (selectedItems.length > 0) {
-        filteredItems = data.items.filter((i) =>
-          selectedItems.includes(i._id)
-        );
-      }
-
-      // Bổ sung variant thực tế
-      const enrichedItems = filteredItems.map((i) => {
-        const variant =
-          i.variant ||
-          i.product.variants?.find(
-            (v) => v._id?.toString() === i.variantId?.toString()
-          );
-        return { ...i, variant };
-      });
-
-      setCart({ ...data, items: enrichedItems });
-    } catch (err) {
-      console.error("Lỗi khi tải giỏ hàng:", err);
+      setCart(data);
+    } catch {
       toast.error("Không thể tải giỏ hàng!");
     } finally {
       setLoading(false);
@@ -58,13 +43,38 @@ export default function CheckoutPage() {
   }, []);
 
   // ===============================
-  // Thay đổi input
+  // Load ADDRESS nếu đã login
   // ===============================
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    api.get("/auth/addresses")
+      .then(res => {
+        setAddresses(res.data);
+
+        const defaultAddr = res.data.find(a => a.isDefault);
+        if (defaultAddr) {
+          setSelectedAddressId(defaultAddr._id);
+
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+          setForm({
+            name: defaultAddr.fullName,
+            phone: defaultAddr.phone,
+            email: user.email || "",
+            address: `${defaultAddr.street}, ${defaultAddr.ward}, ${defaultAddr.city}`,
+          });
+        }
+      })
+      .catch(() => console.log("Không tải được địa chỉ"));
+  }, []);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   // ===============================
-  // Xử lý đặt hàng
+  // Submit Order
   // ===============================
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,20 +84,15 @@ export default function CheckoutPage() {
     }
 
     try {
-      await orderService.createOrder({
-        ...form,
-        selectedItems,
-      });
+      await orderService.createOrder({ ...form, selectedItems });
       toast.success("Đặt hàng thành công!");
       navigate("/success");
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Lỗi khi đặt hàng!");
     }
   };
 
-  if (loading)
-    return <p style={{ textAlign: "center" }}>Đang tải giỏ hàng...</p>;
+  if (loading) return <p style={{ textAlign: "center" }}>Đang tải...</p>;
 
   const total = cart.items.reduce(
     (sum, i) =>
@@ -100,196 +105,139 @@ export default function CheckoutPage() {
     border: "1px solid #d1d5db",
     borderRadius: 6,
     fontSize: 15,
-    outline: "none",
-    transition: "border 0.2s",
   };
 
-  // ===============================
-  // Giao diện
-  // ===============================
   return (
-    <div
-      style={{
-        padding: "40px 20px",
-        maxWidth: 900,
-        margin: "0 auto",
-        background: "#f9fafb",
-        borderRadius: 12,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-      }}
-    >
-      <h1
-        style={{
-          textAlign: "center",
-          color: "#111827",
-          marginBottom: 30,
-          fontSize: 28,
-        }}
-      >
-        🧾 Thanh toán đơn hàng
-      </h1>
+    <div style={{ padding: 40, maxWidth: 900, margin: "0 auto" }}>
+      <h1 style={{ textAlign: "center" }}>🧾 Thanh toán</h1>
 
-      {/* --- Tóm tắt đơn hàng --- */}
-      <div
-        style={{
-          background: "white",
-          padding: 20,
-          borderRadius: 8,
-          marginBottom: 30,
-          border: "1px solid #e5e7eb",
-        }}
-      >
-        <h3
-          style={{
-            marginBottom: 15,
-            borderBottom: "1px solid #e5e7eb",
-            paddingBottom: 8,
-          }}
-        >
-          🛍️ Sản phẩm bạn đã chọn
-        </h3>
+      {/* CHỌN ĐỊA CHỈ */}
+      {addresses.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <h3>📍 Chọn địa chỉ giao hàng</h3>
+          {addresses.map(addr => (
+            <label key={addr._id} style={{ display: "block", marginBottom: 10 }}>
+              <input
+                type="radio"
+                name="addressSelect"
+                checked={selectedAddressId === addr._id}
+                onChange={() => {
+                  setSelectedAddressId(addr._id);
+                  setForm({
+                    name: addr.fullName,
+                    phone: addr.phone,
+                    email: form.email,
+                    address: `${addr.street}, ${addr.ward}, ${addr.city}`,
+                  });
+                }}
+              />
+            <span style={{ marginLeft: 8 }}>
+              <strong>{addr.fullName}</strong> - {addr.phone}<br />
+              {addr.street}, {addr.ward}, {addr.city}
+              {addr.isDefault && <strong style={{ color: "#16a34a" }}> Mặc định</strong>}
+            </span>
 
-        {cart.items.map((i) => {
-          const image = i.variant?.image
-            ? `${SERVER_URL}${i.variant.image}`
-            : i.product?.image
-            ? `${SERVER_URL}${i.product.image}`
-            : "/no-image.png";
+            </label>
+          ))}
+        </div>
+      )}
 
-          return (
-            <div
-              key={i._id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "10px 0",
-                borderBottom: "1px solid #f1f5f9",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      {/* DANH SÁCH SẢN PHẨM ĐANG ĐẶT */}
+      <div style={{ marginBottom: 30 }}>
+        <h3>🛒 Sản phẩm đã chọn</h3>
+
+        {cart.items
+          .filter(item => selectedItems.includes(item._id))
+          .map(item => {
+            const product = item.product;
+            const price = item.variant?.price || product.price;
+
+            return (
+              <div
+                key={item._id}
+                style={{
+                  display: "flex",
+                  gap: 15,
+                  alignItems: "center",
+                  marginBottom: 12,
+                  padding: 10,
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 8
+                }}
+              >
                 <img
-                  src={image}
-                  alt={i.product.name}
-                  width="60"
-                  height="60"
-                  style={{
-                    borderRadius: 8,
-                    objectFit: "cover",
-                    border: "1px solid #e5e7eb",
-                  }}
+                  src={`${SERVER_URL}/${product.image}`}
+                  alt={product.name}
+                  style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }}
                 />
-                <div>
-                  <p style={{ margin: 0, fontWeight: 500 }}>{i.product.name}</p>
-                  {i.variant && (
-                    <small style={{ color: "#6b7280" }}>
-                      Biến thể: {i.variant.name}
-                    </small>
-                  )}
-                  <br />
-                  <small style={{ color: "#6b7280" }}>x {i.quantity}</small>
+
+                <div style={{ flex: 1 }}>
+                  <strong>{product.name}</strong>
+                  <div>Số lượng: {item.quantity}</div>
+                </div>
+
+                <div style={{ textAlign: "right" }}>
+                  <div>{price.toLocaleString()} ₫</div>
+                  <div style={{ fontWeight: 600, color: "#dc2626" }}>
+                    {(price * item.quantity).toLocaleString()} ₫
+                  </div>
                 </div>
               </div>
-
-              <strong style={{ color: "#111827" }}>
-                {(
-                  (i.variant?.price || i.product.price || 0) * i.quantity
-                ).toLocaleString()}{" "}
-                ₫
-              </strong>
-            </div>
-          );
-        })}
-
-        <h3
-          style={{
-            textAlign: "right",
-            marginTop: 20,
-            color: "#111827",
-          }}
-        >
-          Tổng cộng:{" "}
-          <span style={{ color: "#dc2626" }}>{total.toLocaleString()} ₫</span>
-        </h3>
+            );
+          })}
       </div>
 
-      {/* --- Form thông tin giao hàng --- */}
-      <div
-        style={{
-          background: "white",
-          padding: 20,
-          borderRadius: 8,
-          border: "1px solid #e5e7eb",
-        }}
-      >
-        <h3
+
+      {/* FORM NHẬP */}
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <input
+          name="name"
+          placeholder="Họ tên người nhận"
+          value={form.name}
+          onChange={handleChange}
+          style={inputStyle}
+        />
+        <input
+          name="phone"
+          placeholder="Số điện thoại"
+          value={form.phone}
+          onChange={handleChange}
+          style={inputStyle}
+        />
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          style={inputStyle}
+        />
+        <textarea
+          name="address"
+          placeholder="Địa chỉ giao hàng"
+          value={form.address}
+          onChange={handleChange}
+          style={{ ...inputStyle, height: 80 }}
+        />
+
+        <button
+          type="submit"
           style={{
-            marginBottom: 15,
-            borderBottom: "1px solid #e5e7eb",
-            paddingBottom: 8,
+            background: "#16a34a",
+            color: "white",
+            padding: "12px",
+            borderRadius: 8,
+            border: "none",
+            cursor: "pointer",
+            fontWeight: 600,
           }}
         >
-          🚚 Thông tin người nhận
-        </h3>
+          Xác nhận đặt hàng
+        </button>
+      </form>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: 14 }}
-        >
-          <input
-            name="name"
-            placeholder="Họ tên người nhận"
-            value={form.name}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-          <input
-            name="phone"
-            placeholder="Số điện thoại"
-            value={form.phone}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-          <input
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-          <textarea
-            name="address"
-            placeholder="Địa chỉ giao hàng"
-            value={form.address}
-            onChange={handleChange}
-            required
-            style={{ ...inputStyle, height: 80, resize: "none" }}
-          />
-
-          <button
-            type="submit"
-            style={{
-              marginTop: 10,
-              padding: "12px 20px",
-              background: "#16a34a",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: 16,
-              transition: "0.2s",
-            }}
-            onMouseOver={(e) => (e.target.style.background = "#15803d")}
-            onMouseOut={(e) => (e.target.style.background = "#16a34a")}
-          >
-            Xác nhận đặt hàng
-          </button>
-        </form>
-      </div>
+      <h3 style={{ marginTop: 20 }}>
+        Tổng tiền: <span style={{ color: "#dc2626" }}>{total.toLocaleString()} ₫</span>
+      </h3>
     </div>
   );
 }

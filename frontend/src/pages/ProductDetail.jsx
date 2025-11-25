@@ -57,6 +57,18 @@ export default function ProductDetail() {
       console.error("Lỗi khi tải đánh giá:", err);
     }
   };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+      if (storedUser.fullName || storedUser.name) {
+        setReviewForm((prev) => ({
+          ...prev,
+          name: storedUser.fullName || storedUser.name, // ✅ lấy đúng tên hiển thị ở Header
+        }));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     fetchReviews();
@@ -138,41 +150,70 @@ export default function ProductDetail() {
 
   // 💬 Gửi bình luận hoặc đánh giá
   const handleReviewSubmit = async (e) => {
-  e.preventDefault();
-  if (!reviewForm.comment.trim()) {
-    toast.warning("Vui lòng nhập nội dung!");
-    return;
-  }
-
-  const token = localStorage.getItem("token");
-
-  try {
-    // 🛑 ĐÃ ĐĂNG NHẬP nhưng rating = 0 -> không cho gửi bình luận thuần
-    if (token && reviewForm.rating === 0) {
-      toast.warning("Vui lòng chọn số sao để đánh giá!");
+    e.preventDefault();
+    if (!reviewForm.comment.trim()) {
+      toast.warning("Vui lòng nhập nội dung!");
       return;
     }
 
-    // ⭐ Có rating > 0 -> gửi /ratings + token
-    if (reviewForm.rating > 0) {
-      await api.post(`/products/${id}/ratings`, reviewForm, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success("Đã gửi đánh giá!");
-    } else {
-      // 💬 Chưa đăng nhập -> bình luận thường
-      await api.post(`/products/${id}/comments`, {
-        name: reviewForm.name,
-        comment: reviewForm.comment,
-      });
-      toast.success("Đã gửi bình luận!");
-    }
+    const token = localStorage.getItem("token");
 
-    setReviewForm({ name: "", comment: "", rating: 0 });
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Lỗi khi gửi bình luận/đánh giá!");
-  }
-};
+    try {
+      // 🛑 Nếu đã đăng nhập nhưng không chọn sao -> không cho gửi bình luận thuần
+      if (token && reviewForm.rating === 0) {
+        toast.warning("Vui lòng chọn số sao để đánh giá!");
+        return;
+      }
+
+      // ⭐ Có rating > 0 -> gửi /ratings + token
+      if (reviewForm.rating > 0) {
+        await reviewService.addRating(id, reviewForm, token);
+        toast.success("Đã gửi đánh giá!");
+
+        // ✅ Hiển thị ngay trên UI
+        setReviews((prev) => [
+          ...prev,
+          {
+            name: reviewForm.name || "Bạn",
+            rating: reviewForm.rating,
+            comment: reviewForm.comment,
+            createdAt: new Date().toISOString(),
+          },
+        ]);
+      } else {
+        // 💬 Chưa đăng nhập -> bình luận thường
+        await reviewService.addComment(id, {
+          name: reviewForm.name,
+          comment: reviewForm.comment,
+        });
+        toast.success("Đã gửi bình luận!");
+
+        // ✅ Hiển thị ngay trên UI
+        setReviews((prev) => [
+          ...prev,
+          {
+            name: reviewForm.name || "Khách ẩn danh",
+            rating: 0,
+            comment: reviewForm.comment,
+            createdAt: new Date().toISOString(),
+          },
+        ]);
+      }
+
+      // Reset form
+      setReviewForm((prev) => ({
+        ...prev,
+        comment: "",
+        rating: 0,
+      }));
+
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Lỗi khi gửi bình luận/đánh giá!"
+      );
+    }
+  };
+
 
 
   return (
@@ -388,14 +429,25 @@ export default function ProductDetail() {
             marginBottom: 20,
           }}
         >
+          {/* ✅ Ô tên — tự động lấy tên khi đã đăng nhập */}
           <input
             placeholder="Tên (tuỳ chọn)"
             value={reviewForm.name}
+            readOnly={!!localStorage.getItem("token")}
             onChange={(e) =>
+              !localStorage.getItem("token") &&
               setReviewForm({ ...reviewForm, name: e.target.value })
             }
-            style={{ padding: 8, borderRadius: 6, border: "1px solid #d1d5db" }}
+            style={{
+              padding: 8,
+              borderRadius: 6,
+              border: "1px solid #d1d5db",
+              backgroundColor: localStorage.getItem("token") ? "#e5e7eb" : "white",
+              cursor: localStorage.getItem("token") ? "not-allowed" : "text",
+            }}
           />
+
+
           <textarea
             placeholder="Nội dung bình luận..."
             value={reviewForm.comment}
@@ -413,20 +465,25 @@ export default function ProductDetail() {
 
           <div>
             <label>Chấm sao (đăng nhập để gửi):</label>
-            {[1, 2, 3, 4, 5].map((s) => (
-              <span
-                key={s}
-                style={{
-                  fontSize: 22,
-                  color: reviewForm.rating >= s ? "#facc15" : "#d1d5db",
-                  cursor: "pointer",
-                  marginLeft: 6,
-                }}
-                onClick={() => setReviewForm({ ...reviewForm, rating: s })}
-              >
-                ★
-              </span>
-            ))}
+              {[1, 2, 3, 4, 5].map((s) => (
+                <span
+                  key={s}
+                  style={{
+                    fontSize: 22,
+                    color: reviewForm.rating >= s ? "#facc15" : "#d1d5db",
+                    cursor: "pointer",
+                    marginLeft: 6,
+                  }}
+                  onClick={() => {
+                    setReviewForm((prev) => ({
+                      ...prev,
+                      rating: prev.rating === s ? 0 : s, // ✅ bấm lại thì xoá sao
+                    }));
+                  }}
+                >
+                  ★
+                </span>
+              ))}
           </div>
 
           <button
@@ -445,6 +502,7 @@ export default function ProductDetail() {
             Gửi
           </button>
         </form>
+
 
         {/* Danh sách đánh giá */}
         {reviews.length === 0 ? (
