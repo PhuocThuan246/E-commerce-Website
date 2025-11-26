@@ -68,7 +68,13 @@ export default function ProductCard({ product }) {
         }}
       >
         <img
-          src={product.image ? `${SERVER_URL}${product.image}` : "/no-image.png"}
+          src={
+            product.image
+              ? (product.image.startsWith("http")
+                  ? product.image
+                  : `${SERVER_URL}${product.image}`)
+              : "/no-image.png"
+          }
           alt={product.name}
           width="200"
           height="200"

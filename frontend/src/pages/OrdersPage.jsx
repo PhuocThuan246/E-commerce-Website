@@ -221,6 +221,21 @@ export default function OrdersPage() {
               {order.total.toLocaleString()} ₫
             </span>
           </h3>
+          
+          {/* ⭐ NEW: Link xem chi tiết đơn */}
+          <div style={{ textAlign: "right", marginTop: 8 }}>
+            <Link
+              to={`/account/orders/${order._id}`}
+              style={{
+                fontSize: 14,
+                color: "#2563eb",
+                textDecoration: "none",
+                fontWeight: 600,
+              }}
+            >
+              Xem chi tiết →
+            </Link>
+          </div>
 
           {/* --- Thông tin người nhận --- */}
           <div

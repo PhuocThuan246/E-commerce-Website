@@ -1,15 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
 import cartService from "../services/cartService";
 import orderService from "../services/orderService";
+import discountService from "../services/discountService";
+import api, { SERVER_URL } from "../services/api";
 import { toast } from "react-toastify";
-import { SERVER_URL } from "../services/api";
-import api from "../services/api";
+
+// Hàm dựng URL ảnh
+const buildImageUrl = (path) => {
+  if (!path) return "/no-image.png";
+
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  if (path.startsWith("/")) {
+    return `${SERVER_URL}${path}`;
+  }
+
+  return `${SERVER_URL}/${path}`;
+};
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // thông tin giao hàng
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -17,15 +34,27 @@ export default function CheckoutPage() {
     address: "",
   });
 
+  // địa chỉ đã lưu
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
 
+  // mã giảm giá
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
+
+  // loyalty
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
+
+  // danh sách _id item đã chọn từ CartPage
   const selectedItems = location.state?.selectedItems || [];
 
   // ===============================
-  // Load CART
+  // LOAD CART
   // ===============================
   const loadCart = async () => {
     try {
@@ -43,38 +72,136 @@ export default function CheckoutPage() {
   }, []);
 
   // ===============================
-  // Load ADDRESS nếu đã login
+  // LOAD ĐỊA CHỈ + LOYALTY KHI ĐÃ LOGIN
   // ===============================
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    api.get("/auth/addresses")
-      .then(res => {
+    // lấy danh sách địa chỉ
+    api
+      .get("/auth/addresses")
+      .then((res) => {
         setAddresses(res.data);
 
-        const defaultAddr = res.data.find(a => a.isDefault);
+        const defaultAddr = res.data.find((a) => a.isDefault);
         if (defaultAddr) {
           setSelectedAddressId(defaultAddr._id);
 
-          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
 
           setForm({
             name: defaultAddr.fullName,
             phone: defaultAddr.phone,
-            email: user.email || "",
+            email: storedUser.email || "",
             address: `${defaultAddr.street}, ${defaultAddr.ward}, ${defaultAddr.city}`,
           });
         }
       })
       .catch(() => console.log("Không tải được địa chỉ"));
+
+    // lấy loyaltyPoints từ profile
+    api
+      .get("/auth/profile")
+      .then((res) => {
+        const lp = Number(res.data.loyaltyPoints ?? 0);
+        setLoyaltyPoints(lp);
+
+        // đồng bộ lại localStorage
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ ...storedUser, loyaltyPoints: lp })
+        );
+      })
+      .catch((e) => {
+        console.log("Không tải được loyaltyPoints:", e);
+      });
   }, []);
 
+  // ===============================
+  // FORM CHANGE
+  // ===============================
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   // ===============================
-  // Submit Order
+  // TÍNH TOÁN TỔNG TIỀN
+  // ===============================
+  if (loading) return <p style={{ textAlign: "center" }}>Đang tải.</p>;
+  if (!cart || !cart.items || cart.items.length === 0)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Giỏ hàng trống, không thể thanh toán.
+      </p>
+    );
+
+  // chỉ lấy các item user đã tick
+  const selectedCartItems = cart.items.filter((item) =>
+    selectedItems.includes(item._id)
+  );
+
+  if (selectedCartItems.length === 0)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Bạn chưa chọn sản phẩm nào để thanh toán.
+      </p>
+    );
+
+  const selectedSubtotal = selectedCartItems.reduce((sum, item) => {
+    const product = item.product;
+    const price = item.variant?.price || product?.price || 0;
+    return sum + price * item.quantity;
+  }, 0);
+
+  const summary = cart.summary || {};
+  const shippingFee = summary.shippingFee || 0;
+  const tax = summary.tax || 0;
+
+  // tiền được trừ từ điểm
+  const maxCanUse =
+    selectedSubtotal + shippingFee + tax - discountAmount;
+  const loyaltyDiscount = useLoyaltyPoints
+    ? Math.min(loyaltyPoints * 1000, Math.max(maxCanUse, 0))
+    : 0;
+
+  const finalTotal = Math.max(
+    selectedSubtotal + shippingFee + tax - discountAmount - loyaltyDiscount,
+    0
+  );
+
+  // ===============================
+  // ÁP DỤNG MÃ GIẢM GIÁ
+  // ===============================
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) {
+      toast.warning("Vui lòng nhập mã giảm giá!");
+      return;
+    }
+
+    try {
+      setIsApplyingDiscount(true);
+      setDiscountAmount(0);
+
+      const res = await discountService.validate(
+        discountCode.trim(),
+        selectedSubtotal
+      );
+
+      setDiscountAmount(res.data.discountAmount || 0);
+      toast.success(res.data.message || "Áp dụng mã giảm giá thành công!");
+    } catch (err) {
+      setDiscountAmount(0);
+      toast.error(
+        err.response?.data?.message || "Mã giảm giá không hợp lệ!"
+      );
+    } finally {
+      setIsApplyingDiscount(false);
+    }
+  };
+
+  // ===============================
+  // SUBMIT ORDER
   // ===============================
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,21 +211,24 @@ export default function CheckoutPage() {
     }
 
     try {
-      await orderService.createOrder({ ...form, selectedItems });
+      await orderService.createOrder({
+        ...form,
+        selectedItems,
+        shippingFee,
+        tax,
+        discountCode: discountCode.trim() || null,
+        discountAmount,
+        useLoyaltyPoints, // 🟦 gửi lên backend
+      });
+
       toast.success("Đặt hàng thành công!");
+      window.dispatchEvent(new Event("cartUpdated"));
       navigate("/success");
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Lỗi khi đặt hàng!");
     }
   };
-
-  if (loading) return <p style={{ textAlign: "center" }}>Đang tải...</p>;
-
-  const total = cart.items.reduce(
-    (sum, i) =>
-      sum + (i.variant?.price || i.product?.price || 0) * i.quantity,
-    0
-  );
 
   const inputStyle = {
     padding: "10px 12px",
@@ -111,12 +241,15 @@ export default function CheckoutPage() {
     <div style={{ padding: 40, maxWidth: 900, margin: "0 auto" }}>
       <h1 style={{ textAlign: "center" }}>🧾 Thanh toán</h1>
 
-      {/* CHỌN ĐỊA CHỈ */}
+      {/* chọn địa chỉ nếu có nhiều */}
       {addresses.length > 0 && (
         <div style={{ marginBottom: 20 }}>
           <h3>📍 Chọn địa chỉ giao hàng</h3>
-          {addresses.map(addr => (
-            <label key={addr._id} style={{ display: "block", marginBottom: 10 }}>
+          {addresses.map((addr) => (
+            <label
+              key={addr._id}
+              style={{ display: "block", marginBottom: 10 }}
+            >
               <input
                 type="radio"
                 name="addressSelect"
@@ -131,113 +264,289 @@ export default function CheckoutPage() {
                   });
                 }}
               />
-            <span style={{ marginLeft: 8 }}>
-              <strong>{addr.fullName}</strong> - {addr.phone}<br />
-              {addr.street}, {addr.ward}, {addr.city}
-              {addr.isDefault && <strong style={{ color: "#16a34a" }}> Mặc định</strong>}
-            </span>
-
+              <span style={{ marginLeft: 8 }}>
+                <strong>{addr.fullName}</strong> - {addr.phone}
+                <br />
+                {addr.street}, {addr.ward}, {addr.city}
+                {addr.isDefault && (
+                  <strong style={{ color: "#16a34a" }}> Mặc định</strong>
+                )}
+              </span>
             </label>
           ))}
         </div>
       )}
 
-      {/* DANH SÁCH SẢN PHẨM ĐANG ĐẶT */}
+      {/* sản phẩm đã chọn */}
       <div style={{ marginBottom: 30 }}>
         <h3>🛒 Sản phẩm đã chọn</h3>
 
-        {cart.items
-          .filter(item => selectedItems.includes(item._id))
-          .map(item => {
-            const product = item.product;
-            const price = item.variant?.price || product.price;
+        {selectedCartItems.map((item) => {
+          const product = item.product;
+          const variant =
+            item.variant ||
+            product?.variants?.find(
+              (v) => v._id?.toString() === item.variantId?.toString()
+            );
 
-            return (
-              <div
-                key={item._id}
+          const price = variant?.price || product.price;
+          const imageUrl = buildImageUrl(variant?.image || product.image);
+
+          return (
+            <div
+              key={item._id}
+              style={{
+                display: "flex",
+                gap: 15,
+                alignItems: "center",
+                marginBottom: 12,
+                padding: 10,
+                border: "1px solid #e5e7eb",
+                borderRadius: 8,
+              }}
+            >
+              <img
+                src={imageUrl}
+                alt={product.name}
                 style={{
-                  display: "flex",
-                  gap: 15,
-                  alignItems: "center",
-                  marginBottom: 12,
-                  padding: 10,
-                  border: "1px solid #e5e7eb",
-                  borderRadius: 8
+                  width: 70,
+                  height: 70,
+                  objectFit: "cover",
+                  borderRadius: 6,
                 }}
-              >
-                <img
-                  src={`${SERVER_URL}/${product.image}`}
-                  alt={product.name}
-                  style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }}
-                />
+              />
 
-                <div style={{ flex: 1 }}>
-                  <strong>{product.name}</strong>
-                  <div>Số lượng: {item.quantity}</div>
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-                  <div>{price.toLocaleString()} ₫</div>
-                  <div style={{ fontWeight: 600, color: "#dc2626" }}>
-                    {(price * item.quantity).toLocaleString()} ₫
+              <div style={{ flex: 1 }}>
+                <strong>{product.name}</strong>
+                {variant && (
+                  <div style={{ fontSize: 13, color: "#6b7280" }}>
+                    Biến thể: {variant.name}
                   </div>
+                )}
+                <div>Số lượng: {item.quantity}</div>
+              </div>
+
+              <div style={{ textAlign: "right" }}>
+                <div>{price.toLocaleString()} ₫</div>
+                <div style={{ fontWeight: 600, color: "#dc2626" }}>
+                  {(price * item.quantity).toLocaleString()} ₫
                 </div>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
       </div>
 
+      {/* form + tóm tắt */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1.2fr",
+          gap: 24,
+          alignItems: "flex-start",
+        }}
+      >
+        {/* form thông tin */}
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: 12 }}
+        >
+          <input
+            name="name"
+            placeholder="Họ tên người nhận"
+            value={form.name}
+            onChange={handleChange}
+            style={inputStyle}
+          />
+          <input
+            name="phone"
+            placeholder="Số điện thoại"
+            value={form.phone}
+            onChange={handleChange}
+            style={inputStyle}
+          />
+          <input
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            style={inputStyle}
+          />
+          <textarea
+            name="address"
+            placeholder="Địa chỉ giao hàng"
+            value={form.address}
+            onChange={handleChange}
+            style={{ ...inputStyle, height: 80 }}
+          />
 
-      {/* FORM NHẬP */}
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <input
-          name="name"
-          placeholder="Họ tên người nhận"
-          value={form.name}
-          onChange={handleChange}
-          style={inputStyle}
-        />
-        <input
-          name="phone"
-          placeholder="Số điện thoại"
-          value={form.phone}
-          onChange={handleChange}
-          style={inputStyle}
-        />
-        <input
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          style={inputStyle}
-        />
-        <textarea
-          name="address"
-          placeholder="Địa chỉ giao hàng"
-          value={form.address}
-          onChange={handleChange}
-          style={{ ...inputStyle, height: 80 }}
-        />
+          <button
+            type="submit"
+            style={{
+              background: "#16a34a",
+              color: "white",
+              padding: "12px",
+              borderRadius: 8,
+              border: "none",
+              cursor: "pointer",
+              fontWeight: 600,
+              marginTop: 8,
+            }}
+          >
+            Xác nhận đặt hàng
+          </button>
+        </form>
 
-        <button
-          type="submit"
+        {/* tóm tắt đơn + mã + loyalty */}
+        <div
           style={{
-            background: "#16a34a",
-            color: "white",
-            padding: "12px",
+            border: "1px solid #e5e7eb",
             borderRadius: 8,
-            border: "none",
-            cursor: "pointer",
-            fontWeight: 600,
+            padding: 16,
+            background: "#f9fafb",
           }}
         >
-          Xác nhận đặt hàng
-        </button>
-      </form>
+          <h3 style={{ marginTop: 0, marginBottom: 12 }}>Tóm tắt đơn hàng</h3>
 
-      <h3 style={{ marginTop: 20 }}>
-        Tổng tiền: <span style={{ color: "#dc2626" }}>{total.toLocaleString()} ₫</span>
-      </h3>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 6,
+            }}
+          >
+            <span>Tạm tính sản phẩm đã chọn</span>
+            <span>{selectedSubtotal.toLocaleString()} ₫</span>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 6,
+            }}
+          >
+            <span>Thuế (VAT)</span>
+            <span>{tax.toLocaleString()} ₫</span>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 6,
+            }}
+          >
+            <span>Phí vận chuyển</span>
+            <span>{shippingFee.toLocaleString()} ₫</span>
+          </div>
+
+          {discountAmount > 0 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: 6,
+                color: "#16a34a",
+              }}
+            >
+              <span>Giảm giá</span>
+              <span>-{discountAmount.toLocaleString()} ₫</span>
+            </div>
+          )}
+
+          {loyaltyDiscount > 0 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: 6,
+                color: "#16a34a",
+              }}
+            >
+              <span>Trừ bằng điểm</span>
+              <span>-{loyaltyDiscount.toLocaleString()} ₫</span>
+            </div>
+          )}
+
+          <hr style={{ margin: "10px 0" }} />
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontWeight: 700,
+              fontSize: 16,
+            }}
+          >
+            <span>Tổng thanh toán</span>
+            <span style={{ color: "#dc2626" }}>
+              {finalTotal.toLocaleString()} ₫
+            </span>
+          </div>
+
+          {/* mã giảm giá */}
+          <div style={{ marginTop: 16 }}>
+            <h4 style={{ marginBottom: 8 }}>Mã giảm giá</h4>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                placeholder="Nhập mã (5 ký tự)"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value)}
+                style={{ ...inputStyle, flex: 1 }}
+                maxLength={5}
+              />
+              <button
+                type="button"
+                onClick={handleApplyDiscount}
+                disabled={isApplyingDiscount}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 8,
+                  border: "none",
+                  background: "#111827",
+                  color: "white",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  opacity: isApplyingDiscount ? 0.7 : 1,
+                }}
+              >
+                {isApplyingDiscount ? "Đang áp dụng..." : "Áp dụng"}
+              </button>
+            </div>
+            <p style={{ fontSize: 12, color: "#6b7280", marginTop: 6 }}>
+              Mã gồm 5 ký tự, không có ngày hết hạn nhưng giới hạn số lần sử
+              dụng theo quy định của quản trị viên.
+            </p>
+          </div>
+
+          {/* loyalty */}
+          <div style={{ marginTop: 16 }}>
+            <p style={{ fontSize: 13, marginBottom: 6 }}>
+              Bạn đang có{" "}
+              <strong>{loyaltyPoints.toLocaleString()} điểm</strong> (≈{" "}
+              {(loyaltyPoints * 1000).toLocaleString()} ₫).
+            </p>
+            <label
+              style={{
+                fontSize: 14,
+                color: loyaltyPoints > 0 ? "#111827" : "#9ca3af",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={useLoyaltyPoints}
+                onChange={(e) => setUseLoyaltyPoints(e.target.checked)}
+                disabled={loyaltyPoints <= 0}
+              />
+              <span style={{ marginLeft: 8 }}>
+                Dùng toàn bộ điểm hiện có cho đơn này
+                {loyaltyPoints <= 0 && " (hiện chưa có điểm để dùng)"}
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

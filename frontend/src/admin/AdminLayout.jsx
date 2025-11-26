@@ -75,6 +75,7 @@ export default function AdminLayout() {
               ["📦", "Sản phẩm", "/admin/products"],
               ["🏷️", "Danh mục", "/admin/categories"],
               ["📋", "Đơn hàng", "/admin/orders"],
+              ["💸", "Mã giảm giá", "/admin/discounts"], // ⭐ THÊM MỤC NÀY
               ["👥", "Người dùng", "/admin/users"],
             ].map(([icon, label, link]) => (
               <Link

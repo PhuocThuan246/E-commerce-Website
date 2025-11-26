@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function SuccessPage() {
+  // Khi vào trang này, bắn event để Header reload lại số lượng giỏ hàng
+  useEffect(() => {
+    window.dispatchEvent(new Event("cartUpdated"));
+  }, []);
+
   return (
     <div
       style={{
@@ -45,8 +50,10 @@ export default function SuccessPage() {
         </h1>
 
         <p style={{ color: "#4b5563", lineHeight: 1.6, marginBottom: 30 }}>
-          Đơn hàng của bạn đã được ghi nhận thành công.<br />
-          Chúng tôi sẽ sớm liên hệ để xác nhận và giao hàng trong thời gian sớm nhất.
+          Đơn hàng của bạn đã được ghi nhận thành công.
+          <br />
+          Chúng tôi sẽ sớm liên hệ để xác nhận và giao hàng trong thời gian sớm
+          nhất.
         </p>
 
         <div style={{ display: "flex", justifyContent: "center", gap: 12 }}>

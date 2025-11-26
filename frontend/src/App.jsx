@@ -22,14 +22,18 @@ import AccountLayout from "./pages/account/AccountLayout";
 import ProfilePage from "./pages/account/ProfilePage";
 import AddressPage from "./pages/account/AddressPage";
 import ChangePasswordPage from "./pages/account/ChangePasswordPage";
+import OrderDetailPage from "./pages/OrderDetailPage";
+
 // Trang quản trị
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminProducts from "./admin/pages/AdminProducts";
 import AdminCategories from "./admin/pages/AdminCategories";
 import AdminOrders from "./admin/pages/AdminOrders";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AdminUsers from "./admin/pages/AdminUsers";
+import AdminDiscounts from "./admin/pages/AdminDiscounts"; // ⭐ THÊM DÒNG NÀY
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
@@ -54,9 +58,17 @@ export default function App() {
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/login" element={<LoginPage />} />
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                  <Route path="/reset-password" element={<ResetPasswordPage/>} />
+                  <Route
+                    path="/forgot-password"
+                    element={<ForgotPasswordPage />}
+                  />
+                  <Route
+                    path="/reset-password"
+                    element={<ResetPasswordPage />}
+                  />
                   <Route path="*" element={<NotFound />} />
+
+                  {/* Khu account */}
                   <Route
                     path="/account/*"
                     element={
@@ -67,9 +79,12 @@ export default function App() {
                   >
                     <Route path="profile" element={<ProfilePage />} />
                     <Route path="addresses" element={<AddressPage />} />
-                    <Route path="change-password" element={<ChangePasswordPage />} />
+                    <Route
+                      path="change-password"
+                      element={<ChangePasswordPage />}
+                    />
+                    <Route path="orders/:id" element={<OrderDetailPage />} />
                   </Route>
-
                 </Routes>
               </main>
               <Footer />
@@ -91,6 +106,7 @@ export default function App() {
           <Route path="categories" element={<AdminCategories />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="discounts" element={<AdminDiscounts />} /> {/* ⭐ ROUTE MỚI */}
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

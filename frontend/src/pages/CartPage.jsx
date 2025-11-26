@@ -4,14 +4,31 @@ import cartService from "../services/cartService";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../services/api";
 
+// Hàm build URL ảnh "thông minh"
+// - Nếu path đã là URL đầy đủ (http/https) → dùng luôn
+// - Nếu path bắt đầu bằng "/" → ghép SERVER_URL + path
+// - Nếu path không có "/" → thêm "/" ở giữa
+// - Nếu không có path → dùng ảnh mặc định
+const buildImageUrl = (path) => {
+  if (!path) return "/no-image.png";
 
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  if (path.startsWith("/")) {
+    return `${SERVER_URL}${path}`;
+  }
+
+  return `${SERVER_URL}/${path}`;
+};
 
 export default function CartPage() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  // --- Tải giỏ hàng ---
+  // --- Tải giỏ hàng từ backend (có cả summary: subtotal, tax, shippingFee, total) ---
   const loadCart = async () => {
     try {
       const { data } = await cartService.getCart();
@@ -23,16 +40,16 @@ export default function CartPage() {
     }
   };
 
-  // --- Xóa sản phẩm ---
+  // --- Xóa 1 sản phẩm ---
   const handleRemove = async (itemId) => {
     await cartService.removeItem(itemId);
     toast.info("Đã xóa sản phẩm khỏi giỏ hàng!");
     await loadCart();
     setSelectedItems((prev) => prev.filter((id) => id !== itemId));
-    window.dispatchEvent(new Event("cartUpdated"));
+    window.dispatchEvent(new Event("cartUpdated")); // cập nhật số lượng trên Header
   };
 
-  // --- Xóa toàn bộ ---
+  // --- Xóa toàn bộ giỏ ---
   const handleClear = async () => {
     await cartService.clearCart();
     toast.info("Đã xóa toàn bộ giỏ hàng!");
@@ -41,7 +58,7 @@ export default function CartPage() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
-  // --- Cập nhật số lượng ---
+  // --- Cập nhật số lượng (có kiểm tra tồn kho) ---
   const handleQuantityChange = async (itemId, newQty, stock) => {
     if (newQty < 1) return;
     if (newQty > stock) {
@@ -51,7 +68,9 @@ export default function CartPage() {
     try {
       await cartService.updateQuantity(itemId, newQty);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Không thể cập nhật số lượng!");
+      toast.error(
+        err.response?.data?.message || "Không thể cập nhật số lượng!"
+      );
     }
     await loadCart();
     window.dispatchEvent(new Event("cartUpdated"));
@@ -61,7 +80,7 @@ export default function CartPage() {
     loadCart();
   }, []);
 
-  if (loading) return <p style={{ textAlign: "center" }}>Đang tải giỏ hàng...</p>;
+  if (loading) return <p style={{ textAlign: "center" }}>Đang tải giỏ hàng.</p>;
   if (!cart || !cart.items || cart.items.length === 0)
     return (
       <div style={{ textAlign: "center", marginTop: 40 }}>
@@ -72,16 +91,21 @@ export default function CartPage() {
       </div>
     );
 
-  // --- Tổng tiền ---
-  const total = cart.items
+  // --- Tính tổng tiền CÁC SẢN PHẨM ĐƯỢC CHỌN ---
+  const selectedTotal = cart.items
     .filter((item) => selectedItems.includes(item._id))
     .reduce(
       (sum, item) =>
-        sum + (item.variant?.price || item.product?.price || 0) * item.quantity,
+        sum +
+        (item.variant?.price || item.product?.price || 0) * item.quantity,
       0
     );
 
-  // --- Toggle chọn sản phẩm ---
+  // --- Lấy Cart Summary từ backend (toàn bộ giỏ) ---
+  const summary = cart.summary || {};
+  const { subtotal = 0, tax = 0, shippingFee = 0, total = 0 } = summary;
+
+  // --- Toggle chọn 1 sản phẩm ---
   const toggleSelectItem = (itemId) => {
     if (selectedItems.includes(itemId)) {
       setSelectedItems(selectedItems.filter((id) => id !== itemId));
@@ -90,7 +114,7 @@ export default function CartPage() {
     }
   };
 
-  // --- Chọn tất cả ---
+  // --- Chọn / bỏ chọn tất cả ---
   const toggleSelectAll = () => {
     if (selectedItems.length === cart.items.length) {
       setSelectedItems([]);
@@ -105,7 +129,14 @@ export default function CartPage() {
 
       <div style={{ maxWidth: 720, margin: "20px auto" }}>
         {/* Thanh chọn tất cả */}
-        <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
+        <div
+          style={{
+            marginBottom: 16,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
           <input
             type="checkbox"
             checked={selectedItems.length === cart.items.length}
@@ -116,7 +147,7 @@ export default function CartPage() {
           </span>
         </div>
 
-        {/* Danh sách sản phẩm */}
+        {/* Danh sách sản phẩm trong giỏ */}
         {cart.items.map((item) => {
           const product = item.product;
           const variant =
@@ -125,12 +156,8 @@ export default function CartPage() {
               (v) => v._id?.toString() === item.variantId?.toString()
             );
 
-          const image =
-            variant?.image
-              ? `${SERVER_URL}${variant.image}`
-              : product?.image
-              ? `${SERVER_URL}${product.image}`
-              : "/no-image.png";
+          // ✅ Dùng hàm buildImageUrl thay vì ghép thẳng SERVER_URL
+          const image = buildImageUrl(variant?.image || product?.image);
 
           const price = variant?.price || product?.price || 0;
           const stock = variant?.stock ?? product?.stock ?? 0;
@@ -177,7 +204,9 @@ export default function CartPage() {
 
                   {/* Nếu hết hàng, hiện thông báo */}
                   {outOfStock ? (
-                    <p style={{ color: "red", fontWeight: 600 }}>⚠️ Hết hàng</p>
+                    <p style={{ color: "red", fontWeight: 600 }}>
+                      ⚠️ Hết hàng
+                    </p>
                   ) : (
                     <>
                       {/* Bộ điều chỉnh số lượng */}
@@ -191,7 +220,11 @@ export default function CartPage() {
                       >
                         <button
                           onClick={() =>
-                            handleQuantityChange(item._id, item.quantity - 1, stock)
+                            handleQuantityChange(
+                              item._id,
+                              item.quantity - 1,
+                              stock
+                            )
                           }
                           disabled={item.quantity <= 1}
                           style={{
@@ -200,7 +233,8 @@ export default function CartPage() {
                             border: "1px solid #d1d5db",
                             borderRadius: 6,
                             background: "white",
-                            cursor: item.quantity > 1 ? "pointer" : "not-allowed",
+                            cursor:
+                              item.quantity > 1 ? "pointer" : "not-allowed",
                             opacity: item.quantity > 1 ? 1 : 0.5,
                           }}
                         >
@@ -211,7 +245,11 @@ export default function CartPage() {
                           type="number"
                           value={item.quantity}
                           onChange={(e) =>
-                            handleQuantityChange(item._id, Number(e.target.value), stock)
+                            handleQuantityChange(
+                              item._id,
+                              Number(e.target.value),
+                              stock
+                            )
                           }
                           style={{
                             width: 45,
@@ -224,7 +262,11 @@ export default function CartPage() {
 
                         <button
                           onClick={() =>
-                            handleQuantityChange(item._id, item.quantity + 1, stock)
+                            handleQuantityChange(
+                              item._id,
+                              item.quantity + 1,
+                              stock
+                            )
                           }
                           disabled={item.quantity >= stock}
                           style={{
@@ -269,7 +311,30 @@ export default function CartPage() {
 
         {/* Khu vực tổng cộng */}
         <div style={{ textAlign: "right", marginTop: 20 }}>
-          <h3>Tổng cộng: {total.toLocaleString()} ₫</h3>
+          {/* Tổng của các sản phẩm đang được chọn để đi đến Checkout */}
+          <h3>
+            Tổng tiền sản phẩm đã chọn: {selectedTotal.toLocaleString()} ₫
+          </h3>
+
+          {/* Cart Summary toàn bộ giỏ từ backend (phục vụ yêu cầu đề tài) */}
+          {cart.summary && (
+            <div
+              style={{
+                marginTop: 10,
+                paddingTop: 10,
+                borderTop: "1px dashed #d1d5db",
+                fontSize: 14,
+                color: "#4b5563",
+              }}
+            >
+              <div>Tạm tính (tất cả sản phẩm): {subtotal.toLocaleString()} ₫</div>
+              <div>Thuế (VAT): {tax.toLocaleString()} ₫</div>
+              <div>Phí vận chuyển: {shippingFee.toLocaleString()} ₫</div>
+              <div style={{ fontWeight: 600, marginTop: 4 }}>
+                Tổng tiền phải trả (toàn bộ giỏ): {total.toLocaleString()} ₫
+              </div>
+            </div>
+          )}
 
           <div
             style={{

@@ -8,9 +8,9 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 
 
-// =============================
-// Đăng ký tài khoản (nâng cấp guest -> user thật)
-// =============================
+// =========================================
+// REGISTER
+// =========================================
 exports.register = async (req, res) => {
   try {
     const { fullName, email, password, sessionId, addresses } = req.body;
@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
         fullName,
         email,
         password,
-        addresses: addresses || [],   // ✅ dùng addresses thay cho address
+        addresses: addresses || [],
       });
     } else {
       user.fullName = fullName ?? user.fullName;
@@ -34,7 +34,6 @@ exports.register = async (req, res) => {
         user.password = password;
       }
 
-      // ✅ nếu có addresses mới thì cập nhật
       if (addresses && addresses.length > 0) {
         user.addresses = addresses;
       }
@@ -42,6 +41,7 @@ exports.register = async (req, res) => {
       await user.save();
     }
 
+    // Gắn đơn / giỏ guest vào user sau khi đăng ký
     if (sessionId) {
       await Order.updateMany({ sessionId, userId: null }, { $set: { userId: user._id } });
       await Cart.updateMany({ sessionId, userId: null }, { $set: { userId: user._id } });
@@ -57,7 +57,8 @@ exports.register = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        addresses: user.addresses, // ✅ trả về đúng danh sách địa chỉ
+        addresses: user.addresses,
+        loyaltyPoints: user.loyaltyPoints || 0,   // 🟦 THÊM
       },
     });
   } catch (err) {
@@ -68,9 +69,9 @@ exports.register = async (req, res) => {
 
 
 
-// =============================
-// Đăng nhập
-// =============================
+// =========================================
+// LOGIN
+// =========================================
 exports.login = async (req, res) => {
   try {
     const { email, password, sessionId } = req.body;
@@ -79,21 +80,18 @@ exports.login = async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "Email chưa được đăng ký" });
 
-    // CHẶN ĐĂNG NHẬP NẾU BỊ KHÓA
     if (user.isBanned) {
       return res.status(403).json({
         message: "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên!",
       });
     }
 
-    // Nếu user có mật khẩu, kiểm tra bcrypt
     if (user.password) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch)
         return res.status(400).json({ message: "Sai mật khẩu" });
     }
 
-    // Liên kết Order và Cart cũ (guest) về tài khoản sau khi login
     if (sessionId) {
       await Order.updateMany(
         { sessionId, userId: null },
@@ -105,7 +103,6 @@ exports.login = async (req, res) => {
       );
     }
 
-    // Tạo token
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
     res.json({
@@ -117,6 +114,7 @@ exports.login = async (req, res) => {
         email: user.email,
         addresses: user.addresses,
         role: user.role,
+        loyaltyPoints: user.loyaltyPoints || 0,   // 🟦 THÊM
       },
     });
 
@@ -127,11 +125,13 @@ exports.login = async (req, res) => {
 };
 
 
-// =============================
-// Hồ sơ người dùng
-// =============================
+
+// =========================================
+// USER PROFILE (GET /auth/profile)
+// =========================================
 exports.profile = async (req, res) => {
   try {
+    // select -password nên vẫn trả loyaltyPoints đầy đủ
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (err) {
@@ -141,7 +141,10 @@ exports.profile = async (req, res) => {
 };
 
 
-// Gửi mã OTP khôi phục mật khẩu
+
+// =========================================
+// FORGOT PASSWORD - OTP
+// =========================================
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -159,7 +162,11 @@ exports.forgotPassword = async (req, res) => {
   res.json({ message: "Đã gửi mã OTP về email" });
 };
 
-// Xác nhận OTP và đổi mật khẩu
+
+
+// =========================================
+// RESET PASSWORD
+// =========================================
 exports.resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
@@ -182,6 +189,10 @@ exports.resetPassword = async (req, res) => {
 };
 
 
+
+// =========================================
+// CHANGE PASSWORD
+// =========================================
 exports.changePassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
@@ -196,6 +207,11 @@ exports.changePassword = async (req, res) => {
   res.json({ message: "Đổi mật khẩu thành công" });
 };
 
+
+
+// =========================================
+// UPDATE PROFILE
+// =========================================
 exports.updateProfile = async (req, res) => {
   const { fullName } = req.body;
 
@@ -208,6 +224,10 @@ exports.updateProfile = async (req, res) => {
 };
 
 
+
+// =========================================
+// ADD ADDRESS
+// =========================================
 exports.addAddress = async (req, res) => {
   const { fullName, phone, city, ward, street, isDefault } = req.body;
 
@@ -223,9 +243,19 @@ exports.addAddress = async (req, res) => {
   res.json(user.addresses);
 };
 
+
+
+// =========================================
+// DELETE ADDRESS
+// =========================================
 exports.deleteAddress = async (req, res) => {
   const user = await User.findById(req.user.id);
-  user.addresses = user.addresses.filter(a => a._id.toString() !== req.params.id);
+
+  user.addresses = user.addresses.filter(
+    a => a._id.toString() !== req.params.id
+  );
+
   await user.save();
+
   res.json(user.addresses);
 };

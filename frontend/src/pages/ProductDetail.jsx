@@ -7,6 +7,21 @@ import cartService from "../services/cartService";
 import reviewService from "../services/reviewService";
 import api, { SERVER_URL } from "../services/api";
 
+// ✅ Hàm build URL ảnh – dùng chung cho mọi sản phẩm/biến thể
+const buildImageUrl = (path) => {
+  if (!path) return "/no-image.png";
+
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  if (path.startsWith("/")) {
+    return `${SERVER_URL}${path}`;
+  }
+
+  return `${SERVER_URL}/${path}`;
+};
+
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -206,7 +221,6 @@ export default function ProductDetail() {
         comment: "",
         rating: 0,
       }));
-
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Lỗi khi gửi bình luận/đánh giá!"
@@ -214,7 +228,10 @@ export default function ProductDetail() {
     }
   };
 
-
+  // ✅ Ảnh hiển thị: ưu tiên ảnh biến thể, nếu không có dùng ảnh sản phẩm
+  const mainImageUrl = buildImageUrl(
+    selectedVariant?.image || product.image
+  );
 
   return (
     <div style={{ padding: "40px 20px", maxWidth: 1100, margin: "0 auto" }}>
@@ -247,13 +264,7 @@ export default function ProductDetail() {
           }}
         >
           <img
-            src={
-              selectedVariant?.image
-                ? `${SERVER_URL}${selectedVariant.image}`
-                : product.image
-                  ? `${SERVER_URL}${product.image}`
-                  : "/no-image.png"
-            }
+            src={mainImageUrl}
             alt={product.name}
             style={{
               width: "100%",
@@ -447,7 +458,6 @@ export default function ProductDetail() {
             }}
           />
 
-
           <textarea
             placeholder="Nội dung bình luận..."
             value={reviewForm.comment}
@@ -465,25 +475,25 @@ export default function ProductDetail() {
 
           <div>
             <label>Chấm sao (đăng nhập để gửi):</label>
-              {[1, 2, 3, 4, 5].map((s) => (
-                <span
-                  key={s}
-                  style={{
-                    fontSize: 22,
-                    color: reviewForm.rating >= s ? "#facc15" : "#d1d5db",
-                    cursor: "pointer",
-                    marginLeft: 6,
-                  }}
-                  onClick={() => {
-                    setReviewForm((prev) => ({
-                      ...prev,
-                      rating: prev.rating === s ? 0 : s, // ✅ bấm lại thì xoá sao
-                    }));
-                  }}
-                >
-                  ★
-                </span>
-              ))}
+            {[1, 2, 3, 4, 5].map((s) => (
+              <span
+                key={s}
+                style={{
+                  fontSize: 22,
+                  color: reviewForm.rating >= s ? "#facc15" : "#d1d5db",
+                  cursor: "pointer",
+                  marginLeft: 6,
+                }}
+                onClick={() => {
+                  setReviewForm((prev) => ({
+                    ...prev,
+                    rating: prev.rating === s ? 0 : s, // ✅ bấm lại thì xoá sao
+                  }));
+                }}
+              >
+                ★
+              </span>
+            ))}
           </div>
 
           <button
@@ -502,7 +512,6 @@ export default function ProductDetail() {
             Gửi
           </button>
         </form>
-
 
         {/* Danh sách đánh giá */}
         {reviews.length === 0 ? (
