@@ -6,7 +6,9 @@ const sendResetPasswordEmail = require("../utils/sendResetPasswordEmail");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
-
+// Google
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // =========================================
 // REGISTER
@@ -198,6 +200,13 @@ exports.changePassword = async (req, res) => {
 
   const user = await User.findById(req.user.id);
 
+  // Nếu tài khoản không có mật khẩu (Google account)
+  if (!user.password) {
+    return res.status(400).json({
+      message: "Tài khoản này được đăng nhập bằng Google, không thể đổi mật khẩu.",
+    });
+  }
+
   const ok = await bcrypt.compare(oldPassword, user.password);
   if (!ok) return res.status(400).json({ message: "Mật khẩu cũ sai" });
 
@@ -258,4 +267,56 @@ exports.deleteAddress = async (req, res) => {
   await user.save();
 
   res.json(user.addresses);
+};
+
+
+
+
+
+// Google
+exports.googleLogin = async (req, res) => {
+  try {
+    const { token, sessionId } = req.body;
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        fullName: name,
+        email,
+        addresses: [],
+      });
+    }
+
+    // Liên kết giỏ hàng guest nếu có
+    if (sessionId) {
+      await Order.updateMany({ sessionId, userId: null }, { $set: { userId: user._id } });
+      await Cart.updateMany({ sessionId, userId: null }, { $set: { userId: user._id } });
+    }
+
+    const jwtToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
+
+    res.json({
+      success: true,
+      token: jwtToken,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        addresses: user.addresses,
+      },
+    });
+  } catch (error) {
+    console.error("Google login lỗi:", error);
+    res.status(401).json({ message: "Đăng nhập Google thất bại" });
+  }
 };

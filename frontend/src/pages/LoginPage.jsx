@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import authService from "../services/authService";
+// Google
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -30,6 +32,29 @@ export default function LoginPage() {
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Sai thông tin đăng nhập");
+    }
+  };
+
+
+  // Google
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const sessionId = localStorage.getItem("sessionId");
+
+      const { data } = await authService.googleLogin({
+        token: credentialResponse.credential,
+        sessionId,
+      });
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      window.dispatchEvent(new Event("storage"));
+
+      toast.success("Đăng nhập Google thành công!");
+      navigate("/");
+    } catch (err) {
+      toast.error("Google Login thất bại");
     }
   };
 
@@ -110,6 +135,16 @@ export default function LoginPage() {
           >
             Đăng nhập
           </button>
+
+          {/* GOOGLE LOGIN */}
+          <div style={{ marginTop: 20, textAlign: "center" }}>
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => toast.error("Google Login lỗi")}
+            />
+          </div>
+
+
         </div>
         <div style={{ textAlign: "center", marginTop: 10 }}>
           <Link

@@ -4,13 +4,13 @@ const sendResetPasswordEmail = async (email, name, otp) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   });
 
   await transporter.sendMail({
-    from: `"E-Shop" <${process.env.EMAIL_USER}>`,
+    from: `"E-Shop" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "🔐 Khôi phục mật khẩu - E-Shop",
     html: `

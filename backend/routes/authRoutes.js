@@ -13,6 +13,12 @@ const {
   addAddress,
   deleteAddress,
 } = require("../controllers/authController");
+// Google
+const { googleLogin } = require("../controllers/authController");
+router.post("/google-login", googleLogin);
+
+
+
 
 const { protect } = require("../middlewares/authMiddleware");
 
