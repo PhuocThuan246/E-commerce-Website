@@ -154,13 +154,16 @@ export default function CheckoutPage() {
     return sum + price * item.quantity;
   }, 0);
 
+  // Giữ phí ship từ summary (nếu bạn đang dùng chung cho toàn đơn)
   const summary = cart.summary || {};
   const shippingFee = summary.shippingFee || 0;
-  const tax = summary.tax || 0;
+
+  // ✅ VAT chỉ tính trên subtotal của sản phẩm đã chọn
+  const TAX_RATE = 0.1; // 10%
+  const tax = Math.round(selectedSubtotal * TAX_RATE);
 
   // tiền được trừ từ điểm
-  const maxCanUse =
-    selectedSubtotal + shippingFee + tax - discountAmount;
+  const maxCanUse = selectedSubtotal + shippingFee + tax - discountAmount;
   const loyaltyDiscount = useLoyaltyPoints
     ? Math.min(loyaltyPoints * 1000, Math.max(maxCanUse, 0))
     : 0;
