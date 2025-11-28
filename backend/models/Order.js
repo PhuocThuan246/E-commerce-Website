@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // ================================
-// 📌 Lịch sử trạng thái đơn hàng
+// Lịch sử trạng thái đơn hàng
 // ================================
 const statusHistorySchema = new mongoose.Schema({
   status: String,
@@ -9,7 +9,7 @@ const statusHistorySchema = new mongoose.Schema({
 });
 
 // ================================
-// 📌 Item của đơn hàng
+// Item của đơn hàng
 // ================================
 const orderItemSchema = new mongoose.Schema({
   product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
@@ -19,7 +19,7 @@ const orderItemSchema = new mongoose.Schema({
 });
 
 // ================================
-// 📌 Order Schema
+// Order Schema
 // ================================
 const orderSchema = new mongoose.Schema({
   sessionId: String,
@@ -42,7 +42,7 @@ const orderSchema = new mongoose.Schema({
 
   total: Number,
 
-  // ⭐ Loyalty
+  // Loyalty
   loyaltyPointsEarned: { type: Number, default: 0 },
   loyaltyPointsUsed: { type: Number, default: 0 },
   loyaltyDiscountAmount: { type: Number, default: 0 }, // tiền giảm do dùng điểm

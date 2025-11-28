@@ -1,5 +1,5 @@
 // ================================
-// 📌 IMPORT CÁC THƯ VIỆN CẦN DÙNG
+// IMPORT CÁC THƯ VIỆN CẦN DÙNG
 // ================================
 const express = require("express");
 const path = require("path");
@@ -14,7 +14,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 // ================================
-// 📌 IMPORT CÁC ROUTES
+// IMPORT CÁC ROUTES
 // ================================
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
@@ -28,12 +28,12 @@ const adminCategoryRoutes = require("./routes/admin/adminCategoryRoutes");
 const adminOrderRoutes = require("./routes/admin/adminOrderRoutes");
 const adminUserRoutes = require("./routes/admin/adminUserRoutes");
 const adminDiscountRoutes = require("./routes/admin/adminDiscountRoutes");
-
-// 🆕 Route mã giảm giá cho khách (checkout)
+const adminDashboardRoutes = require("./routes/admin/adminDashboardRoutes");
+// Route mã giảm giá cho khách (checkout)
 const discountRoutes = require("./routes/discountRoutes");
 
 // ================================
-// 📌 CONFIG
+// CONFIG
 // ================================
 dotenv.config();
 connectDB();
@@ -48,7 +48,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // ================================
-// 📌 KHAI BÁO ROUTES
+// KHAI BÁO ROUTES
 // ================================
 app.get("/", (req, res) => {
   res.send("Welcome to E-commerce API");
@@ -67,44 +67,26 @@ app.use("/api/admin/categories", adminCategoryRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/discounts", adminDiscountRoutes);
-
+app.use("/api/admin/dashboard", adminDashboardRoutes);
 // Discount cho checkout (validate code)
 app.use("/api/discounts", discountRoutes);
 
 // ================================
-// 📌 404 – Route không tồn tại
+// 404 – Route không tồn tại
 // ================================
 app.use((req, res) => {
   res.status(404).json({ message: "404 Not Found" });
 });
 
-// ================================
-// 📌 KHỞI TẠO SERVER CÓ SOCKET.IO
-// ================================
-const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] },
-});
-
-// Cho phép controller emit sự kiện real-time
-app.set("io", io);
-
-io.on("connection", (socket) => {
-  socket.on("product:join", (productId) => {
-    socket.join(`product:${productId}`);
-  });
-
-  socket.on("disconnect", () => {});
-});
 
 // ================================
-// 📌 TỰ LẮNG NGHE NẾU CHẠY TRỰC TIẾP
+// TỰ LẮNG NGHE NẾU CHẠY TRỰC TIẾP
 // ================================
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
-    console.log(`🚀 API & Socket.IO running on port ${PORT}`);
+    console.log(`API & Socket.IO running on port ${PORT}`);
   });
 }
 

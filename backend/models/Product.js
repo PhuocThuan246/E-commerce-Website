@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // ==============================
-// 🧩 Schema cho biến thể (variants)
+// Schema cho biến thể (variants)
 // ==============================
 const variantSchema = new mongoose.Schema({
   name: String,
@@ -12,7 +12,7 @@ const variantSchema = new mongoose.Schema({
 });
 
 // ==============================
-// ⭐ Schema cho đánh giá (reviews)
+// Schema cho đánh giá (reviews)
 // ==============================
 const reviewSchema = new mongoose.Schema(
   {
@@ -30,7 +30,7 @@ const reviewSchema = new mongoose.Schema(
 );
 
 // ==============================
-// 📦 Schema cho sản phẩm (products)
+// Schema cho sản phẩm (products)
 // ==============================
 const productSchema = new mongoose.Schema(
   {
@@ -44,7 +44,7 @@ const productSchema = new mongoose.Schema(
     image: String,
     images: [String],
 
-    // ✅ Thêm brand để lọc và hiển thị thương hiệu
+    // Thêm brand để lọc và hiển thị thương hiệu
     brand: {
       type: String,
       trim: true,
@@ -61,11 +61,11 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔍 Index cho tìm kiếm & lọc nhanh
+// Index cho tìm kiếm & lọc nhanh
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ brand: 1, effectivePrice: 1, ratingAverage: -1 });
 
-// 🧮 Hàm tính giá đại diện
+// Hàm tính giá đại diện
 function calcEffectivePrice(doc) {
   if (doc.variants && doc.variants.length > 0) {
     const prices = doc.variants.map((v) => v.price || Infinity);
@@ -75,7 +75,7 @@ function calcEffectivePrice(doc) {
   return doc.price || 0;
 }
 
-// ⚙️ Middleware: tính lại giá & rating trước khi save
+// Middleware: tính lại giá & rating trước khi save
 productSchema.pre("save", function (next) {
   this.effectivePrice = calcEffectivePrice(this);
 

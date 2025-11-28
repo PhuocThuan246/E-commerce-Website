@@ -3,31 +3,24 @@ import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
   const stats = [
+    { title: "Trang chủ", icon: "🏠", color: "#2563eb", link: "/admin" },
+    { title: "Sản phẩm", icon: "📦", color: "#3b82f6", link: "/admin/products" },
+    { title: "Danh mục", icon: "🏷️", color: "#10b981", link: "/admin/categories" },
+    { title: "Đơn hàng", icon: "📋", color: "#f59e0b", link: "/admin/orders" },
+    { title: "Mã giảm giá", icon: "💸", color: "#ef4444", link: "/admin/discounts" },
+    { title: "Người dùng", icon: "👥", color: "#14a248", link: "/admin/users" },
     {
-      title: "Sản phẩm",
-      color: "#3b82f6",
-      icon: "💻",
-      link: "/admin/products",
+      title: "Bảng điều khiển",
+      icon: "📊",
+      color: "#6366f1",
+      link: "/admin/dashboard/simple",
     },
     {
-      title: "Danh mục",
-      color: "#10b981",
-      icon: "🏷️",
-      link: "/admin/categories",
+      title: "Phân tích nâng cao",
+      icon: "📈",
+      color: "#8b5cf6",
+      link: "/admin/dashboard/advanced",
     },
-    {
-      title: "Đơn hàng",
-      color: "#f59e0b",
-      icon: "📦",
-      link: "/admin/orders",
-    },
-    {
-      title: "Người dùng",
-      color: "#14a248ff",
-      icon: "👥",
-      link: "/admin/users",
-    },
-    
   ];
 
   return (
@@ -42,11 +35,12 @@ export default function AdminDashboard() {
       >
         📊 Bảng điều khiển quản trị
       </h1>
+
       <p style={{ color: "#6b7280", marginBottom: 30 }}>
-        Xin chào <strong>Admin</strong> 👋 — Dưới đây là tổng quan hệ thống.
+        Xin chào <strong>Admin</strong> 👋 — Chọn nhanh chức năng quản trị bên dưới
       </p>
 
-      {/* Cards thống kê */}
+      {/* DASHBOARD NAVIGATION CARDS */}
       <div
         style={{
           display: "grid",
@@ -55,100 +49,89 @@ export default function AdminDashboard() {
         }}
       >
         {stats.map((s, i) => (
-          <Link
-            key={i}
-            to={s.link}
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-              background: "white",
-              borderRadius: 12,
-              border: "1px solid #e5e7eb",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-              padding: 20,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
-            }}
-          >
-            <div
-              style={{
-                background: s.color,
-                color: "white",
-                borderRadius: "50%",
-                width: 60,
-                height: 60,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 28,
-                marginBottom: 14,
-              }}
-            >
-              {s.icon}
-            </div>
-            <h3 style={{ margin: 0, fontSize: 18 }}>{s.title}</h3>
-            <p
-              style={{
-                fontSize: 24,
-                fontWeight: 700,
-                color: s.color,
-                margin: "8px 0 0",
-              }}
-            >
-            </p>
-          </Link>
-        ))}
-      </div>
-
-      {/* Placeholder biểu đồ */}
-      <div
-        style={{
-          marginTop: 40,
-          background: "white",
-          borderRadius: 12,
-          border: "1px solid #e5e7eb",
-          padding: 20,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2 style={{ color: "#111827" }}>📈 Doanh thu gần đây</h2>
-        <p style={{ color: "#6b7280" }}>
-          (Tính năng biểu đồ sẽ được bổ sung sau)
-        </p>
-        <div
+        <Link
+          key={i}
+          to={s.link}
           style={{
-            height: 220,
-            borderRadius: 8,
-            background:
-              "repeating-linear-gradient(90deg, #e5e7eb 0px, #e5e7eb 1px, transparent 1px, transparent 40px)",
+            textDecoration: "none",
+            color: "inherit",
+            background: `linear-gradient(145deg, #ffffff, ${s.color}15)`,
+            borderRadius: 16,
+            border: `1px solid ${s.color}40`,
+            padding: 24,
             display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-around",
-            padding: "0 20px",
+            alignItems: "center",
+            gap: 18,
+            position: "relative",
+            overflow: "hidden",
+            boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+            transition: "all 0.25s ease",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+            e.currentTarget.style.boxShadow = `0 10px 25px ${s.color}55`;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = "translateY(0) scale(1)";
+            e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.06)";
           }}
         >
-          {[60, 90, 120, 80, 100, 70, 130].map((h, i) => (
-            <div
-              key={i}
+          {/* Glow background */}
+          <div
+            style={{
+              position: "absolute",
+              right: -20,
+              top: -20,
+              width: 120,
+              height: 120,
+              background: s.color,
+              opacity: 0.15,
+              borderRadius: "50%",
+              filter: "blur(40px)",
+            }}
+          />
+
+          {/* Icon */}
+          <div
+            style={{
+              background: s.color,
+              color: "white",
+              borderRadius: 18,
+              width: 64,
+              height: 64,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 28,
+              boxShadow: `0 6px 16px ${s.color}66`,
+            }}
+          >
+            {s.icon}
+          </div>
+
+          {/* Text */}
+          <div style={{ zIndex: 2 }}>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>
+              {s.title}
+            </h3>
+
+            <span
               style={{
-                width: 20,
-                height: h,
-                background: "#3b82f6",
-                borderRadius: 4,
+                fontSize: 13,
+                color: "#6b7280",
+                background: `${s.color}20`,
+                padding: "3px 10px",
+                borderRadius: 20,
+                display: "inline-block",
+                marginTop: 6,
               }}
-            ></div>
-          ))}
-        </div>
+            >
+              Quản lý & điều hướng
+            </span>
+          </div>
+        </Link>
+
+        ))}
       </div>
     </div>
   );

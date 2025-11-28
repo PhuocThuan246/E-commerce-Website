@@ -2,6 +2,31 @@ import React, { useEffect, useState } from "react";
 import adminOrderService from "../services/adminOrderService";
 
 const STATUS_OPTIONS = ["pending", "confirmed", "shipping", "delivered"];
+const STATUS_LABELS = {
+  pending: "Chờ xác nhận",
+  confirmed: "Đã xác nhận",
+  shipping: "Đang giao hàng",
+  delivered: "Đã giao thành công",
+};
+const STATUS_STYLES = {
+  pending: {
+    background: "#FEF3C7",
+    color: "#92400E",
+  },
+  confirmed: {
+    background: "#DBEAFE",
+    color: "#1E40AF",
+  },
+  shipping: {
+    background: "#E0F2FE",
+    color: "#075985",
+  },
+  delivered: {
+    background: "#DCFCE7",
+    color: "#166534",
+  },
+};
+
 
 const FILTERS = [
   { key: "all", label: "Tất cả" },
@@ -217,16 +242,20 @@ export default function AdminOrders() {
                         {formatMoney(o.total)}
                       </td>
                       <td style={td}>
-                        <span
-                          style={{
-                            padding: "4px 8px",
-                            borderRadius: 999,
-                            fontSize: 12,
-                            background: "#e5e7eb",
-                          }}
-                        >
-                          {o.status}
-                        </span>
+                      <span
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: 999,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          background: STATUS_STYLES[o.status]?.background,
+                          color: STATUS_STYLES[o.status]?.color,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {STATUS_LABELS[o.status] || o.status}
+                      </span>
+
                       </td>
                       <td style={td}>
                         {new Date(o.createdAt).toLocaleString("vi-VN")}
@@ -372,9 +401,10 @@ export default function AdminOrders() {
                   >
                     {STATUS_OPTIONS.map((s) => (
                       <option key={s} value={s}>
-                        {s}
+                        {STATUS_LABELS[s] || s}
                       </option>
                     ))}
+
                   </select>
                   {statusUpdating && (
                     <span style={{ fontSize: 12, color: "#6b7280" }}>
@@ -397,7 +427,7 @@ export default function AdminOrders() {
                   <ul style={{ paddingLeft: 16, margin: 0, fontSize: 12 }}>
                     {selectedOrder.statusHistory.map((h) => (
                       <li key={h._id}>
-                        <b>{h.status}</b> —{" "}
+                        <b>{STATUS_LABELS[h.status] || h.status}</b>—{" "}
                         {new Date(h.updatedAt).toLocaleString("vi-VN")}
                       </li>
                     ))}
@@ -418,12 +448,14 @@ export default function AdminOrders() {
 
 const table = {
   width: "100%",
-  borderCollapse: "collapse",
+  borderCollapse: "separate",
+  borderSpacing: 0,
   background: "white",
-  borderRadius: 8,
+  borderRadius: 10,
   overflow: "hidden",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
 };
+
 
 const th = {
   padding: 10,
@@ -448,14 +480,16 @@ const dateInput = {
 };
 
 const detailBtn = {
-  padding: "6px 10px",
+  padding: "6px 14px",
   fontSize: 12,
-  borderRadius: 999,
-  border: "1px solid #111827",
-  background: "#111827",
+  borderRadius: 20,
+  border: "none",
+  background: "linear-gradient(135deg, #111827, #374151)",
   color: "#fff",
   cursor: "pointer",
+  transition: "0.2s",
 };
+
 
 const pageBtn = {
   padding: "4px 8px",

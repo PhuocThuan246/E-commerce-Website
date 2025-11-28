@@ -3,6 +3,33 @@ import { useParams, Link } from "react-router-dom";
 import orderService from "../services/orderService";
 import { toast } from "react-toastify";
 
+
+const STATUS_LABELS = {
+  pending: "Chờ xác nhận",
+  confirmed: "Đã xác nhận",
+  shipping: "Đang giao hàng",
+  delivered: "Đã giao thành công",
+};
+
+const STATUS_COLORS = {
+  pending: {
+    bg: "#FEF3C7",
+    color: "#92400E",
+  },
+  confirmed: {
+    bg: "#DBEAFE",
+    color: "#1E40AF",
+  },
+  shipping: {
+    bg: "#E0F2FE",
+    color: "#075985",
+  },
+  delivered: {
+    bg: "#DCFCE7",
+    color: "#166534",
+  },
+};
+
 export default function OrderDetailPage() {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
@@ -115,7 +142,7 @@ export default function OrderDetailPage() {
               textTransform: "capitalize",
             }}
           >
-            {order.status}
+            {STATUS_LABELS[order.status] || order.status}
           </div>
         </div>
 
@@ -253,9 +280,21 @@ export default function OrderDetailPage() {
             <tbody>
               {order.statusHistory.map((h, idx) => (
                 <tr key={idx} style={{ borderTop: "1px solid #e5e7eb" }}>
-                  <td style={{ padding: 8, textTransform: "capitalize" }}>
-                    {h.status}
+                  <td style={{ padding: 8 }}>
+                    <span
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: 999,
+                        fontSize: 13,
+                        fontWeight: 600,
+                        background: STATUS_COLORS[h.status]?.bg,
+                        color: STATUS_COLORS[h.status]?.color,
+                      }}
+                    >
+                      {STATUS_LABELS[h.status] || h.status}
+                    </span>
                   </td>
+
                   <td style={{ padding: 8 }}>
                     {new Date(h.updatedAt).toLocaleString("vi-VN")}
                   </td>

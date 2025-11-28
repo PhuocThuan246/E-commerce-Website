@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 
 // Trang khách hàng
 import HomePage from "./pages/HomePage";
-import ProductCatalog from "./pages/ProductCatalog"; // ✅ thêm dòng này
+import ProductCatalog from "./pages/ProductCatalog"; 
 import ProductDetail from "./pages/ProductDetail";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
@@ -31,8 +31,9 @@ import AdminProducts from "./admin/pages/AdminProducts";
 import AdminCategories from "./admin/pages/AdminCategories";
 import AdminOrders from "./admin/pages/AdminOrders";
 import AdminUsers from "./admin/pages/AdminUsers";
-import AdminDiscounts from "./admin/pages/AdminDiscounts"; // ⭐ THÊM DÒNG NÀY
-
+import AdminDiscounts from "./admin/pages/AdminDiscounts"; 
+import SimpleDashboard from "./admin/pages/AdminSimpleDashboard";
+import AdvancedDashboard from "./admin/pages/AdminAdvancedDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
@@ -55,7 +56,7 @@ export default function App() {
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/checkout" element={<CheckoutPage />} />
                   <Route path="/success" element={<SuccessPage />} />
-                  <Route path="/orders" element={<OrdersPage />} />
+          
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route
@@ -83,6 +84,7 @@ export default function App() {
                       path="change-password"
                       element={<ChangePasswordPage />}
                     />
+                    <Route path="orders" element={<OrdersPage />} /> 
                     <Route path="orders/:id" element={<OrderDetailPage />} />
                   </Route>
                 </Routes>
@@ -106,7 +108,9 @@ export default function App() {
           <Route path="categories" element={<AdminCategories />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
-          <Route path="discounts" element={<AdminDiscounts />} /> {/* ⭐ ROUTE MỚI */}
+          <Route path="discounts" element={<AdminDiscounts />} /> {/* ROUTE MỚI */}
+          <Route path="dashboard/simple" element={<SimpleDashboard />} />
+          <Route path="dashboard/advanced" element={<AdvancedDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

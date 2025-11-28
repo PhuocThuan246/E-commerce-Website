@@ -14,7 +14,7 @@ export default function ProductCatalog() {
   const [rating, setRating] = useState(0);
   const [sort, setSort] = useState("default");
 
-  // ✅ Phân trang client
+  // Phân trang client
   const [page, setPage] = useState(1);
   const limit = 10;
 

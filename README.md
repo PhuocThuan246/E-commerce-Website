@@ -22,3 +22,4 @@ Phúc - cập nhật thêm websocket và tự động lấy tên người dùng 
 Thuận - quản lý hồ sơ người dùng, quản lý nhiều địa chỉ, quên mật khẩu
 Quý - Giỏ hàng và thanh toán, Quản lý đơn hàng, Quản lý mã giảm giá
 Thuận - Xác thực bằng Google
+Thuận - Dardboards, chỉnh một số phần lại, chỉnh một số giao diện

@@ -72,7 +72,9 @@ export default function Header() {
             {showMenu && (
               <div style={styles.dropdown}>
                 <Link to="/account/profile" style={styles.menuItem}>Tài khoản của tôi</Link>
-                <Link to="/orders" style={styles.menuItem}>Đơn hàng</Link>
+                <Link to="/account/orders" style={styles.menuItem}>
+                  Đơn hàng của tôi
+              </Link>
                 <div onClick={logout} style={{ ...styles.menuItem, color: "#ef4444" }}>
                   Đăng xuất
                 </div>

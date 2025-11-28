@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 
 async function sendEmail({ to, subject, html }) {
-  // 👉 LOG ENV MỖI LẦN GỬI
+  // LOG ENV MỖI LẦN GỬI
   console.log("ENV SMTP_USER =", process.env.SMTP_USER);
   console.log("ENV SMTP_PASS exist =", !!process.env.SMTP_PASS);
 
@@ -9,7 +9,7 @@ async function sendEmail({ to, subject, html }) {
   const pass = process.env.SMTP_PASS;
 
   if (!user || !pass) {
-    console.error("❌ [MAIL] Thiếu SMTP_USER hoặc SMTP_PASS trong env!");
+    console.error("[MAIL] Thiếu SMTP_USER hoặc SMTP_PASS trong env!");
     return;
   }
 
@@ -22,7 +22,7 @@ async function sendEmail({ to, subject, html }) {
   });
 
   try {
-    console.log("📧 [MAIL] Đang gửi tới:", to);
+    console.log("[MAIL] Đang gửi tới:", to);
 
     const info = await transporter.sendMail({
       from: `"E-Shop" <${user}>`,
@@ -31,9 +31,9 @@ async function sendEmail({ to, subject, html }) {
       html,
     });
 
-    console.log("✅ [MAIL] Gửi thành công, id:", info.messageId);
+    console.log("[MAIL] Gửi thành công, id:", info.messageId);
   } catch (err) {
-    console.error("❌ [MAIL] Gửi email thất bại:", err);
+    console.error("[MAIL] Gửi email thất bại:", err);
   }
 }
 

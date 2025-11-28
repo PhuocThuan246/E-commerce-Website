@@ -3,7 +3,7 @@ const Order = require("../models/Order");
 const mongoose = require("mongoose");
 
 // ================================
-// 📦 Lấy danh sách sản phẩm (Catalog) - hỗ trợ tìm kiếm & lọc AJAX
+// Lấy danh sách sản phẩm (Catalog) - hỗ trợ tìm kiếm & lọc AJAX
 // ================================
 const getCatalogProducts = async (req, res) => {
   try {

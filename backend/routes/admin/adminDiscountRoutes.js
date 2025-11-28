@@ -12,7 +12,7 @@ const {
   adminOnly,
 } = require("../../middlewares/authMiddleware");
 
-// ✅ tất cả route dưới đều yêu cầu admin
+// tất cả route dưới đều yêu cầu admin
 router.use(protect, adminOnly);
 
 // Danh sách mã + orders

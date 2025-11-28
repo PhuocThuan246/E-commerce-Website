@@ -158,7 +158,7 @@ export default function CheckoutPage() {
   const summary = cart.summary || {};
   const shippingFee = summary.shippingFee || 0;
 
-  // ✅ VAT chỉ tính trên subtotal của sản phẩm đã chọn
+  // VAT chỉ tính trên subtotal của sản phẩm đã chọn
   const TAX_RATE = 0.1; // 10%
   const tax = Math.round(selectedSubtotal * TAX_RATE);
 
@@ -221,7 +221,7 @@ export default function CheckoutPage() {
         tax,
         discountCode: discountCode.trim() || null,
         discountAmount,
-        useLoyaltyPoints, // 🟦 gửi lên backend
+        useLoyaltyPoints, // gửi lên backend
       });
 
       toast.success("Đặt hàng thành công!");

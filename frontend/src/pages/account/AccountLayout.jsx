@@ -34,6 +34,10 @@ export default function AccountLayout() {
           <Link to="/account/addresses" style={linkStyle("/account/addresses")}>
             Địa chỉ giao hàng
           </Link>
+          <Link to="/account/orders" style={linkStyle("/account/orders")}>
+            Đơn hàng của tôi
+          </Link>
+
           <Link to="/account/change-password" style={linkStyle("/account/change-password")}>
             Đổi mật khẩu
           </Link>
