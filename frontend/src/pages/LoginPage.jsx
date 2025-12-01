@@ -88,7 +88,7 @@ export default function LoginPage() {
             marginBottom: "25px",
           }}
         >
-          🔐 Đăng nhập tài khoản
+          Đăng nhập tài khoản
         </h2>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>

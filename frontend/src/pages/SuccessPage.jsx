@@ -75,7 +75,7 @@ export default function SuccessPage() {
           </Link>
 
           <Link
-            to="/orders"
+            to="/account/orders"
             style={{
               textDecoration: "none",
               background: "white",

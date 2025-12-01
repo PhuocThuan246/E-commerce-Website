@@ -92,7 +92,7 @@ export default function ProductCatalog() {
           gap: 8,
         }}
       >
-        🛒 Danh sách sản phẩm
+        Danh sách sản phẩm
       </h2>
 
       {/* Bộ lọc */}
@@ -105,10 +105,10 @@ export default function ProductCatalog() {
           justifyContent: "space-between",
         }}
       >
-        {/* 🔍 Tìm kiếm realtime */}
+        {/*  Tìm kiếm realtime */}
         <input
           type="text"
-          placeholder="🔍 Tìm sản phẩm..."
+          placeholder="Nhập sản phẩm cần tìm?"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           style={{
@@ -235,7 +235,7 @@ export default function ProductCatalog() {
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
             style={{
-              background: "#2563eb",
+              background: "#000000ff",
               color: "white",
               border: "none",
               borderRadius: 6,
@@ -252,7 +252,7 @@ export default function ProductCatalog() {
               key={i}
               onClick={() => setPage(i + 1)}
               style={{
-                background: page === i + 1 ? "#2563eb" : "#e5e7eb",
+                background: page === i + 1 ? "#000000ff" : "#e5e7eb",
                 color: page === i + 1 ? "white" : "#111827",
                 border: "none",
                 borderRadius: 6,
@@ -269,7 +269,7 @@ export default function ProductCatalog() {
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
             style={{
-              background: "#2563eb",
+              background: "#000000ff",
               color: "white",
               border: "none",
               borderRadius: 6,

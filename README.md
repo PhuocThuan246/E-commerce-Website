@@ -23,3 +23,4 @@ Thuận - quản lý hồ sơ người dùng, quản lý nhiều địa chỉ, q
 Quý - Giỏ hàng và thanh toán, Quản lý đơn hàng, Quản lý mã giảm giá
 Thuận - Xác thực bằng Google
 Thuận - Dardboards, chỉnh một số phần lại, chỉnh một số giao diện
+Phúc - Chỉnh lại toàn bộ giao diện.

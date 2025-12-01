@@ -1,0 +1,220 @@
+/* =====================================================
+   🌐 RESPONSIVE STYLES FOR E-COMMERCE WEBSITE
+   Tác giả: ChatGPT Assistant
+   Phiên bản: 1.0 (2025)
+   ===================================================== */
+
+/* ====== 1️⃣ FOUNDATION ====== */
+:root {
+  --gap: 16px;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Giới hạn chiều rộng nội dung lớn */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ====== 2️⃣ HOMEPAGE ====== */
+.homepage {
+  display: flex;
+  gap: var(--gap);
+  padding: 24px;
+}
+
+.sidebar {
+  width: 230px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  height: fit-content;
+}
+
+.banner {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: var(--gap);
+  margin-bottom: 40px;
+}
+
+.cards-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* ====== 3️⃣ PRODUCT CATALOG ====== */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+/* ====== 4️⃣ ORDERS PAGE ====== */
+.order-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  transition: 0.25s;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+/* ====== 5️⃣ ORDER DETAIL PAGE ====== */
+.order-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container th,
+.table-container td {
+  padding: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+/* ====== 6️⃣ AUTH PAGES (Login / Register) ====== */
+.auth-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(to right, #dbeafe, #f8fafc);
+}
+
+.auth-form {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+}
+
+/* =====================================================
+   📱 RESPONSIVE BREAKPOINTS
+   ===================================================== */
+
+/* 💻 <= 1280px: Giảm số cột catalog */
+@media (max-width: 1280px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 🧩 <= 1024px: Banner 1 cột, catalog 3 cột */
+@media (max-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .banner {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 📲 <= 768px: Sidebar xuống dưới, catalog 2 cột, order header dọc */
+@media (max-width: 768px) {
+  .homepage {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    order: 2;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .order-section {
+    padding: 16px;
+  }
+
+  .auth-form {
+    padding: 28px;
+  }
+}
+
+/* 📱 <= 480px: catalog 1 cột, giảm padding form */
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-form {
+    padding: 22px;
+  }
+
+  .cards-row {
+    justify-content: center;
+  }
+
+  .filters input,
+  .filters select {
+    width: 100% !important;
+  }
+}
+
+/* =====================================================
+   🎨 BONUS: Smooth hover + transition effects
+   ===================================================== */
+button,
+a {
+  transition: 0.2s ease;
+}

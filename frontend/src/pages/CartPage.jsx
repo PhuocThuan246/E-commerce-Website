@@ -355,7 +355,7 @@ export default function CartPage() {
                 cursor: "pointer",
               }}
             >
-              🗑️ Xóa toàn bộ giỏ
+              Xóa toàn bộ giỏ
             </button>
 
             <Link
@@ -371,13 +371,13 @@ export default function CartPage() {
                 opacity: selectedItems.length === 0 ? 0.5 : 1,
               }}
             >
-              💳 Thanh toán ({selectedItems.length})
+              Thanh toán ({selectedItems.length})
             </Link>
           </div>
         </div>
 
         <div style={{ textAlign: "center", marginTop: 40 }}>
-          <Link to="/" style={{ color: "#2563eb", textDecoration: "none" }}>
+          <Link to="/" style={{ color: "#000000ff", textDecoration: "none" }}>
             ← Tiếp tục mua sắm
           </Link>
         </div>

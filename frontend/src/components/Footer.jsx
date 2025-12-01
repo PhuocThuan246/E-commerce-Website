@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaGithub } from "react-icons/fa";
+import "../styles/footer.css";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -11,101 +12,86 @@ export default function Footer() {
   ];
 
   return (
-    <footer style={styles.footer}>
-      <div style={styles.container}>
-        
-        {/* LOGO + SLOGAN */}
-        <div style={styles.brand}>
-          <h2 style={styles.logo}>E-Shop</h2>
-          <p style={styles.tagline}>
-            Trải nghiệm mua sắm cao cấp & tinh tế
-          </p>
+    <footer className="footer">
+      {/* ==== PHẦN TRÊN (THÔNG TIN GIỐNG GEARVN) ==== */}
+      <div className="footer-container">
+        <div className="footer-column">
+          <h4>VỀ E-SHOP</h4>
+          <ul>
+            <li>Giới thiệu</li>
+            <li>Tuyển dụng</li>
+            <li>Liên hệ</li>
+          </ul>
         </div>
 
-        {/* SOCIAL */}
-        <div style={styles.socials}>
+        <div className="footer-column">
+          <h4>CHÍNH SÁCH</h4>
+          <ul>
+            <li>Chính sách bảo hành</li>
+            <li>Chính sách giao hàng</li>
+            <li>Chính sách bảo mật</li>
+          </ul>
+        </div>
+
+        <div className="footer-column">
+          <h4>THÔNG TIN</h4>
+          <ul>
+            <li>Hệ thống cửa hàng</li>
+            <li>Hướng dẫn mua hàng</li>
+            <li>Hướng dẫn thanh toán</li>
+            <li>Hướng dẫn trả góp</li>
+            <li>Tra cứu địa chỉ bảo hành</li>
+            <li>Build PC</li>
+          </ul>
+        </div>
+
+        <div className="footer-column">
+          <h4>TỔNG ĐÀI HỖ TRỢ (8:00 - 21:00)</h4>
+          <ul>
+            <li>Mua hàng: <a href="tel:19005301">1900.5301</a></li>
+            <li>Bảo hành: <a href="tel:19005325">1900.5325</a></li>
+            <li>Khếu nại: <a href="tel:18006173">1800.6173</a></li>
+            <li>Email: <a href="mailto:cskh@eshop.com">cskh@eshop.com</a></li>
+          </ul>
+        </div>
+
+        <div className="footer-column">
+          <h4>ĐƠN VỊ VẬN CHUYỂN</h4>
+          <div className="footer-logos">
+            <img src="/banners/ghn.png" alt="GHN" />
+            <img src="/banners/ems.png" alt="EMS" />
+            <img src="/banners/GHTK.png" alt="GVN" />
+          </div>
+
+          
+        </div>
+      </div>
+
+      {/* ==== PHẦN DƯỚI (LOGO + SOCIAL + COPYRIGHT) ==== */}
+      <div className="footer-bottom">
+        <div className="footer-brand">
+          <h2 className="footer-logo">E-Shop</h2>
+          <p className="footer-tagline">Trải nghiệm mua sắm cao cấp & tinh tế</p>
+        </div>
+
+        <div className="footer-socials">
           {socials.map((s, i) => (
             <a
               key={i}
               href={s.link}
               target="_blank"
               rel="noopener noreferrer"
-              style={styles.socialIcon}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#111827";
-                e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#f3f4f6";
-                e.currentTarget.style.color = "#111827";
-              }}
+              className="footer-social-icon"
             >
               {s.icon}
             </a>
           ))}
         </div>
 
-        {/* COPYRIGHT */}
-        <div style={styles.copy}>
+        <div className="footer-copy">
           © {year} E-Shop. All rights reserved.
         </div>
       </div>
     </footer>
   );
 }
-
-/* ===================== STYLES ===================== */
-
-const styles = {
-  footer: {
-    marginTop: 80,
-    padding: "50px 20px 35px",
-    background: "rgba(255,255,255,0.75)",
-    backdropFilter: "blur(14px)",
-    borderTop: "1px solid #e5e7eb",
-  },
-  container: {
-    maxWidth: 1100,
-    margin: "0 auto",
-    textAlign: "center",
-  },
-  brand: {
-    marginBottom: 20,
-  },
-  logo: {
-    fontSize: 28,
-    fontWeight: 800,
-    letterSpacing: 1,
-    color: "#111827",
-    margin: 0,
-  },
-  tagline: {
-    color: "#6b7280",
-    marginTop: 6,
-    fontSize: 14,
-  },
-  socials: {
-    display: "flex",
-    justifyContent: "center",
-    gap: 14,
-    marginTop: 20,
-  },
-  socialIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: "50%",
-    background: "#f3f4f6",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#111827",
-    transition: "all 0.3s ease",
-    textDecoration: "none",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
-  },
-  copy: {
-    marginTop: 30,
-    fontSize: 13,
-    color: "#9ca3af",
-  },
-};

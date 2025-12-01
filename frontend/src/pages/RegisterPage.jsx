@@ -27,8 +27,6 @@ export default function RegisterPage() {
         email: form.email,
         password: form.password,
         sessionId,
-
-        // ✅ tạo địa chỉ đầy đủ mặc định
         addresses: [
           {
             fullName: form.fullName,
@@ -42,11 +40,9 @@ export default function RegisterPage() {
       };
 
       const { data } = await authService.register(payload);
-
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      toast.success("Đăng ký thành công!");
+      toast.success("🎉 Đăng ký thành công!");
       navigate("/");
     } catch (err) {
       toast.error(err.response?.data?.message || "Lỗi khi đăng ký");
@@ -54,108 +50,134 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: "100vh",
-      background: "linear-gradient(to right, #eff6ff, #f9fafb)",
-    }}>
-      <form onSubmit={handleSubmit} style={{
-        background: "white",
-        padding: "40px",
-        borderRadius: "12px",
-        boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
-        width: "100%",
-        maxWidth: "450px",
-      }}>
-        <h2 style={{
-          textAlign: "center",
-          color: "#2563eb",
-          fontWeight: "700",
-          marginBottom: "25px",
-        }}>
-          📝 Tạo tài khoản mới
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, #eff6ff 0%, #f9fafb 50%, #e0f2fe 100%)",
+        padding: "20px",
+      }}
+    >
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          background: "white",
+          padding: "45px 40px",
+          borderRadius: "16px",
+          boxShadow: "0 8px 25px rgba(0,0,0,0.12)",
+          width: "100%",
+          maxWidth: "460px",
+          transition: "all 0.3s ease",
+        }}
+      >
+        {/* --- Tiêu đề --- */}
+        <h2
+          style={{
+            textAlign: "center",
+            color: "#1d4ed8",
+            fontWeight: "800",
+            marginBottom: "25px",
+            letterSpacing: "0.3px",
+          }}
+        >
+          Đăng ký tài khoản
         </h2>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-          <input
-            type="text"
-            placeholder="Họ và tên"
-            value={form.fullName}
-            onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-            required
-          />
+        {/* --- Input form --- */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "15px",
+          }}
+        >
+          {[
+            { key: "fullName", placeholder: "Họ và tên" },
+            { key: "email", placeholder: "Email", type: "email" },
+            { key: "phone", placeholder: "Số điện thoại" },
+            { key: "city", placeholder: "Tỉnh / Thành phố" },
+            { key: "ward", placeholder: "Phường / Xã" },
+            { key: "street", placeholder: "Địa chỉ chi tiết (số nhà, đường...)" },
+            { key: "password", placeholder: "Mật khẩu", type: "password" },
+          ].map((f) => (
+            <input
+              key={f.key}
+              type={f.type || "text"}
+              placeholder={f.placeholder}
+              value={form[f.key]}
+              onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+              required={
+                ["ward", "street"].includes(f.key) ? false : true
+              }
+              style={{
+                padding: "12px 14px",
+                borderRadius: "8px",
+                border: "1.5px solid #d1d5db",
+                outline: "none",
+                fontSize: "15px",
+                transition: "0.2s ease",
+              }}
+              onFocus={(e) =>
+                (e.target.style.border = "1.5px solid #2563eb")
+              }
+              onBlur={(e) =>
+                (e.target.style.border = "1.5px solid #d1d5db")
+              }
+            />
+          ))}
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            required
-          />
-
-          <input
-            type="text"
-            placeholder="Số điện thoại"
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            required
-          />
-
-          <input
-            type="text"
-            placeholder="Tỉnh / Thành phố"
-            value={form.city}
-            onChange={(e) => setForm({ ...form, city: e.target.value })}
-            required
-          />
-
-          <input
-            type="text"
-            placeholder="Phường / Xã"
-            value={form.ward}
-            onChange={(e) => setForm({ ...form, ward: e.target.value })}
-          />
-
-          <input
-            type="text"
-            placeholder="Địa chỉ chi tiết (số nhà, đường...)"
-            value={form.street}
-            onChange={(e) => setForm({ ...form, street: e.target.value })}
-          />
-
-          <input
-            type="password"
-            placeholder="Mật khẩu"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required
-          />
-
-          <button type="submit" style={{
-            background: "#2563eb",
-            color: "white",
-            border: "none",
-            padding: "12px",
-            borderRadius: "8px",
-            fontSize: "16px",
-            cursor: "pointer",
-            fontWeight: "600",
-            marginTop: "10px",
-          }}>
+          {/* --- Nút đăng ký --- */}
+          <button
+            type="submit"
+            style={{
+              background:
+                "linear-gradient(90deg, #2563eb, #1d4ed8)",
+              color: "white",
+              border: "none",
+              padding: "13px",
+              borderRadius: "10px",
+              fontSize: "16px",
+              cursor: "pointer",
+              fontWeight: "600",
+              marginTop: "10px",
+              transition: "0.3s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.target.style.background =
+                "linear-gradient(90deg, #1e40af, #1d4ed8)")
+            }
+            onMouseLeave={(e) =>
+              (e.target.style.background =
+                "linear-gradient(90deg, #2563eb, #1d4ed8)")
+            }
+          >
             Đăng ký ngay
           </button>
         </div>
 
-        <p style={{
-          textAlign: "center",
-          marginTop: "20px",
-          fontSize: "14px",
-          color: "#6b7280",
-        }}>
+        {/* --- Link đăng nhập --- */}
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "22px",
+            fontSize: "14px",
+            color: "#6b7280",
+          }}
+        >
           Đã có tài khoản?{" "}
-          <Link to="/login" style={{ color: "#2563eb", fontWeight: 500 }}>
+          <Link
+            to="/login"
+            style={{
+              color: "#2563eb",
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+            onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
+            onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+          >
             Đăng nhập
           </Link>
         </p>

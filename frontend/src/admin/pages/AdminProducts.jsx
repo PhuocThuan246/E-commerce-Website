@@ -11,11 +11,11 @@ export default function AdminProducts() {
   const [form, setForm] = useState({
     name: "",
     category: "",
-    brand: "", // ✅ thêm brand vào form
+    brand: "",
     description: "",
-    image: "",
+    images: [],
   });
-  const [imagePreview, setImagePreview] = useState("");
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [editId, setEditId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -45,14 +45,23 @@ export default function AdminProducts() {
     e.preventDefault();
     if (!form.name || !form.category)
       return toast.warning("Vui lòng nhập tên và danh mục!");
+    if (form.images.length < 3)
+      return toast.warning("Cần tối thiểu 3 ảnh sản phẩm!");
+
+    // ✅ Kiểm tra độ dài mô tả (>=200 ký tự)
+    if (!form.description || form.description.trim().length < 200) {
+      toast.warning("Mô tả phải có ít nhất 200 ký tự để đảm bảo thông tin đầy đủ!");
+      return;
+    }
 
     try {
       const formData = new FormData();
       formData.append("name", form.name);
       formData.append("category", form.category);
-      formData.append("brand", form.brand); // ✅ gửi brand lên server
-      formData.append("description", form.description);
-      if (form.image instanceof File) formData.append("image", form.image);
+      formData.append("brand", form.brand);
+      formData.append("description", form.description.trim());
+
+      form.images.forEach((file) => formData.append("images", file));
 
       if (editId) {
         await adminProductService.update(editId, formData);
@@ -62,20 +71,24 @@ export default function AdminProducts() {
         toast.success("Đã thêm sản phẩm!");
       }
 
-      setForm({
-        name: "",
-        category: "",
-        brand: "",
-        description: "",
-        image: "",
-      });
-      setImagePreview("");
-      setEditId(null);
-      setShowForm(false);
+      resetForm();
       fetchData();
     } catch (err) {
       toast.error(err.response?.data?.message || "Lỗi khi lưu sản phẩm");
     }
+  };
+
+  const resetForm = () => {
+    setForm({
+      name: "",
+      category: "",
+      brand: "",
+      description: "",
+      images: [],
+    });
+    setImagePreviews([]);
+    setEditId(null);
+    setShowForm(false);
   };
 
   const handleDelete = async (id, name) => {
@@ -96,38 +109,31 @@ export default function AdminProducts() {
     setForm({
       name: product.name,
       category: product.category?._id || "",
-      brand: product.brand || "", // ✅ nạp lại brand khi edit
+      brand: product.brand || "",
       description: product.description || "",
-      image: product.image || "",
+      images: [],
     });
-    setImagePreview(`${SERVER_URL}${product.image}`);
+    const existingImgs = (product.images || [product.image]).filter(Boolean);
+    setImagePreviews(existingImgs.map((img) => `${SERVER_URL}${img}`));
     setEditId(product._id);
     setShowForm(true);
   };
 
-  const cancelEdit = () => {
-    setForm({ name: "", category: "", brand: "", description: "", image: "" });
-    setImagePreview("");
-    setEditId(null);
-    setShowForm(false);
-  };
-
   // ===============================
-  // XỬ LÝ ẢNH XEM TRƯỚC
+  // XỬ LÝ ẢNH
   // ===============================
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setForm({ ...form, image: file });
-    const previewURL = URL.createObjectURL(file);
-    setImagePreview(previewURL);
+  const handleImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length < 3) {
+      toast.warning("Cần chọn ít nhất 3 ảnh!");
+    }
+    setForm({ ...form, images: files });
+    setImagePreviews(files.map((f) => URL.createObjectURL(f)));
   };
 
   useEffect(() => {
-    return () => {
-      if (imagePreview) URL.revokeObjectURL(imagePreview);
-    };
-  }, [imagePreview]);
+    return () => imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+  }, [imagePreviews]);
 
   // ===============================
   // GIAO DIỆN
@@ -153,7 +159,6 @@ export default function AdminProducts() {
         {showForm ? "✖ Ẩn form" : "➕ Thêm sản phẩm"}
       </button>
 
-      {/* FORM */}
       {showForm && (
         <form
           onSubmit={handleSubmit}
@@ -168,7 +173,6 @@ export default function AdminProducts() {
             boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
           }}
         >
-          {/* TÊN SẢN PHẨM */}
           <input
             placeholder="Tên sản phẩm"
             value={form.name}
@@ -176,7 +180,6 @@ export default function AdminProducts() {
             style={{ padding: 10, borderRadius: 6, border: "1px solid #d1d5db" }}
           />
 
-          {/* DANH MỤC */}
           <select
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -190,7 +193,6 @@ export default function AdminProducts() {
             ))}
           </select>
 
-          {/* ✅ THƯƠNG HIỆU */}
           <input
             placeholder="Thương hiệu (VD: Apple, Samsung...)"
             value={form.brand}
@@ -198,33 +200,40 @@ export default function AdminProducts() {
             style={{ padding: 10, borderRadius: 6, border: "1px solid #d1d5db" }}
           />
 
-          {/* ẢNH */}
-          <input type="file" accept="image/*" onChange={handleImageChange} />
+          {/* ẢNH GALLERY */}
+          <input type="file" multiple accept="image/*" onChange={handleImagesChange} />
 
-          {/* ẢNH XEM TRƯỚC */}
-          {imagePreview && (
-            <div style={{ textAlign: "center", marginTop: 10 }}>
-              <p style={{ color: "#6b7280", fontSize: 14 }}>Ảnh xem trước:</p>
-              <img
-                src={imagePreview}
-                alt="Preview"
-                style={{
-                  width: 120,
-                  height: 120,
-                  borderRadius: 8,
-                  objectFit: "cover",
-                  border: "1px solid #d1d5db",
-                }}
-              />
+          {imagePreviews.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 10,
+                marginTop: 8,
+              }}
+            >
+              {imagePreviews.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`Preview ${i}`}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                    border: "1px solid #d1d5db",
+                  }}
+                />
+              ))}
             </div>
           )}
 
-          {/* MÔ TẢ */}
           <textarea
-            placeholder="Mô tả sản phẩm"
+            placeholder="Mô tả sản phẩm (ít nhất 200 ký tự)"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            rows={3}
+            rows={5}
             style={{
               padding: 10,
               borderRadius: 6,
@@ -233,7 +242,6 @@ export default function AdminProducts() {
             }}
           ></textarea>
 
-          {/* NÚT LƯU */}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
             <button
               type="submit"
@@ -252,7 +260,7 @@ export default function AdminProducts() {
             {editId && (
               <button
                 type="button"
-                onClick={cancelEdit}
+                onClick={resetForm}
                 style={{
                   background: "#9ca3af",
                   color: "white",
@@ -269,7 +277,7 @@ export default function AdminProducts() {
         </form>
       )}
 
-      {/* BẢNG SẢN PHẨM */}
+      {/* DANH SÁCH */}
       <div
         style={{
           background: "white",
@@ -301,25 +309,19 @@ export default function AdminProducts() {
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr
-                key={p._id}
-                style={{
-                  borderBottom: "1px solid #f3f4f6",
-                  transition: "0.2s",
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.background = "#f9fafb")
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.background = "transparent")
-                }
-              >
+              <tr key={p._id}>
                 <td style={{ padding: 10 }}>{p.name}</td>
                 <td style={{ padding: 10 }}>{p.category?.name}</td>
                 <td style={{ padding: 10 }}>{p.brand || "—"}</td>
                 <td style={{ padding: 10 }}>
                   <img
-                    src={p.image ? `${SERVER_URL}${p.image}` : "/no-image.png"}
+                    src={
+                      p.images?.[0]
+                        ? `${SERVER_URL}${p.images[0]}`
+                        : p.image
+                        ? `${SERVER_URL}${p.image}`
+                        : "/no-image.png"
+                    }
                     alt={p.name}
                     width={60}
                     height={60}
@@ -380,7 +382,6 @@ export default function AdminProducts() {
         </table>
       </div>
 
-      {/* MODAL BIẾN THỂ */}
       {selectedProduct && (
         <VariantModal
           product={selectedProduct}
@@ -389,7 +390,6 @@ export default function AdminProducts() {
         />
       )}
 
-      {/* MODAL XÓA */}
       {confirmDelete && (
         <div
           style={{
@@ -417,10 +417,9 @@ export default function AdminProducts() {
           >
             <h3 style={{ marginBottom: 10 }}>Xác nhận xóa</h3>
             <p style={{ marginBottom: 20 }}>
-              Bạn có chắc muốn xóa sản phẩm{" "}
+              Bạn có chắc muốn xóa{" "}
               <strong style={{ color: "#ef4444" }}>{confirmDelete.name}</strong>?
             </p>
-
             <div style={{ display: "flex", justifyContent: "space-around" }}>
               <button
                 onClick={() => setConfirmDelete(null)}

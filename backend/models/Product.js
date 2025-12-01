@@ -1,26 +1,22 @@
 const mongoose = require("mongoose");
 
 // ==============================
-// Schema cho biến thể (variants)
+// 🧩 Schema cho biến thể (variants)
 // ==============================
 const variantSchema = new mongoose.Schema({
-  name: String,
-  sku: String,
-  price: Number,
-  stock: Number,
+  name: { type: String, required: true, trim: true },
+  sku: { type: String, trim: true },
+  price: { type: Number, default: 0 },
+  stock: { type: Number, default: 0 },
   image: String,
 });
 
 // ==============================
-// Schema cho đánh giá (reviews)
+// ⭐ Schema cho đánh giá (reviews)
 // ==============================
 const reviewSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: false,
-    },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     name: String,
     rating: { type: Number, min: 0, max: 5, default: 0 },
     comment: String,
@@ -30,7 +26,7 @@ const reviewSchema = new mongoose.Schema(
 );
 
 // ==============================
-// Schema cho sản phẩm (products)
+// 📦 Schema cho sản phẩm (products)
 // ==============================
 const productSchema = new mongoose.Schema(
   {
@@ -40,17 +36,29 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    description: { type: String, required: true },
-    image: String,
-    images: [String],
 
-    // Thêm brand để lọc và hiển thị thương hiệu
-    brand: {
+    // ✅ Mô tả >=200 ký tự
+    description: {
       type: String,
+      required: true,
       trim: true,
-      default: "Unknown",
+      validate: {
+        validator: (v) => v && v.trim().length >= 200,
+        message: "Mô tả phải có ít nhất 200 ký tự.",
+      },
     },
 
+    // ✅ Ảnh chính & gallery
+    image: String,
+    images: {
+      type: [String],
+      validate: {
+        validator: (arr) => Array.isArray(arr) && arr.length >= 3,
+        message: "Cần ít nhất 3 ảnh minh họa cho sản phẩm.",
+      },
+    },
+
+    brand: { type: String, trim: true, default: "Unknown" },
     effectivePrice: { type: Number, default: 0 },
     variants: [variantSchema],
     reviews: [reviewSchema],
@@ -61,21 +69,21 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Index cho tìm kiếm & lọc nhanh
+// 🔍 Index cho tìm kiếm
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ brand: 1, effectivePrice: 1, ratingAverage: -1 });
 
-// Hàm tính giá đại diện
+// 🧮 Tính giá đại diện
 function calcEffectivePrice(doc) {
   if (doc.variants && doc.variants.length > 0) {
     const prices = doc.variants.map((v) => v.price || Infinity);
     const minPrice = Math.min(...prices);
-    return Number.isFinite(minPrice) ? minPrice : doc.price || 0;
+    return Number.isFinite(minPrice) ? minPrice : 0;
   }
-  return doc.price || 0;
+  return 0;
 }
 
-// Middleware: tính lại giá & rating trước khi save
+// ⚙️ Middleware: cập nhật giá & rating
 productSchema.pre("save", function (next) {
   this.effectivePrice = calcEffectivePrice(this);
 
@@ -90,23 +98,6 @@ productSchema.pre("save", function (next) {
 
   next();
 });
-
-productSchema.methods.updateAverageRating = async function () {
-  if (!this.reviews || this.reviews.length === 0) {
-    this.ratingAverage = 0;
-    this.ratingCount = 0;
-  } else {
-    const total = this.reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
-    this.ratingCount = this.reviews.length;
-    this.ratingAverage = Number((total / this.reviews.length).toFixed(1));
-  }
-  await this.save();
-};
-
-productSchema.methods.recalcEffectivePrice = async function () {
-  this.effectivePrice = calcEffectivePrice(this);
-  await this.save();
-};
 
 productSchema.set("toJSON", {
   transform: (_doc, ret) => {
