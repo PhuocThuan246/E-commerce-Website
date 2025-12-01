@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import productService from "../services/productService";
 import ProductCard from "../components/ProductCard";
 import CategoryTabs from "../components/CategoryTabs";
-import api from "../services/api"; // để gọi categories thật
+import api from "../services/api";
 
+// 🟥 Màu chủ đạo GearVN: đỏ đậm (#dc2626)
 export default function HomePage() {
   const [categories, setCategories] = useState([]);
   const [activeCat, setActiveCat] = useState("all");
@@ -12,14 +13,10 @@ export default function HomePage() {
   const [bestSellers, setBestSellers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Bộ lọc
+  // Bộ lọc đơn giản
   const [search, setSearch] = useState("");
-  const [brand, setBrand] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [rating, setRating] = useState("");
-
-  // Lấy danh mục từ DB
+  
+  // ======= LẤY DỮ LIỆU =======
   useEffect(() => {
     (async () => {
       try {
@@ -31,18 +28,17 @@ export default function HomePage() {
     })();
   }, []);
 
-  // Lấy sản phẩm mới + bán chạy
   useEffect(() => {
     (async () => {
       try {
         const [{ data: news }, { data: best }] = await Promise.all([
-          productService.getNew(3),
-          productService.getBestSellers(3),
+          productService.getNew(4),
+          productService.getBestSellers(4),
         ]);
         setNewProducts(news);
         setBestSellers(best);
       } catch (err) {
-        console.error("Lỗi khi tải New/Best:", err);
+        console.error("Lỗi khi tải sản phẩm:", err);
       }
     })();
   }, []);
@@ -65,175 +61,94 @@ export default function HomePage() {
     fetchByCat(activeCat);
   }, [activeCat]);
 
-  // Lọc dữ liệu theo tiêu chí
-  const filteredProducts = products.filter((p) => {
-    const nameMatch = p.name.toLowerCase().includes(search.toLowerCase());
-    const brandMatch = brand ? p.brand === brand : true;
-    const price = p.effectivePrice || (p.variants?.[0]?.effectivePrice ?? 0);
-    const priceMatch =
-      (!minPrice || price >= parseFloat(minPrice)) &&
-      (!maxPrice || price <= parseFloat(maxPrice));
-    const ratingMatch = rating ? p.rating >= parseInt(rating) : true;
+  const filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
 
-    return nameMatch && brandMatch && priceMatch && ratingMatch;
-  });
-
+  // ================== GIAO DIỆN ==================
   return (
-    <div style={{ display: "flex", padding: 24, gap: 16 }}>
-      {/* ✅ SIDEBAR DANH MỤC */}
-      <aside
+    <div style={{ background: "#f9fafb", minHeight: "100vh" }}>
+      {/* ===== Banner ===== */}
+      <div
         style={{
-          width: 230,
-          background: "#fff",
-          borderRadius: 10,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          padding: "10px 0",
-          height: "fit-content",
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: 16,
+          padding: "20px 40px",
         }}
       >
-        {categories.length > 0 ? (
-          categories.map((c) => (
-            <div
-              key={c._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "10px 16px",
-                cursor: "pointer",
-                transition: "0.2s",
-              }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.background = "#f3f4f6")
-              }
-              onMouseOut={(e) => (e.currentTarget.style.background = "white")}
-              onClick={() => setActiveCat(c._id)}
-            >
-              <span style={{ fontSize: 15 }}>{c.name}</span>
-              <span style={{ color: "#9ca3af" }}>›</span>
-            </div>
-          ))
-        ) : (
-          <p style={{ textAlign: "center", color: "#aaa" }}>Đang tải...</p>
-        )}
-      </aside>
-
-      {/* MAIN CONTENT */}
-      <div style={{ flex: 1 }}>
-        {/* Banner */}
-        <div
+        <img
+          src="/banners/banner1.jpg"
+          alt="Main Banner"
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 260px",
-            gap: 16,
-            marginBottom: 40,
+            width: "100%",
+            borderRadius: 10,
+            objectFit: "cover",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
           }}
-        >
+        />
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <img
-            src="/banners/main-banner.webp"
-            alt="Main Banner"
+            src="/banners/banner2.jpg"
+            alt="Side Banner 1"
             style={{
               width: "100%",
               borderRadius: 10,
               objectFit: "cover",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
             }}
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <img
-              src="/banners/side1.webp"
-              alt="Side Banner 1"
-              style={{ width: "100%", borderRadius: 10 }}
-            />
-            <img
-              src="/banners/side2.webp"
-              alt="Side Banner 2"
-              style={{ width: "100%", borderRadius: 10 }}
-            />
-          </div>
+          <img
+            src="/banners/banner3.jpg"
+            alt="Side Banner 2"
+            style={{
+              width: "100%",
+              borderRadius: 10,
+              objectFit: "cover",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+            }}
+          />
         </div>
+      </div>
 
-        {/* New products */}
-        <section style={{ marginBottom: 32 }}>
-          <h2 style={{ color: "#111827", marginBottom: 12 }}>✨ Sản phẩm mới</h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-            {newProducts.map((p) => (
-              <ProductCard key={p._id} product={p} />
-            ))}
-          </div>
-        </section>
+     
 
-        {/* Best Sellers */}
-        <section style={{ marginBottom: 32 }}>
-          <h2 style={{ color: "#111827", marginBottom: 12 }}>🔥 Bán chạy nhất</h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-            {bestSellers.map((p) => (
-              <ProductCard key={p._id} product={p} />
-            ))}
-          </div>
-        </section>
+      {/* ===== Sản phẩm mới ===== */}
+      <section className="section-container">
+        <h2 className="section-title">Sản phẩm mới</h2>
+        <div className="product-grid">
+          {newProducts.map((p) => (
+            <ProductCard key={p._id} product={p} />
+          ))}
+        </div>
+      </section>
 
-        {/* Lọc sản phẩm chính */}
-        <h2 style={{ textAlign: "center", marginTop: 10 }}>
-          🛍️ Danh sách sản phẩm
-        </h2>
+      {/* ===== Bán chạy ===== */}
+      <section className="section-container">
+        <h2 className="section-title">Bán chạy nhất</h2>
+        <div className="product-grid">
+          {bestSellers.map((p) => (
+            <ProductCard key={p._id} product={p} />
+          ))}
+        </div>
+      </section>
 
-        {/* Bộ lọc */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 12,
-            justifyContent: "center",
-            marginBottom: 20,
-          }}
-        >
+      {/* ===== Danh sách sản phẩm ===== */}
+      <section className="section-container">
+        <div className="filter-header">
+          <h2 className="section-title">Tất cả sản phẩm</h2>
           <input
             type="text"
-            placeholder="🔍 Tìm sản phẩm..."
+            placeholder="Tìm sản phẩm..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #ccc", width: "200px" }}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #d1d5db",
+              width: 220,
+            }}
           />
-
-          <select
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-            style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #ccc" }}
-          >
-            <option value="">Tất cả thương hiệu</option>
-            <option value="Apple">Apple</option>
-            <option value="Samsung">Samsung</option>
-            <option value="Xiaomi">Xiaomi</option>
-            <option value="Oppo">Oppo</option>
-          </select>
-
-          <div>
-            <input
-              type="number"
-              placeholder="Giá min"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              style={{ width: 90, padding: "6px", marginRight: 6 }}
-            />
-            <input
-              type="number"
-              placeholder="Giá max"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              style={{ width: 90, padding: "6px" }}
-            />
-          </div>
-
-          <select
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #ccc" }}
-          >
-            <option value="">Tất cả xếp hạng</option>
-            <option value="4">⭐ 4 sao trở lên</option>
-            <option value="3">⭐ 3 sao trở lên</option>
-            <option value="2">⭐ 2 sao trở lên</option>
-          </select>
         </div>
 
         <CategoryTabs active={activeCat} onChange={setActiveCat} />
@@ -241,20 +156,77 @@ export default function HomePage() {
         {loading ? (
           <p style={{ textAlign: "center" }}>Đang tải...</p>
         ) : (
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: 12,
-            }}
-          >
+          <div className="product-grid">
             {filteredProducts.map((p) => (
               <ProductCard key={p._id} product={p} />
             ))}
           </div>
         )}
-      </div>
+      </section>
+
+      {/* ===== CSS nội tuyến ===== */}
+      <style>
+        {`
+          .section-container {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+          }
+
+          .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #111827;
+            border-left: 5px solid #dc2626;
+            padding-left: 10px;
+          }
+
+          .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 16px;
+            justify-content: center;
+          }
+
+          .highlight-card {
+            background: white;
+            border-radius: 10px;
+            padding: 14px 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            font-weight: 600;
+            color: #dc2626;
+            cursor: pointer;
+            transition: 0.25s;
+          }
+          .highlight-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+          }
+
+          .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+          }
+
+          @media (max-width: 900px) {
+            .product-grid {
+              grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            .section-title {
+              font-size: 18px;
+            }
+            .highlight-card {
+              width: 45%;
+              text-align: center;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 }
