@@ -69,17 +69,25 @@ export default function ProductCard({ product }) {
       >
         <img
           src={
-            product.image
-              ? (product.image.startsWith("http")
-                  ? product.image
-                  : `${SERVER_URL}${product.image}`)
+            product.images && product.images.length > 0
+              ? (
+                  product.images[0].startsWith("http")
+                    ? product.images[0]
+                    : `${SERVER_URL}${product.images[0]}`
+                )
               : "/no-image.png"
           }
           alt={product.name}
           width="200"
           height="200"
           style={{ borderRadius: 8, objectFit: "cover" }}
+          onError={(e) => {
+            if (e.target.src !== "/no-image.png") {
+              e.target.src = "/no-image.png";  // chỉ fallback 1 lần → KHÔNG giật nữa
+            }
+          }}
         />
+
 
         <h3
           style={{

@@ -59,19 +59,21 @@ export default function ProfilePage() {
 }
 
 const title = {
-  fontSize: 22,
+  fontSize: 24,
   marginBottom: 20,
-  color: "#0f172a",
+  color: "#dc2626",
+  fontWeight: 700,
 };
 
 const card = {
   background: "white",
   padding: 26,
   borderRadius: 20,
-  boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
+  boxShadow: "0 12px 30px rgba(0,0,0,0.06)",
   display: "flex",
   flexDirection: "column",
   gap: 16,
+  border: "1px solid #fee2e2",
 };
 
 const input = {
@@ -83,11 +85,13 @@ const input = {
 };
 
 const btn = {
-  background: "linear-gradient(135deg,#0f172a,#334155)",
+  background: "linear-gradient(135deg,#dc2626,#b91c1c)",
   color: "white",
   padding: "14px",
   borderRadius: 14,
   border: "none",
   fontWeight: 600,
   cursor: "pointer",
+  marginTop: 10,
 };
+

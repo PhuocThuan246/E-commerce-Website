@@ -5,7 +5,7 @@ import productService from "../services/productService";
 import "../styles/searchPopup.css";
 import { SERVER_URL } from "../services/api";
 
-// 🖼️ Hàm build URL ảnh chuẩn (dùng cùng logic ProductDetail.jsx)
+// Hàm build URL ảnh chuẩn (dùng cùng logic ProductDetail.jsx)
 const buildImageUrl = (path) => {
   if (!path) return "/no-image.png";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
@@ -55,7 +55,7 @@ export default function Header() {
         const { data } = await productService.getAll();
         setAllProducts(data);
       } catch (err) {
-        console.error("❌ Lỗi khi tải sản phẩm:", err);
+        console.error("Lỗi khi tải sản phẩm:", err);
       }
     })();
   }, []);

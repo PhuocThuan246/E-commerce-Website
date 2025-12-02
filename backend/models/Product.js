@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // ==============================
-// 🧩 Schema cho biến thể (variants)
+// Schema cho biến thể (variants)
 // ==============================
 const variantSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
@@ -12,7 +12,7 @@ const variantSchema = new mongoose.Schema({
 });
 
 // ==============================
-// ⭐ Schema cho đánh giá (reviews)
+// Schema cho đánh giá (reviews)
 // ==============================
 const reviewSchema = new mongoose.Schema(
   {
@@ -26,7 +26,7 @@ const reviewSchema = new mongoose.Schema(
 );
 
 // ==============================
-// 📦 Schema cho sản phẩm (products)
+// Schema cho sản phẩm (products)
 // ==============================
 const productSchema = new mongoose.Schema(
   {
@@ -37,7 +37,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
-    // ✅ Mô tả >=200 ký tự
+    // Mô tả >=200 ký tự
     description: {
       type: String,
       required: true,
@@ -48,15 +48,21 @@ const productSchema = new mongoose.Schema(
       },
     },
 
-    // ✅ Ảnh chính & gallery
-    image: String,
+    // Ảnh chính & gallery
     images: {
       type: [String],
       validate: {
-        validator: (arr) => Array.isArray(arr) && arr.length >= 3,
+        validator: function (arr) {
+          // CHỈ VALIDATE KHI TẠO MỚI
+          if (this.isNew) {
+            return Array.isArray(arr) && arr.length >= 3;
+          }
+          return true; // UPDATE thì không kiểm tra nữa
+        },
         message: "Cần ít nhất 3 ảnh minh họa cho sản phẩm.",
       },
     },
+
 
     brand: { type: String, trim: true, default: "Unknown" },
     effectivePrice: { type: Number, default: 0 },
@@ -69,11 +75,11 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔍 Index cho tìm kiếm
+// Index cho tìm kiếm
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ brand: 1, effectivePrice: 1, ratingAverage: -1 });
 
-// 🧮 Tính giá đại diện
+// Tính giá đại diện
 function calcEffectivePrice(doc) {
   if (doc.variants && doc.variants.length > 0) {
     const prices = doc.variants.map((v) => v.price || Infinity);
@@ -83,7 +89,7 @@ function calcEffectivePrice(doc) {
   return 0;
 }
 
-// ⚙️ Middleware: cập nhật giá & rating
+// Middleware: cập nhật giá & rating
 productSchema.pre("save", function (next) {
   this.effectivePrice = calcEffectivePrice(this);
 

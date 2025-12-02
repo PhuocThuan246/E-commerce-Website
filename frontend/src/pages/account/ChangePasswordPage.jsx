@@ -30,7 +30,7 @@ export default function ChangePasswordPage() {
 
   return (
     <div style={card}>
-      <h2 style={title}>🔐 Đổi mật khẩu</h2>
+      <h2 style={title}>Đổi mật khẩu</h2>
 
       <input
         style={input}
@@ -68,16 +68,18 @@ const card = {
   background: "white",
   borderRadius: 20,
   padding: 26,
-  boxShadow: "0 15px 35px rgba(0,0,0,0.08)",
+  border: "1px solid #fee2e2",
+  boxShadow: "0 12px 30px rgba(0,0,0,0.06)",
   display: "flex",
   flexDirection: "column",
   gap: 16,
 };
 
 const title = {
-  fontSize: 20,
+  fontSize: 22,
+  marginBottom: 10,
   fontWeight: 700,
-  color: "#0f172a",
+  color: "#dc2626",
 };
 
 const input = {
@@ -89,7 +91,7 @@ const input = {
 };
 
 const btnDanger = {
-  background: "linear-gradient(135deg,#7f1d1d,#991b1b)",
+  background: "linear-gradient(135deg,#dc2626,#b91c1c)",
   color: "white",
   padding: "14px",
   borderRadius: 14,
@@ -97,3 +99,4 @@ const btnDanger = {
   fontWeight: 600,
   cursor: "pointer",
 };
+

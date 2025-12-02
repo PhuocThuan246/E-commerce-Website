@@ -3,16 +3,16 @@ const fs = require("fs");
 const path = require("path");
 
 // ==============================
-// 📂 Tạo thư mục uploads nếu chưa có
+// Tạo thư mục uploads nếu chưa có
 // ==============================
 const uploadDir = path.join(__dirname, "../public/uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
-  console.log("📁 Tạo thư mục:", uploadDir);
+  console.log("Tạo thư mục:", uploadDir);
 }
 
 // ==============================
-// ⚙️ Cấu hình lưu trữ
+// Cấu hình lưu trữ
 // ==============================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -26,19 +26,19 @@ const storage = multer.diskStorage({
 });
 
 // ==============================
-// 🧩 Bộ lọc loại file
+// Bộ lọc loại file
 // ==============================
 const fileFilter = (req, file, cb) => {
   const allowed = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
   if (allowed.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("❌ Chỉ chấp nhận file ảnh (jpg, png, webp)!"));
+    cb(new Error("Chỉ chấp nhận file ảnh (jpg, png, webp)!"));
   }
 };
 
 // ==============================
-// 🚀 Tạo instance Multer
+// Tạo instance Multer
 // ==============================
 const upload = multer({
   storage,
@@ -47,7 +47,7 @@ const upload = multer({
 });
 
 // ==============================
-// ✅ Cho phép cả 'image' và 'images'
+// Cho phép cả 'image' và 'images'
 // ==============================
 const multiUpload = upload.fields([
   { name: "image", maxCount: 1 },
@@ -55,7 +55,7 @@ const multiUpload = upload.fields([
 ]);
 
 // ==============================
-// 🧩 Xuất
+// Xuất
 // ==============================
 module.exports = {
   upload,

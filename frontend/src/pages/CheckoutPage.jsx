@@ -293,7 +293,12 @@ export default function CheckoutPage() {
             );
 
           const price = variant?.price || product.price;
-          const imageUrl = buildImageUrl(variant?.image || product.image);
+          // CHỈ dùng ảnh sản phẩm
+          const rawImage = product?.images?.[0] || null;
+
+          const imageUrl = buildImageUrl(rawImage);
+
+
 
           return (
             <div

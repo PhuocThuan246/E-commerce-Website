@@ -1,7 +1,8 @@
 const Product = require("../../models/Product");
-
+const fs = require("fs");
+const path = require("path");
 // ======================================================
-// 📦 LẤY TOÀN BỘ SẢN PHẨM
+// LẤY TOÀN BỘ SẢN PHẨM
 // ======================================================
 exports.getAll = async (req, res) => {
   try {
@@ -11,13 +12,13 @@ exports.getAll = async (req, res) => {
 
     res.json(products);
   } catch (err) {
-    console.error("❌ Lỗi khi lấy sản phẩm:", err);
+    console.error("Lỗi khi lấy sản phẩm:", err);
     res.status(500).json({ message: "Lỗi server khi lấy sản phẩm" });
   }
 };
 
 // ======================================================
-// ➕ THÊM SẢN PHẨM (nhiều ảnh, validate mô tả)
+// THÊM SẢN PHẨM (nhiều ảnh, validate mô tả)
 // ======================================================
 exports.create = async (req, res) => {
   try {
@@ -31,7 +32,7 @@ exports.create = async (req, res) => {
         .status(400)
         .json({ message: "Mô tả phải có ít nhất 200 ký tự!" });
 
-    // ✅ Xử lý ảnh từ multiUpload (hỗ trợ 'images' & 'image')
+    // Xử lý ảnh từ multiUpload (hỗ trợ 'images' & 'image')
     let images = [];
     if (req.files && (req.files.images || req.files.image)) {
       const arr = [];
@@ -53,9 +54,9 @@ exports.create = async (req, res) => {
     });
 
     await product.save();
-    res.status(201).json({ message: "✅ Đã thêm sản phẩm mới!", product });
+    res.status(201).json({ message: "Đã thêm sản phẩm mới!", product });
   } catch (err) {
-    console.error("❌ Lỗi khi thêm sản phẩm:", err);
+    console.error("Lỗi khi thêm sản phẩm:", err);
     res.status(500).json({
       message: "Lỗi server khi thêm sản phẩm",
       error: err.message,
@@ -64,7 +65,7 @@ exports.create = async (req, res) => {
 };
 
 // ======================================================
-// ✏️ CẬP NHẬT SẢN PHẨM
+// CẬP NHẬT SẢN PHẨM
 // ======================================================
 exports.update = async (req, res) => {
   try {
@@ -75,36 +76,44 @@ exports.update = async (req, res) => {
     if (!product)
       return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
 
-    if (description && description.trim().length < 200)
-      return res
-        .status(400)
-        .json({ message: "Mô tả phải có ít nhất 200 ký tự!" });
+    // 1. Cập nhật field text
+    if (name) product.name = name;
+    if (category) product.category = category;
+    if (brand) product.brand = brand.trim();
 
-    // ✅ Hỗ trợ multiUpload khi cập nhật
-    let images = [];
+    if (description) {
+      if (description.trim().length < 200) {
+        return res
+          .status(400)
+          .json({ message: "Mô tả phải có ít nhất 200 ký tự!" });
+      }
+      product.description = description.trim();
+    }
+
+    // 2. Xác định ảnh upload mới
+    let newImages = [];
+
     if (req.files && (req.files.images || req.files.image)) {
       const arr = [];
       if (req.files.images) arr.push(...req.files.images);
       if (req.files.image) arr.push(...req.files.image);
-      images = arr.map((f) => `/uploads/${f.filename}`);
-    } else {
-      images = product.images; // nếu không upload ảnh mới
+
+      newImages = arr.map((f) => `/uploads/${f.filename}`);
     }
 
-    if (!images || images.length < 3)
-      return res.status(400).json({ message: "Cần ít nhất 3 ảnh sản phẩm!" });
+    // 3. CHỈ thay ảnh nếu upload ảnh mới
+    if (newImages.length > 0) {
+      product.images = newImages;
+      product.image = newImages[0];
+    }
 
-    product.name = name || product.name;
-    product.category = category || product.category;
-    product.brand = brand?.trim() || product.brand;
-    product.description = description?.trim() || product.description;
-    product.images = images;
-    product.image = images[0];
+    // 4. Lưu (validateModifiedOnly TRUE)
+    await product.save({ validateModifiedOnly: true });
 
-    await product.save();
-    res.json({ message: "✅ Đã cập nhật sản phẩm!", product });
+    res.json({ message: "Đã cập nhật sản phẩm!", product });
+
   } catch (err) {
-    console.error("❌ Lỗi khi cập nhật sản phẩm:", err);
+    console.error("Lỗi khi cập nhật sản phẩm:", err);
     res.status(500).json({
       message: "Lỗi server khi cập nhật sản phẩm",
       error: err.message,
@@ -112,30 +121,74 @@ exports.update = async (req, res) => {
   }
 };
 
-// ======================================================
-// 🗑️ XÓA SẢN PHẨM
-// ======================================================
-exports.remove = async (req, res) => {
-  try {
-    const deleted = await Product.findByIdAndDelete(req.params.id);
-    if (!deleted)
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
 
-    res.json({ message: "🗑️ Đã xóa sản phẩm!", product: deleted });
-  } catch (err) {
-    console.error("❌ Lỗi khi xóa sản phẩm:", err);
-    res.status(500).json({
-      message: "Lỗi server khi xóa sản phẩm",
-      error: err.message,
-    });
-  }
-};
+
 
 // ======================================================
-// 🧩 QUẢN LÝ BIẾN THỂ (Variant)
+// XÓA SẢN PHẨM
+// ======================================================
+    exports.remove = async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product)
+        return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
+
+      const images = product.images || [];
+
+      // Xóa product khỏi DB
+      await Product.findByIdAndDelete(req.params.id);
+
+      // CHECK TỪNG ẢNH
+      for (let imgPath of images) {
+
+        // imgPath đang là: /uploads/xxxxx.jpg
+        // cần tách tên file thôi
+        const filename = imgPath.replace("/uploads/", "");
+
+        // Kiểm tra ảnh có được dùng ở sản phẩm khác không
+        const existsInOtherProduct = await Product.findOne({
+          images: imgPath  // DB lưu dạng /uploads/xxxxx.jpg -> giữ nguyên
+        });
+
+        if (existsInOtherProduct) {
+          console.log(`Ảnh ${filename} vẫn đang được dùng → KHÔNG xóa`);
+          continue;
+        }
+
+        // Đường dẫn file thực trên ổ đĩa
+        const filePath = path.join(__dirname, "../../public/uploads", filename);
+
+        console.log("Thử xóa:", filePath);
+
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.log(`Không thể xóa ảnh ${filename}:`, err.message);
+          } else {
+            console.log(`Đã xóa ảnh: ${filename}`);
+          }
+        });
+      }
+
+      res.json({
+        message: "Đã xóa sản phẩm! Ảnh dùng chung được giữ lại.",
+        product,
+      });
+
+    } catch (err) {
+      console.error("Lỗi khi xóa sản phẩm:", err);
+      res.status(500).json({
+        message: "Lỗi server khi xóa sản phẩm",
+        error: err.message,
+      });
+    }
+  };
+
+
+// ======================================================
+// QUẢN LÝ BIẾN THỂ (Variant)
 // ======================================================
 
-// ➕ Thêm biến thể mới
+// Thêm biến thể mới
 exports.addVariant = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,15 +203,16 @@ exports.addVariant = async (req, res) => {
       sku,
       price: Number(price) || 0,
       stock: Number(stock) || 0,
-      image: req.file ? `/uploads/${req.file.filename}` : "",
+      image: "", // không dùng ảnh cho biến thể
     };
 
     product.variants.push(newVariant);
     await product.save();
 
-    res.status(201).json({ message: "✅ Đã thêm biến thể mới!", product });
+    res.status(201).json(product.variants[product.variants.length - 1]);
+
   } catch (err) {
-    console.error("❌ Lỗi khi thêm biến thể:", err);
+    console.error("Lỗi khi thêm biến thể:", err);
     res.status(500).json({
       message: "Lỗi server khi thêm biến thể",
       error: err.message,
@@ -166,7 +220,7 @@ exports.addVariant = async (req, res) => {
   }
 };
 
-// ✏️ Cập nhật biến thể
+// Cập nhật biến thể
 exports.updateVariant = async (req, res) => {
   try {
     const { id, variantId } = req.params;
@@ -185,12 +239,10 @@ exports.updateVariant = async (req, res) => {
     variant.price = Number(price) || variant.price;
     variant.stock = Number(stock) || variant.stock;
 
-    if (req.file) variant.image = `/uploads/${req.file.filename}`;
-
     await product.save();
-    res.json({ message: "✅ Đã cập nhật biến thể!", product });
+    res.json(variant);
   } catch (err) {
-    console.error("❌ Lỗi khi cập nhật biến thể:", err);
+    console.error("Lỗi khi cập nhật biến thể:", err);
     res.status(500).json({
       message: "Lỗi server khi cập nhật biến thể",
       error: err.message,
@@ -198,7 +250,7 @@ exports.updateVariant = async (req, res) => {
   }
 };
 
-// 🗑️ Xóa biến thể
+// Xóa biến thể
 exports.removeVariant = async (req, res) => {
   try {
     const { id, variantId } = req.params;
@@ -211,9 +263,9 @@ exports.removeVariant = async (req, res) => {
     );
 
     await product.save();
-    res.json({ message: "🗑️ Đã xóa biến thể!", product });
+    res.json({ message: "Đã xóa biến thể!", product });
   } catch (err) {
-    console.error("❌ Lỗi khi xóa biến thể:", err);
+    console.error("Lỗi khi xóa biến thể:", err);
     res.status(500).json({
       message: "Lỗi server khi xóa biến thể",
       error: err.message,

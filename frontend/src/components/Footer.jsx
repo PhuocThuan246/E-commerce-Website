@@ -50,7 +50,7 @@ export default function Footer() {
           <ul>
             <li>Mua hàng: <a href="tel:19005301">1900.5301</a></li>
             <li>Bảo hành: <a href="tel:19005325">1900.5325</a></li>
-            <li>Khếu nại: <a href="tel:18006173">1800.6173</a></li>
+            <li>Khiếu nại: <a href="tel:18006173">1800.6173</a></li>
             <li>Email: <a href="mailto:cskh@eshop.com">cskh@eshop.com</a></li>
           </ul>
         </div>

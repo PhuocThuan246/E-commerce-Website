@@ -22,7 +22,7 @@ const getCatalogProducts = async (req, res) => {
     const pageSize = Math.min(60, Math.max(1, parseInt(limit)));
     const query = {};
 
-    // 🔍 Tìm kiếm theo tên hoặc mô tả
+    // Tìm kiếm theo tên hoặc mô tả
     if (search && search.trim()) {
       query.$or = [
         { name: { $regex: search.trim(), $options: "i" } },
@@ -30,13 +30,13 @@ const getCatalogProducts = async (req, res) => {
       ];
     }
 
-    // 🏷️ Lọc theo thương hiệu
+    // Lọc theo thương hiệu
     if (brand) {
       const brands = brand.split(",").map((b) => b.trim()).filter(Boolean);
       if (brands.length) query.brand = { $in: brands };
     }
 
-    // 💰 Lọc theo giá
+    // Lọc theo giá
     if (minPrice || maxPrice) {
       query.effectivePrice = {};
       if (!isNaN(minPrice) && minPrice !== "")
@@ -45,12 +45,12 @@ const getCatalogProducts = async (req, res) => {
         query.effectivePrice.$lte = Number(maxPrice);
     }
 
-    // ⭐ Lọc theo xếp hạng
+    // Lọc theo xếp hạng
     if (rating && !isNaN(rating)) {
       query.ratingAverage = { $gte: Number(rating) };
     }
 
-    // 🧭 Sắp xếp
+    // Sắp xếp
     let sortOption = {};
     switch (sort) {
       case "price_asc":
@@ -72,7 +72,7 @@ const getCatalogProducts = async (req, res) => {
         sortOption = { createdAt: -1 };
     }
 
-    // 📄 Truy vấn dữ liệu
+    // Truy vấn dữ liệu
     const [items, total] = await Promise.all([
       Product.find(query)
         .populate("category", "name")
@@ -85,7 +85,7 @@ const getCatalogProducts = async (req, res) => {
         .sort(sortOption)
         .skip((pageNum - 1) * pageSize)
         .limit(pageSize)
-        .select("name image brand effectivePrice ratingAverage category"),
+        .select("name images brand effectivePrice ratingAverage category"),
       Product.countDocuments(query),
     ]);
 
@@ -99,13 +99,13 @@ const getCatalogProducts = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("❌ Lỗi khi lọc sản phẩm:", err);
+    console.error("Lỗi khi lọc sản phẩm:", err);
     res.status(500).json({ message: "Lỗi server khi lọc sản phẩm" });
   }
 };
 
 // ================================
-// 🧩 API lấy danh sách brand + khoảng giá (min/max)
+// API lấy danh sách brand + khoảng giá (min/max)
 // ================================
 const getFilterMeta = async (req, res) => {
   try {
@@ -122,19 +122,19 @@ const getFilterMeta = async (req, res) => {
     ]);
     res.json(result[0] || { brands: [], minPrice: 0, maxPrice: 0 });
   } catch (err) {
-    console.error("❌ Lỗi khi lấy filter meta:", err);
+    console.error("Lỗi khi lấy filter meta:", err);
     res.status(500).json({ message: "Lỗi server khi lấy filter meta" });
   }
 };
 
 // ================================
-// 📦 Lấy toàn bộ sản phẩm (dùng cho trang chủ & admin)
+// Lấy toàn bộ sản phẩm (dùng cho trang chủ & admin)
 // ================================
 const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find()
       .populate("category", "name")
-      .select("name image description variants category effectivePrice brand ratingAverage");
+      .select("name images description variants category effectivePrice brand ratingAverage");
     res.json(products);
   } catch (err) {
     res.status(500).json({ message: "Lỗi server" });
@@ -142,7 +142,7 @@ const getAllProducts = async (req, res) => {
 };
 
 // ================================
-// 📦 Lấy sản phẩm theo danh mục cụ thể
+// Lấy sản phẩm theo danh mục cụ thể
 // ================================
 const getProductsByCategory = async (req, res) => {
   try {
@@ -163,7 +163,7 @@ const getProductsByCategory = async (req, res) => {
 };
 
 // ================================
-// 🔍 Lấy chi tiết sản phẩm
+// Lấy chi tiết sản phẩm
 // ================================
 const getProductById = async (req, res) => {
   try {
@@ -180,7 +180,7 @@ const getProductById = async (req, res) => {
 };
 
 // ================================
-// 🔄 Cập nhật tồn kho biến thể (giảm sau khi mua)
+// Cập nhật tồn kho biến thể (giảm sau khi mua)
 // ================================
 const updateVariantStock = async (req, res) => {
   try {
@@ -206,7 +206,7 @@ const updateVariantStock = async (req, res) => {
 };
 
 // ================================
-// 🆕 Sản phẩm mới nhất
+// Sản phẩm mới nhất
 // ================================
 const getNewProducts = async (req, res) => {
   try {
@@ -222,7 +222,7 @@ const getNewProducts = async (req, res) => {
 };
 
 // ================================
-// 🔥 Sản phẩm bán chạy nhất
+// Sản phẩm bán chạy nhất
 // ================================
 const getBestSellers = async (req, res) => {
   try {
@@ -246,7 +246,7 @@ const getBestSellers = async (req, res) => {
 };
 
 // ================================
-// 🏷️ Lấy danh sách thương hiệu theo danh mục
+// Lấy danh sách thương hiệu theo danh mục
 // ================================
 const getBrandsByCategory = async (req, res) => {
   try {
@@ -271,10 +271,10 @@ const getBrandsByCategory = async (req, res) => {
 };
 
 // ===================================================
-// 💬 Bình luận (KHÔNG yêu cầu đăng nhập) — Realtime
+// Bình luận (KHÔNG yêu cầu đăng nhập) — Realtime
 // ===================================================
-// 💬 Bình luận (KHÔNG yêu cầu đăng nhập)
-// ⛔ Nếu đã đăng nhập mà không chọn sao → không cho bình luận thuần.
+// Bình luận (KHÔNG yêu cầu đăng nhập)
+// Nếu đã đăng nhập mà không chọn sao → không cho bình luận thuần.
 const addComment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -284,7 +284,7 @@ const addComment = async (req, res) => {
       return res.status(400).json({ message: "Vui lòng nhập bình luận!" });
     }
 
-    // ✅ Nếu có Authorization header (tức là đã đăng nhập)
+    // Nếu có Authorization header (tức là đã đăng nhập)
     //    => Không cho gửi bình luận thuần, bắt buộc dùng /ratings
     const authHeader = req.headers.authorization || "";
     if (authHeader.startsWith("Bearer ")) {

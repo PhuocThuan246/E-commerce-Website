@@ -6,6 +6,7 @@ export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
+  const [search, setSearch] = useState("");   // <- NEW
 
   const [form, setForm] = useState({
     fullName: "",
@@ -26,6 +27,19 @@ export default function AdminUsers() {
   };
 
   useEffect(() => { fetchUsers(); }, []);
+
+  // ================= FILTER USERS (SEARCH) =================
+  const filteredUsers = users.filter(u => {
+    const defaultAddr = u.addresses?.find(a => a.isDefault);
+    const city = defaultAddr?.city || "";
+
+    const keyword = search.toLowerCase();
+    return (
+      u.fullName.toLowerCase().includes(keyword) ||
+      u.email.toLowerCase().includes(keyword) ||
+      city.toLowerCase().includes(keyword)
+    );
+  });
 
   // ================= START EDIT =================
   const startEdit = (u) => {
@@ -82,10 +96,27 @@ export default function AdminUsers() {
 
   return (
     <div style={{ padding: 30 }}>
-      <h2 style={{ marginBottom: 20 }}>👥 Danh sách người dùng ({users.length})</h2>
+      <h2 style={{ marginBottom: 20 }}>👥 Danh sách người dùng ({filteredUsers.length})</h2>
 
-      {users.length === 0 ? (
-        <p>Chưa có người dùng nào.</p>
+      {/* ================= SEARCH BAR ================= */}
+      <div style={{ marginBottom: 20 }}>
+        <input
+          type="text"
+          placeholder="Tìm theo tên, email, thành phố..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "10px 14px",
+            borderRadius: 8,
+            border: "1px solid #d1d5db",
+            fontSize: 15
+          }}
+        />
+      </div>
+
+      {filteredUsers.length === 0 ? (
+        <p>Không có người dùng phù hợp.</p>
       ) : (
         <table style={{
           width: "100%",
@@ -105,7 +136,7 @@ export default function AdminUsers() {
           </thead>
 
           <tbody>
-            {users.map((u) => {
+            {filteredUsers.map((u) => {
               const defaultAddr = u.addresses?.find(a => a.isDefault);
 
               return (

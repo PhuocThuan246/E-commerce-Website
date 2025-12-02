@@ -68,7 +68,7 @@ const getCart = async (req, res) => {
     // Luôn chỉ tìm theo sessionId cụ thể
     let cart = await Cart.findOne({ sessionId }).populate({
       path: "items.product",
-      select: "name image category variants",
+      select: "name images category variants",
     });
 
     if (!cart) {
@@ -102,7 +102,7 @@ const addToCart = async (req, res) => {
     let cart = await Cart.findOne({ sessionId });
     if (!cart) cart = await Cart.create({ sessionId, items: [] });
 
-    // ✅ Lấy thông tin sản phẩm & biến thể
+    // Lấy thông tin sản phẩm & biến thể
     const product = await Product.findById(productId);
     if (!product)
       return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
@@ -111,7 +111,7 @@ const addToCart = async (req, res) => {
     if (!variant)
       return res.status(404).json({ message: "Không tìm thấy biến thể" });
 
-    // ✅ Kiểm tra tồn kho (tổng số lượng sau khi cộng thêm không được vượt stock)
+    // Kiểm tra tồn kho (tổng số lượng sau khi cộng thêm không được vượt stock)
     const existingItem = cart.items.find(
       (item) =>
         item.product.toString() === productId && item.variantId === variantId
@@ -126,7 +126,7 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // ✅ Cập nhật hoặc thêm mới item trong giỏ
+    // Cập nhật hoặc thêm mới item trong giỏ
     if (existingItem) {
       existingItem.quantity = totalQty;
     } else {
@@ -138,7 +138,7 @@ const addToCart = async (req, res) => {
     // Populate lại product để tính summary
     const populated = await cart.populate({
       path: "items.product",
-      select: "name image category variants",
+      select: "name images category variants",
     });
 
     const formatted = formatCart(populated);
@@ -164,7 +164,7 @@ const updateQuantity = async (req, res) => {
     // Lấy giỏ hàng + populate product để có variants
     const cart = await Cart.findOne({ sessionId }).populate({
       path: "items.product",
-      select: "name image category variants",
+      select: "name images category variants",
     });
     if (!cart)
       return res.status(404).json({ message: "Không tìm thấy giỏ hàng" });
@@ -175,7 +175,7 @@ const updateQuantity = async (req, res) => {
         .status(404)
         .json({ message: "Không tìm thấy sản phẩm trong giỏ" });
 
-    // ✅ Kiểm tra tồn kho trước khi cập nhật
+    // Kiểm tra tồn kho trước khi cập nhật
     const product = item.product;
     const variant = product.variants.id(item.variantId);
     if (!variant)
@@ -193,13 +193,13 @@ const updateQuantity = async (req, res) => {
 
     const populated = await cart.populate({
       path: "items.product",
-      select: "name image category variants",
+      select: "name images category variants",
     });
 
     const formatted = formatCart(populated);
     res.json(formatted);
   } catch (error) {
-    console.error("🔥 Lỗi updateQuantity:", error);
+    console.error("Lỗi updateQuantity:", error);
     res.status(500).json({ message: "Lỗi khi cập nhật số lượng" });
   }
 };
@@ -215,7 +215,7 @@ const removeItem = async (req, res) => {
 
     const cart = await Cart.findOne({ sessionId }).populate({
       path: "items.product",
-      select: "name image category variants",
+      select: "name images category variants",
     });
     if (!cart)
       return res.status(404).json({ message: "Không tìm thấy giỏ hàng" });
@@ -232,7 +232,7 @@ const removeItem = async (req, res) => {
     const formatted = formatCart(populated);
     res.json(formatted);
   } catch (error) {
-    console.error("🔥 Lỗi removeItem:", error);
+    console.error("Lỗi removeItem:", error);
     res.status(500).json({ message: "Lỗi khi xóa sản phẩm" });
   }
 };
@@ -252,7 +252,7 @@ const clearCart = async (req, res) => {
     await cart.save();
     res.json({ message: "Đã xóa toàn bộ giỏ hàng" });
   } catch (error) {
-    console.error("🔥 Lỗi clearCart:", error);
+    console.error("Lỗi clearCart:", error);
     res.status(500).json({ message: "Lỗi khi xóa toàn bộ giỏ" });
   }
 };

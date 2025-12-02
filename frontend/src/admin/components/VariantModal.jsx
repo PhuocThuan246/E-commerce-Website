@@ -32,7 +32,6 @@ export default function VariantModal({ product, onClose, onRefresh }) {
       formData.append("sku", form.sku.trim());
       formData.append("price", parseDigits(form.price));
       formData.append("stock", parseDigits(form.stock));
-      if (form.image) formData.append("image", form.image); // gửi file thật
 
       let updatedVariant;
       if (editVariant) {
@@ -52,7 +51,7 @@ export default function VariantModal({ product, onClose, onRefresh }) {
           formData
         );
         updatedVariant = data;
-        setVariants((prev) => [...prev, data]);
+        setVariants((prev) => [...prev, data]);  // dữ liệu data đã đúng biến thể mới
         toast.success("Đã thêm biến thể mới");
       }
 
@@ -147,29 +146,12 @@ export default function VariantModal({ product, onClose, onRefresh }) {
                   alignItems: "center",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <img
-                    src={
-                      v.image
-                        ? `${SERVER_URL}${v.image}`
-                        : "/no-image.png"
-                    } // hiển thị đúng ảnh từ server
-                    alt={v.name}
-                    width={50}
-                    height={50}
-                    style={{ borderRadius: 6, border: "1px solid #e5e7eb" }}
-                  />
-                  <span>
-                    <strong>{v.name}</strong> —{" "}
-                    {Number(v.price).toLocaleString("vi-VN")} ₫ (
-                    {Number(v.stock)} tồn)
-                    {v.sku && (
-                      <span style={{ color: "#6b7280", marginLeft: 6 }}>
-                        — SKU: {v.sku}
-                      </span>
-                    )}
-                  </span>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <strong>{v.name}</strong>
+                  <span>{(Number(v.price) || 0).toLocaleString("vi-VN")} ₫ — {Number(v.stock) || 0} tồn kho</span>
+                  {v.sku && <span style={{ color: "#6b7280" }}>SKU: {v.sku}</span>}
                 </div>
+
                 <div>
                   <button
                     onClick={() => handleEdit(v)}
@@ -245,33 +227,6 @@ export default function VariantModal({ product, onClose, onRefresh }) {
               setForm({ ...form, stock: e.target.value.replace(/[^\d]/g, "") })
             }
           />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
-          />
-
-          {/* Ảnh preview */}
-          {(form.image || form.oldImage) && (
-            <div style={{ textAlign: "center", marginTop: 6 }}>
-              <img
-                src={
-                  form.image
-                    ? URL.createObjectURL(form.image) // ảnh mới đang chọn
-                    : `${SERVER_URL}${form.oldImage}` // ảnh cũ đang có
-                }
-                alt="Preview"
-                width={100}
-                height={100}
-                style={{
-                  borderRadius: 8,
-                  border: "1px solid #d1d5db",
-                  objectFit: "cover",
-                }}
-              />
-              <p style={{ fontSize: 12, color: "#6b7280" }}>Ảnh xem trước</p>
-            </div>
-          )}
 
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <button

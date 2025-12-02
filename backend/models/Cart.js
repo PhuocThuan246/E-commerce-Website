@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // ================================
-// 📌 Schema của từng item trong giỏ hàng
+// Schema của từng item trong giỏ hàng
 //   - product: ID sản phẩm
 //   - variantId: mỗi product có nhiều biến thể → lưu ID biến thể
 //   - quantity: số lượng mua
@@ -24,7 +24,7 @@ const cartItemSchema = new mongoose.Schema({
 });
 
 // ================================
-// 📌 Cart Schema
+// Cart Schema
 //   - userId: nếu user đăng nhập
 //   - sessionId: nếu user chưa đăng nhập (guest)
 //   - items: danh sách sản phẩm trong giỏ

@@ -91,10 +91,19 @@ exports.advancedDashboard = async (req, res) => {
     switch (type) {
       case "week":
         groupId = {
-          year: { $year: "$createdAt" },
-          week: { $week: "$createdAt" }
+          year: { $isoWeekYear: "$createdAt" },
+          week: { $isoWeek: "$createdAt" }
+        };
+        // CHỈ LẤY TUẦN CỦA NĂM HIỆN TẠI
+        dateFilter = {
+          ...dateFilter,
+          createdAt: {
+            ...(dateFilter.createdAt || {}),
+            $gte: new Date(new Date().getFullYear(), 0, 1)
+          }
         };
         break;
+
 
       case "month":
         groupId = {

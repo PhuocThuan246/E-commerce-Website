@@ -20,6 +20,19 @@ export default function AdminProducts() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [search, setSearch] = useState("");
+
+  // ===============================
+  // FILTER PRODUCTS (SEARCH)
+  // ===============================
+  const filteredProducts = products.filter((p) => {
+    const keyword = search.toLowerCase();
+    return (
+      p.name.toLowerCase().includes(keyword) ||
+      (p.brand || "").toLowerCase().includes(keyword) ||
+      (p.category?.name || "").toLowerCase().includes(keyword)
+    );
+  });
 
   const fetchData = async () => {
     try {
@@ -48,7 +61,7 @@ export default function AdminProducts() {
     if (form.images.length < 3)
       return toast.warning("Cần tối thiểu 3 ảnh sản phẩm!");
 
-    // ✅ Kiểm tra độ dài mô tả (>=200 ký tự)
+    // Kiểm tra độ dài mô tả (>=200 ký tự)
     if (!form.description || form.description.trim().length < 200) {
       toast.warning("Mô tả phải có ít nhất 200 ký tự để đảm bảo thông tin đầy đủ!");
       return;
@@ -141,7 +154,21 @@ export default function AdminProducts() {
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto" }}>
       <h2 style={{ marginBottom: 24, color: "#111827" }}>📦 Quản lý sản phẩm</h2>
-
+      {/* ================= SEARCH BAR ================= */}
+      <input
+        type="text"
+        placeholder="Tìm sản phẩm theo tên, thương hiệu, danh mục..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "10px 14px",
+          borderRadius: 8,
+          border: "1px solid #d1d5db",
+          marginBottom: 20,
+          fontSize: 15,
+        }}
+      />
       <button
         onClick={() => setShowForm(!showForm)}
         style={{
@@ -308,7 +335,7 @@ export default function AdminProducts() {
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
+            {filteredProducts.map((p) => (
               <tr key={p._id}>
                 <td style={{ padding: 10 }}>{p.name}</td>
                 <td style={{ padding: 10 }}>{p.category?.name}</td>

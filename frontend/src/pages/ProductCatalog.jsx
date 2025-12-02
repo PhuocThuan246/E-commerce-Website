@@ -20,7 +20,7 @@ export default function ProductCatalog() {
 
   const [brandOptions, setBrandOptions] = useState([]);
 
-  // ✅ Lấy toàn bộ sản phẩm từ DB
+  // Lấy toàn bộ sản phẩm từ DB
   useEffect(() => {
     (async () => {
       try {
@@ -32,14 +32,14 @@ export default function ProductCatalog() {
         ];
         setBrandOptions(uniqueBrands);
       } catch (err) {
-        console.error("❌ Lỗi khi tải sản phẩm:", err);
+        console.error("Lỗi khi tải sản phẩm:", err);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
-  // ✅ Lọc dữ liệu realtime
+  // Lọc dữ liệu realtime
   const filteredProducts = products
     .filter((p) => {
       const nameMatch = p.name.toLowerCase().includes(search.toLowerCase());
@@ -48,7 +48,7 @@ export default function ProductCatalog() {
       const priceMatch =
         (!minPrice || price >= parseFloat(minPrice)) &&
         (!maxPrice || price <= parseFloat(maxPrice));
-      // ⭐ Lọc theo số sao trung bình
+      // Lọc theo số sao trung bình
       const ratingMatch = rating ? (p.ratingAverage || 0) >= parseFloat(rating) : true;
       return nameMatch && brandMatch && priceMatch && ratingMatch;
     })
@@ -67,7 +67,7 @@ export default function ProductCatalog() {
       }
     });
 
-  // ✅ Phân trang client-side
+  // Phân trang client-side
   const totalPages = Math.ceil(filteredProducts.length / limit);
   const startIndex = (page - 1) * limit;
   const currentPageProducts = filteredProducts.slice(
@@ -119,7 +119,7 @@ export default function ProductCatalog() {
           }}
         />
 
-        {/* ✅ Lọc thương hiệu */}
+        {/* Lọc thương hiệu */}
         <select
           value={brand}
           onChange={(e) => setBrand(e.target.value)}
@@ -146,7 +146,7 @@ export default function ProductCatalog() {
           )}
         </select>
 
-        {/* 💰 Giá */}
+        {/* Giá */}
         <div>
           <input
             type="number"
@@ -164,7 +164,7 @@ export default function ProductCatalog() {
           />
         </div>
 
-        {/* ⭐ Lọc theo sao */}
+        {/* Lọc theo sao */}
         <select
           value={rating}
           onChange={(e) => setRating(e.target.value)}
@@ -182,7 +182,7 @@ export default function ProductCatalog() {
           <option value="1">⭐ 1 sao trở lên</option>
         </select>
 
-        {/* 🔽 Sắp xếp */}
+        {/* Sắp xếp */}
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
@@ -206,13 +206,17 @@ export default function ProductCatalog() {
       {loading ? (
         <p style={{ textAlign: "center" }}>Đang tải...</p>
       ) : currentPageProducts.length > 0 ? (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
-            gap: 16,
-          }}
-        >
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gap: 22,                    // khoảng cách sản phẩm
+          paddingLeft: 8,
+          paddingRight: 8,
+          alignItems: "stretch"
+        }}
+      >
+
           {currentPageProducts.map((p) => (
             <ProductCard key={p._id} product={p} />
           ))}
@@ -221,7 +225,7 @@ export default function ProductCatalog() {
         <p style={{ textAlign: "center" }}>Không tìm thấy sản phẩm nào.</p>
       )}
 
-      {/* ✅ Phân trang client-side */}
+      {/* Phân trang client-side */}
       {totalPages > 1 && (
         <div
           style={{

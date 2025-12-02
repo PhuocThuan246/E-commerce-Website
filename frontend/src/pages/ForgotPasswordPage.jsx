@@ -26,7 +26,8 @@ export default function ForgotPasswordPage() {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        background: "linear-gradient(to right, #eff6ff, #f9fafb)",
+        background: "#ffffff",              // NỀN TRẮNG
+        padding: "20px",
       }}
     >
       <form
@@ -34,21 +35,26 @@ export default function ForgotPasswordPage() {
         style={{
           background: "white",
           padding: "40px",
-          borderRadius: "12px",
+          borderRadius: "14px",
           boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
           width: "100%",
-          maxWidth: "400px",
+          maxWidth: "420px",
         }}
       >
-        <h2 style={{
-          textAlign: "center",
-          color: "#2563eb",
-          fontWeight: "700",
-          marginBottom: "25px",
-        }}>
-          🔑 Quên mật khẩu
+        {/* ==== TIÊU ĐỀ (đỏ đồng bộ header) ==== */}
+        <h2
+          style={{
+            textAlign: "center",
+            color: "#dc2626",          // MÀU ĐỎ HEADER
+            fontWeight: 700,
+            marginBottom: 25,
+            fontSize: 24,
+          }}
+        >
+          Quên mật khẩu
         </h2>
 
+        {/* ==== INPUT ==== */}
         <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
           <input
             type="email"
@@ -57,17 +63,22 @@ export default function ForgotPasswordPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             style={{
-              padding: "10px",
+              padding: "12px 14px",
               border: "1px solid #d1d5db",
-              borderRadius: "6px",
+              borderRadius: "8px",
               fontSize: "15px",
+              outline: "none",
+              transition: "0.2s ease",
             }}
+            onFocus={(e) => (e.target.style.border = "1px solid #2563eb")}
+            onBlur={(e) => (e.target.style.border = "1px solid #d1d5db")}
           />
 
+          {/* ==== BUTTON ==== */}
           <button
             type="submit"
             style={{
-              background: "#2563eb",
+              background: "#dc2626",              // 🔴 MÀU ĐỎ CHÍNH
               color: "white",
               border: "none",
               padding: "12px",
@@ -75,20 +86,36 @@ export default function ForgotPasswordPage() {
               fontSize: "16px",
               cursor: "pointer",
               fontWeight: "600",
+              transition: "0.25s",
             }}
+            onMouseOver={(e) => (e.target.style.background = "#b91c1c")} // 🔴 ĐỎ ĐẬM
+            onMouseOut={(e) => (e.target.style.background = "#dc2626")}
           >
             Gửi mã OTP
           </button>
+
         </div>
 
-        <p style={{
-          textAlign: "center",
-          marginTop: "20px",
-          fontSize: "14px",
-          color: "#6b7280",
-        }}>
+        {/* ==== LINK TRỞ LẠI ==== */}
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "20px",
+            fontSize: "14px",
+            color: "#6b7280",
+          }}
+        >
           Nhớ mật khẩu rồi?{" "}
-          <Link to="/login" style={{ color: "#2563eb", fontWeight: 500 }}>
+          <Link
+            to="/login"
+            style={{
+              color: "#dc2626",
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+            onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
+            onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+          >
             Đăng nhập
           </Link>
         </p>

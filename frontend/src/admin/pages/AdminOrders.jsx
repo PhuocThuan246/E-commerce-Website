@@ -1,32 +1,25 @@
 import React, { useEffect, useState } from "react";
 import adminOrderService from "../services/adminOrderService";
+import ConfirmModal from "../components/ConfirmModal";
+
+/* ===================== CONSTANTS ====================== */
 
 const STATUS_OPTIONS = ["pending", "confirmed", "shipping", "delivered"];
+
+
 const STATUS_LABELS = {
   pending: "Chờ xác nhận",
   confirmed: "Đã xác nhận",
   shipping: "Đang giao hàng",
   delivered: "Đã giao thành công",
 };
-const STATUS_STYLES = {
-  pending: {
-    background: "#FEF3C7",
-    color: "#92400E",
-  },
-  confirmed: {
-    background: "#DBEAFE",
-    color: "#1E40AF",
-  },
-  shipping: {
-    background: "#E0F2FE",
-    color: "#075985",
-  },
-  delivered: {
-    background: "#DCFCE7",
-    color: "#166534",
-  },
-};
 
+const STATUS_STYLES = {
+  pending: { background: "#fff7e6", color: "#b46905" },
+  confirmed: { background: "#e8f0ff", color: "#1d4ed8" },
+  shipping: { background: "#e0faff", color: "#0369a1" },
+  delivered: { background: "#e6ffee", color: "#166534" },
+};
 
 const FILTERS = [
   { key: "all", label: "Tất cả" },
@@ -37,7 +30,11 @@ const FILTERS = [
   { key: "range", label: "Khoảng ngày" },
 ];
 
+/* ================================================= */
+
 export default function AdminOrders() {
+  /* ===== STATE ===== */
+  const [search, setSearch] = useState("");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,23 +48,20 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
 
-  // ============================
-  // Load danh sách đơn
-  // ============================
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState(null);
+
+  /* ===== LOAD ORDERS ===== */
   useEffect(() => {
     fetchOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filter, startDate, endDate]);
 
   async function fetchOrders() {
     try {
       setLoading(true);
-
       const params = { page, limit: 20 };
 
-      if (filter !== "all" && filter !== "range") {
-        params.filter = filter;
-      }
+      if (filter !== "all" && filter !== "range") params.filter = filter;
       if (filter === "range" && startDate && endDate) {
         params.filter = "range";
         params.start = startDate;
@@ -77,82 +71,107 @@ export default function AdminOrders() {
       const { data } = await adminOrderService.getAll(params);
       setOrders(data.orders || []);
       setTotalPages(data.pagination?.totalPages || 1);
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi khi tải danh sách đơn hàng!");
+    } catch {
+      alert("Không thể tải danh sách đơn hàng.");
     } finally {
       setLoading(false);
     }
   }
 
-  // ============================
-  // Xem chi tiết đơn
-  // ============================
+  /* ===== VIEW DETAIL ===== */
   async function handleViewDetail(orderId) {
     try {
       const { data } = await adminOrderService.getById(orderId);
       setSelectedOrder(data);
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi khi tải chi tiết đơn hàng!");
+    } catch {
+      alert("Không thể tải chi tiết đơn!");
     }
   }
 
-  // ============================
-  // Đổi trạng thái đơn
-  // ============================
-  async function handleChangeStatus(newStatus) {
+  /* ===== OPEN CONFIRM POPUP ===== */
+  function handleChangeStatus(newStatus) {
     if (!selectedOrder) return;
+    setPendingStatus(newStatus);
+    setShowConfirm(true);
+  }
 
-    if (!window.confirm("Xác nhận đổi trạng thái đơn hàng?")) return;
-
+  /* ===== CONFIRMED UPDATE ===== */
+  async function doUpdateStatus() {
     try {
       setStatusUpdating(true);
+
       const { data } = await adminOrderService.updateStatus(
         selectedOrder._id,
-        newStatus
+        pendingStatus
       );
 
-      // cập nhật chi tiết
       setSelectedOrder(data);
-
-      // cập nhật list
       setOrders((prev) =>
-        prev.map((o) => (o._id === data._id ? { ...o, status: data.status } : o))
+        prev.map((o) =>
+          o._id === data._id ? { ...o, status: data.status } : o
+        )
       );
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi khi cập nhật trạng thái đơn!");
+    } catch {
+      alert("Không thể cập nhật trạng thái!");
     } finally {
       setStatusUpdating(false);
+      setShowConfirm(false);
     }
   }
 
-  function formatMoney(v) {
-    if (v == null) return "0 ₫";
-    return `${Number(v).toLocaleString("vi-VN")} ₫`;
-  }
+    /* ===== FORMAT MONEY ===== */
+    const formatMoney = (v) =>
+      `${Number(v).toLocaleString("vi-VN")} ₫`;
 
-  const isRange = filter === "range";
+    const isRange = filter === "range";
 
-  if (loading && orders.length === 0)
-    return <p style={{ textAlign: "center" }}>Đang tải...</p>;
+    if (loading && orders.length === 0)
+      return <p style={{ textAlign: "center", marginTop: 40 }}>Đang tải...</p>;
+    const filteredOrders = orders.filter((o) => {
+    const keyword = search.toLowerCase();
+
+    return (
+      o._id.toLowerCase().includes(keyword) ||
+      (o.customer?.name || "").toLowerCase().includes(keyword) ||
+      (o.customer?.email || "").toLowerCase().includes(keyword) ||
+      (o.customer?.phone || "").toLowerCase().includes(keyword)
+    );
+  });
+
+  /* =========================================================== */
+  /* ========================= UI ============================== */
+  /* =========================================================== */
 
   return (
-    <div style={{ padding: 24 }}>
-      <h2 style={{ marginBottom: 16, color: "#111827" }}>📦 Quản lý đơn hàng</h2>
+    <div style={styles.container}>
+      <h2 style={styles.pageTitle}>📦 Quản lý đơn hàng</h2>
+      <input
+          type="text"
+          placeholder="Tìm theo mã đơn, tên khách, email, số điện thoại..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "10px 14px",
+            borderRadius: 8,
+            border: "1px solid #d1d5db",
+            marginBottom: 20,
+            fontSize: 15,
+          }}
+        />
 
-      {/* Bộ lọc */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 8,
-          marginBottom: 16,
-          alignItems: "center",
-        }}
-      >
-        <span style={{ fontWeight: 600 }}>Lọc theo thời gian:</span>
+      {/* Confirm Modal */}
+      <ConfirmModal
+        show={showConfirm}
+        message="Bạn có chắc muốn đổi trạng thái đơn hàng?"
+        onConfirm={doUpdateStatus}
+        onCancel={() => setShowConfirm(false)}
+      />
+
+      {/* FILTER BAR */}
+      <div style={styles.filterBar}>
+        <span style={styles.filterLabel}>Lọc theo thời gian:</span>
+
         {FILTERS.map((f) => (
           <button
             key={f.key}
@@ -161,13 +180,8 @@ export default function AdminOrders() {
               setPage(1);
             }}
             style={{
-              padding: "6px 12px",
-              borderRadius: 999,
-              border: "1px solid #e5e7eb",
-              backgroundColor: filter === f.key ? "#111827" : "#fff",
-              color: filter === f.key ? "#fff" : "#111827",
-              cursor: "pointer",
-              fontSize: 13,
+              ...styles.filterBtn,
+              ...(filter === f.key ? styles.filterBtnActive : {}),
             }}
           >
             {f.label}
@@ -175,172 +189,135 @@ export default function AdminOrders() {
         ))}
 
         {isRange && (
-          <>
+          <div style={styles.dateRow}>
             <input
               type="date"
               value={startDate}
-              onChange={(e) => {
-                setStartDate(e.target.value);
-                setPage(1);
-              }}
-              style={dateInput}
+              onChange={(e) => setStartDate(e.target.value)}
+              style={styles.dateInput}
             />
-            <span>→</span>
+            <span style={{ margin: "0 4px" }}>→</span>
             <input
               type="date"
               value={endDate}
-              onChange={(e) => {
-                setEndDate(e.target.value);
-                setPage(1);
-              }}
-              style={dateInput}
+              onChange={(e) => setEndDate(e.target.value)}
+              style={styles.dateInput}
             />
-          </>
+          </div>
         )}
       </div>
 
-      {/* Bảng đơn hàng */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1.5fr",
-          gap: 24,
-          alignItems: "flex-start",
-        }}
-      >
+      {/* MAIN LAYOUT */}
+      <div style={styles.mainGrid}>
+        {/* LEFT TABLE */}
         <div>
-          {orders.length === 0 ? (
-            <p>Không có đơn hàng nào.</p>
-          ) : (
-            <>
-              <table style={table}>
-                <thead style={{ background: "#f3f4f6" }}>
-                  <tr>
-                    <th style={th}>Mã đơn</th>
-                    <th style={th}>Khách hàng</th>
-                    <th style={th}>Tổng tiền</th>
-                    <th style={th}>Trạng thái</th>
-                    <th style={th}>Ngày đặt</th>
-                    <th style={th}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((o) => (
-                    <tr key={o._id}>
-                      <td style={td}>#{o._id.slice(-6).toUpperCase()}</td>
-                      <td style={td}>
-                        <div style={{ fontWeight: 600 }}>
-                          {o.customer?.name || "Khách vãng lai"}
-                        </div>
-                        <div style={{ fontSize: 12, color: "#6b7280" }}>
-                          {o.customer?.email}
-                          <br />
-                          {o.customer?.phone}
-                        </div>
-                      </td>
-                      <td style={{ ...td, color: "#dc2626", fontWeight: 600 }}>
-                        {formatMoney(o.total)}
-                      </td>
-                      <td style={td}>
-                      <span
-                        style={{
-                          padding: "6px 12px",
-                          borderRadius: 999,
-                          fontSize: 12,
-                          fontWeight: 600,
-                          background: STATUS_STYLES[o.status]?.background,
-                          color: STATUS_STYLES[o.status]?.color,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {STATUS_LABELS[o.status] || o.status}
-                      </span>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Mã đơn</th>
+                <th style={styles.th}>Khách hàng</th>
+                <th style={styles.th}>Tổng tiền</th>
+                <th style={styles.th}>Trạng thái</th>
+                <th style={styles.th}>Ngày đặt</th>
+                <th style={styles.th}></th>
+              </tr>
+            </thead>
 
-                      </td>
-                      <td style={td}>
-                        {new Date(o.createdAt).toLocaleString("vi-VN")}
-                      </td>
-                      <td style={td}>
-                        <button
-                          onClick={() => handleViewDetail(o._id)}
-                          style={detailBtn}
-                        >
-                          Chi tiết
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <tbody>
+              {filteredOrders.map((o) => (
+                <tr key={o._id}>
+                  <td style={styles.td}>#{o._id.slice(-6).toUpperCase()}</td>
 
-              {/* Pagination */}
-              <div
-                style={{
-                  marginTop: 12,
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: 8,
-                  alignItems: "center",
-                }}
-              >
-                <button
-                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                  disabled={page <= 1}
-                  style={pageBtn}
-                >
-                  ◀
-                </button>
-                <span style={{ fontSize: 13 }}>
-                  Trang {page} / {totalPages}
-                </span>
-                <button
-                  onClick={() =>
-                    setPage((p) => (p < totalPages ? p + 1 : p))
-                  }
-                  disabled={page >= totalPages}
-                  style={pageBtn}
-                >
-                  ▶
-                </button>
-              </div>
-            </>
-          )}
+                  <td style={styles.td}>
+                    <div style={{ fontWeight: 600 }}>
+                      {o.customer?.name || "Khách vãng lai"}
+                    </div>
+                    <div style={styles.textMuted}>
+                      {o.customer?.email}
+                      <br />
+                      {o.customer?.phone}
+                    </div>
+                  </td>
+
+                  <td style={{ ...styles.td, color: "#dc2626" }}>
+                    <b>{formatMoney(o.total)}</b>
+                  </td>
+
+                  <td style={styles.td}>
+                    <span
+                      style={{
+                        ...styles.statusTag,
+                        background: STATUS_STYLES[o.status].background,
+                        color: STATUS_STYLES[o.status].color,
+                      }}
+                    >
+                      {STATUS_LABELS[o.status]}
+                    </span>
+                  </td>
+
+                  <td style={styles.td}>
+                    {new Date(o.createdAt).toLocaleString("vi-VN")}
+                  </td>
+
+                  <td style={styles.td}>
+                    <button
+                      onClick={() => handleViewDetail(o._id)}
+                      style={styles.viewBtn}
+                    >
+                      Chi tiết
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          <div style={styles.pagination}>
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              style={styles.pageBtn}
+              disabled={page <= 1}
+            >
+              ◀
+            </button>
+            <span style={styles.pageInfo}>
+              Trang {page} / {totalPages}
+            </span>
+            <button
+              onClick={() => setPage((p) => (p < totalPages ? p + 1 : p))}
+              style={styles.pageBtn}
+              disabled={page >= totalPages}
+            >
+              ▶
+            </button>
+          </div>
         </div>
 
-        {/* Panel chi tiết đơn */}
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: 8,
-            border: "1px solid #e5e7eb",
-            padding: 16,
-            minHeight: 200,
-          }}
-        >
-          <h3 style={{ marginBottom: 8, fontSize: 16, fontWeight: 600 }}>
-            Chi tiết đơn hàng
-          </h3>
-
+        {/* RIGHT DETAIL PANEL */}
+        <div style={styles.detailCard}>
           {!selectedOrder ? (
-            <p style={{ fontSize: 13, color: "#6b7280" }}>
-              Chọn một đơn hàng ở bảng bên trái để xem chi tiết.
+            <p style={styles.textMuted}>
+              Chọn một đơn hàng để xem chi tiết.
             </p>
           ) : (
             <>
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 13, color: "#6b7280" }}>
-                  Mã đơn: #{selectedOrder._id.slice(-6).toUpperCase()}
-                </div>
-                <div style={{ fontSize: 13, color: "#6b7280" }}>
+              {/* HEADER */}
+              <div style={styles.detailHeader}>
+                <h3 style={styles.detailTitle}>
+                  Đơn #{selectedOrder._id.slice(-6).toUpperCase()}
+                </h3>
+                <p style={styles.detailDate}>
                   Ngày đặt:{" "}
                   {new Date(selectedOrder.createdAt).toLocaleString("vi-VN")}
-                </div>
+                </p>
               </div>
 
-              <section style={sectionBox}>
-                <h4 style={sectionTitle}>Khách hàng</h4>
-                <p>
-                  <b>{selectedOrder.customer?.name || "Khách vãng lai"}</b>
+              {/* Customer */}
+              <section style={styles.section}>
+                <h4 style={styles.sectionTitle}>Khách hàng</h4>
+                <p style={styles.sectionText}>
+                  <b>{selectedOrder.customer?.name}</b>
                   <br />
                   {selectedOrder.customer?.email}
                   <br />
@@ -350,93 +327,57 @@ export default function AdminOrders() {
                 </p>
               </section>
 
-              <section style={sectionBox}>
-                <h4 style={sectionTitle}>Sản phẩm</h4>
-                <ul style={{ paddingLeft: 16, margin: 0 }}>
+              {/* Products */}
+              <section style={styles.section}>
+                <h4 style={styles.sectionTitle}>Sản phẩm</h4>
+                <ul style={styles.productList}>
                   {selectedOrder.items.map((it) => (
-                    <li key={it._id} style={{ fontSize: 13, marginBottom: 4 }}>
-                      {it.product?.name || "Sản phẩm"}{" "}
-                      {it.variantName ? `(${it.variantName})` : ""} x
-                      {it.quantity} — {formatMoney(it.price)}
+                    <li key={it._id}>
+                      {it.product?.name}{" "}
+                      {it.variantName && (
+                        <span style={styles.variant}>
+                          ({it.variantName})
+                        </span>
+                      )}
+                      × {it.quantity} —{" "}
+                      <b>{formatMoney(it.price)}</b>
                     </li>
                   ))}
                 </ul>
               </section>
 
-              <section style={sectionBox}>
-                <h4 style={sectionTitle}>Thanh toán</h4>
-                <p style={{ fontSize: 13 }}>
-                  Tạm tính: {formatMoney(selectedOrder.subtotal)}
-                  <br />
-                  Thuế: {formatMoney(selectedOrder.tax)}
-                  <br />
-                  Phí ship: {formatMoney(selectedOrder.shippingFee)}
-                  <br />
-                  Giảm giá mã khuyến mãi:{" "}
-                    {formatMoney(selectedOrder.discountAmount)}
-                  {selectedOrder.discountCode && (
-                    <>
-                      {" "}
-                      (code: <b>{selectedOrder.discountCode.code}</b>)
-                    </>
-                  )}
-                  <br />
-                  <b>Tổng thanh toán: {formatMoney(selectedOrder.total)}</b>
-                </p>
+              {/* Status */}
+              <section style={styles.section}>
+                <h4 style={styles.sectionTitle}>Trạng thái</h4>
+
+                <select
+                  value={selectedOrder.status}
+                  onChange={(e) => handleChangeStatus(e.target.value)}
+                  style={styles.statusSelect}
+                >
+                  {STATUS_OPTIONS.map((s) => (
+                    <option key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </option>
+                  ))}
+                </select>
+
+                {statusUpdating && (
+                  <span style={styles.textMuted}>Đang cập nhật...</span>
+                )}
               </section>
 
-              <section style={sectionBox}>
-                <h4 style={sectionTitle}>Trạng thái đơn hàng</h4>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <select
-                    value={selectedOrder.status}
-                    onChange={(e) => handleChangeStatus(e.target.value)}
-                    disabled={statusUpdating}
-                    style={{
-                      padding: "6px 8px",
-                      borderRadius: 6,
-                      border: "1px solid #d1d5db",
-                      fontSize: 13,
-                    }}
-                  >
-                    {STATUS_OPTIONS.map((s) => (
-                      <option key={s} value={s}>
-                        {STATUS_LABELS[s] || s}
-                      </option>
-                    ))}
-
-                  </select>
-                  {statusUpdating && (
-                    <span style={{ fontSize: 12, color: "#6b7280" }}>
-                      Đang cập nhật...
-                    </span>
-                  )}
-                </div>
-
-                <h5
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 4,
-                    fontSize: 13,
-                    fontWeight: 600,
-                  }}
-                >
-                  Lịch sử trạng thái
-                </h5>
-                {selectedOrder.statusHistory?.length ? (
-                  <ul style={{ paddingLeft: 16, margin: 0, fontSize: 12 }}>
-                    {selectedOrder.statusHistory.map((h) => (
-                      <li key={h._id}>
-                        <b>{STATUS_LABELS[h.status] || h.status}</b>—{" "}
-                        {new Date(h.updatedAt).toLocaleString("vi-VN")}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p style={{ fontSize: 12, color: "#6b7280" }}>
-                    Chưa có lịch sử trạng thái.
-                  </p>
-                )}
+              {/* Status History */}
+              <section style={styles.section}>
+                <h4 style={styles.sectionTitle}>Lịch sử trạng thái</h4>
+                <ul style={styles.historyList}>
+                  {selectedOrder.statusHistory.map((h) => (
+                    <li key={h._id}>
+                      <b>{STATUS_LABELS[h.status]}</b> —{" "}
+                      {new Date(h.updatedAt).toLocaleString("vi-VN")}
+                    </li>
+                  ))}
+                </ul>
               </section>
             </>
           )}
@@ -446,68 +387,199 @@ export default function AdminOrders() {
   );
 }
 
-const table = {
-  width: "100%",
-  borderCollapse: "separate",
-  borderSpacing: 0,
-  background: "white",
-  borderRadius: 10,
-  overflow: "hidden",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-};
+/* ========================================================= */
+/* ========================== STYLES ======================== */
+/* ========================================================= */
 
+const styles = {
+  container: {
+    padding: 28,
+    maxWidth: 1500,
+    margin: "0 auto",
+  },
 
-const th = {
-  padding: 10,
-  border: "1px solid #e5e7eb",
-  fontWeight: 600,
-  fontSize: 13,
-  textAlign: "left",
-};
+  pageTitle: {
+    marginBottom: 18,
+    fontSize: 28,
+    fontWeight: 700,
+    color: "#111827",
+  },
 
-const td = {
-  padding: 10,
-  border: "1px solid #e5e7eb",
-  verticalAlign: "top",
-  fontSize: 13,
-};
+  filterBar: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 10,
+    alignItems: "center",
+    marginBottom: 18,
+  },
 
-const dateInput = {
-  padding: "4px 8px",
-  borderRadius: 6,
-  border: "1px solid #d1d5db",
-  fontSize: 13,
-};
+  filterLabel: {
+    fontWeight: 600,
+    marginRight: 8,
+    color: "#374151",
+  },
 
-const detailBtn = {
-  padding: "6px 14px",
-  fontSize: 12,
-  borderRadius: 20,
-  border: "none",
-  background: "linear-gradient(135deg, #111827, #374151)",
-  color: "#fff",
-  cursor: "pointer",
-  transition: "0.2s",
-};
+  filterBtn: {
+    padding: "6px 14px",
+    borderRadius: 20,
+    border: "1px solid #d1d5db",
+    background: "#fff",
+    color: "#374151",
+    cursor: "pointer",
+    fontSize: 13,
+  },
 
+  filterBtnActive: {
+    background: "#111827",
+    color: "#fff",
+    borderColor: "#111827",
+  },
 
-const pageBtn = {
-  padding: "4px 8px",
-  borderRadius: 999,
-  border: "1px solid #e5e7eb",
-  background: "#fff",
-  cursor: "pointer",
-  fontSize: 12,
-};
+  dateRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+  },
 
-const sectionBox = {
-  borderTop: "1px solid #e5e7eb",
-  paddingTop: 8,
-  marginTop: 8,
-};
+  dateInput: {
+    padding: "6px 10px",
+    border: "1px solid #d1d5db",
+    borderRadius: 8,
+    fontSize: 14,
+  },
 
-const sectionTitle = {
-  fontSize: 13,
-  fontWeight: 600,
-  marginBottom: 4,
+  mainGrid: {
+    display: "grid",
+    gridTemplateColumns: "2fr 1.1fr",
+    gap: 24,
+  },
+
+  table: {
+    width: "100%",
+    background: "#fff",
+    borderRadius: 12,
+    overflow: "hidden",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 3px 10px rgba(0,0,0,0.03)",
+  },
+
+  th: {
+    padding: 12,
+    background: "#f3f4f6",
+    fontWeight: 600,
+    fontSize: 13,
+    borderBottom: "1px solid #e5e7eb",
+  },
+
+  td: {
+    padding: 12,
+    borderBottom: "1px solid #f1f5f9",
+    fontSize: 13,
+  },
+
+  textMuted: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+
+  statusTag: {
+    padding: "4px 12px",
+    borderRadius: 999,
+    fontWeight: 600,
+    fontSize: 12,
+  },
+
+  viewBtn: {
+    padding: "6px 12px",
+    borderRadius: 8,
+    border: "none",
+    background: "#111827",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: 12,
+  },
+
+  pagination: {
+    marginTop: 12,
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  pageBtn: {
+    padding: "6px 10px",
+    borderRadius: 8,
+    border: "1px solid #d1d5db",
+    background: "#fff",
+    cursor: "pointer",
+  },
+
+  pageInfo: {
+    fontSize: 13,
+  },
+
+  detailCard: {
+    background: "#fff",
+    borderRadius: 14,
+    border: "1px solid #e5e7eb",
+    padding: 20,
+    minHeight: 300,
+    boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+  },
+
+  detailHeader: {
+    marginBottom: 16,
+  },
+
+  detailTitle: {
+    margin: 0,
+    fontSize: 20,
+    fontWeight: 700,
+  },
+
+  detailDate: {
+    color: "#6b7280",
+    marginTop: 4,
+  },
+
+  section: {
+    borderTop: "1px solid #e5e7eb",
+    paddingTop: 14,
+    marginTop: 14,
+  },
+
+  sectionTitle: {
+    fontWeight: 700,
+    marginBottom: 6,
+    fontSize: 15,
+  },
+
+  sectionText: {
+    fontSize: 14,
+    color: "#374151",
+    lineHeight: "22px",
+  },
+
+  productList: {
+    paddingLeft: 18,
+    fontSize: 14,
+  },
+
+  variant: {
+    color: "#6b7280",
+  },
+
+  historyList: {
+    paddingLeft: 18,
+    fontSize: 13,
+  },
+
+  statusSelect: {
+    padding: "8px 10px",
+    borderRadius: 8,
+    border: "1px solid #d1d5db",
+    fontSize: 14,
+    marginBottom: 6,
+  },
 };

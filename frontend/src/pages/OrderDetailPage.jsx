@@ -3,31 +3,18 @@ import { useParams, Link } from "react-router-dom";
 import orderService from "../services/orderService";
 import { toast } from "react-toastify";
 
-
 const STATUS_LABELS = {
   pending: "Chờ xác nhận",
   confirmed: "Đã xác nhận",
-  shipping: "Đang giao hàng",
-  delivered: "Đã giao thành công",
+  shipping: "Đang giao",
+  delivered: "Hoàn tất",
 };
 
-const STATUS_COLORS = {
-  pending: {
-    bg: "#FEF3C7",
-    color: "#92400E",
-  },
-  confirmed: {
-    bg: "#DBEAFE",
-    color: "#1E40AF",
-  },
-  shipping: {
-    bg: "#E0F2FE",
-    color: "#075985",
-  },
-  delivered: {
-    bg: "#DCFCE7",
-    color: "#166534",
-  },
+const STATUS_STYLES = {
+  pending: { bg: "#FEF3C7", color: "#B45309" },
+  confirmed: { bg: "#DBEAFE", color: "#1D4ED8" },
+  shipping: { bg: "#E0F2FE", color: "#0369A1" },
+  delivered: { bg: "#DCFCE7", color: "#166534" },
 };
 
 export default function OrderDetailPage() {
@@ -44,192 +31,139 @@ export default function OrderDetailPage() {
       return;
     }
 
-    async function fetchDetail() {
+    async function load() {
       try {
         const { data } = await orderService.getOrderById(id);
         setOrder(data);
       } catch (err) {
-        console.error(err);
-        if (err.response?.status === 401) {
-          setIsLoggedIn(false);
-        } else {
-          toast.error("Lỗi khi tải chi tiết đơn hàng!");
-        }
+        toast.error("Không thể tải chi tiết đơn hàng!");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchDetail();
+    load();
   }, [id]);
 
   if (loading)
-    return <p style={{ textAlign: "center", marginTop: 50 }}>Đang tải...</p>;
+    return <p style={{ textAlign: "center", marginTop: 60 }}>Đang tải...</p>;
 
   if (!isLoggedIn)
     return (
       <div style={{ textAlign: "center", marginTop: 60 }}>
-        <h2 style={{ color: "#dc2626" }}>🔒 Vui lòng đăng nhập để xem đơn hàng!</h2>
-        <p style={{ color: "#6b7280", marginTop: 8 }}>
-          Bạn cần đăng nhập để xem chi tiết đơn hàng của mình.
-        </p>
+        <h2 style={{ color: "#dc2626" }}>🔒 Bạn chưa đăng nhập!</h2>
       </div>
     );
 
   if (!order)
     return (
       <div style={{ textAlign: "center", marginTop: 60 }}>
-        <h2 style={{ color: "#111827" }}>Không tìm thấy đơn hàng</h2>
-        <Link to="/account/orders">← Quay lại danh sách đơn</Link>
+        <h2>Không tìm thấy đơn hàng!</h2>
+        <Link to="/account/orders">← Quay lại</Link>
       </div>
     );
 
-  const statusColor = {
-    pending: "#f59e0b",
-    confirmed: "#3b82f6",
-    shipping: "#6366f1",
-    delivered: "#16a34a",
-  }[order.status] || "#6b7280";
+  const st = STATUS_STYLES[order.status];
 
   return (
-    <div
-      style={{
-        padding: "40px 20px",
-        maxWidth: 900,
-        margin: "0 auto",
-      }}
-    >
-      <div style={{ marginBottom: 24 }}>
-        <Link to="/account/orders" style={{ textDecoration: "none", color: "#2563eb" }}>
-          ← Quay lại danh sách đơn
-        </Link>
-      </div>
-
-      {/* Header */}
-      <div
+    <div style={{ padding: 30, maxWidth: 950, margin: "0 auto" }}>
+      <Link
+        to="/account/orders"
         style={{
-          background: "white",
-          padding: 20,
-          borderRadius: 12,
-          boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-          marginBottom: 24,
+          color: "#dc2626",
+          fontWeight: 600,
+          textDecoration: "none",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        ← Quay lại danh sách đơn
+      </Link>
+
+      {/* Header đơn hàng */}
+      <div
+        style={{
+          marginTop: 18,
+          background: "white",
+          padding: 24,
+          borderRadius: 20,
+          boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div>
-            <h2 style={{ margin: 0, color: "#111827" }}>
-              Đơn hàng #{order._id.slice(-6).toUpperCase()}
+            <h2 style={{ margin: 0, fontSize: 24 }}>
+              Đơn #{order._id.slice(-6).toUpperCase()}
             </h2>
             <p style={{ margin: "6px 0", color: "#6b7280" }}>
-              Ngày đặt:{" "}
-              {new Date(order.createdAt).toLocaleString("vi-VN")}
+              Ngày đặt: {new Date(order.createdAt).toLocaleString("vi-VN")}
             </p>
           </div>
 
-          <div
+          <span
             style={{
-              padding: "6px 14px",
-              borderRadius: 999,
-              background: statusColor + "22",
-              color: statusColor,
-              fontWeight: 600,
-              textTransform: "capitalize",
+              color: st.color,
+              fontWeight: 700,
+              fontSize: 16,
             }}
           >
-            {STATUS_LABELS[order.status] || order.status}
-          </div>
+
+            {STATUS_LABELS[order.status]}
+          </span>
         </div>
 
-        {/* Tổng & Loyalty */}
-        <div style={{ marginTop: 12, textAlign: "right" }}>
-          <p style={{ margin: 0, color: "#4b5563" }}>
-            Tạm tính: {order.subtotal.toLocaleString()} ₫
-          </p>
-          <p style={{ margin: 0, color: "#4b5563" }}>
-            Phí ship: {order.shippingFee.toLocaleString()} ₫
-          </p>
-          {order.tax > 0 && (
-            <p style={{ margin: 0, color: "#4b5563" }}>
-              Thuế: {order.tax.toLocaleString()} ₫
-            </p>
-          )}
-          {order.discountAmount > 0 && (
-            <p style={{ margin: 0, color: "#b91c1c" }}>
-              Giảm giá mã: -{order.discountAmount.toLocaleString()} ₫
-            </p>
-          )}
-          {order.loyaltyDiscountAmount > 0 && (
-            <p style={{ margin: 0, color: "#b91c1c" }}>
-              Giảm bằng điểm: -{order.loyaltyDiscountAmount.toLocaleString()} ₫ (
-              {order.loyaltyPointsUsed} điểm)
-            </p>
-          )}
-
-          <h3 style={{ marginTop: 8 }}>
-            Tổng thanh toán:{" "}
-            <span style={{ color: "#dc2626" }}>
-              {order.total.toLocaleString()} ₫
-            </span>
-          </h3>
-
-          {order.loyaltyPointsEarned > 0 && (
-            <p style={{ margin: 0, color: "#16a34a" }}>
-              🎁 Điểm tích lũy từ đơn này:{" "}
-              <strong>{order.loyaltyPointsEarned} điểm</strong>
-            </p>
-          )}
-        </div>
+        <h3 style={{ marginTop: 16, fontSize: 20 }}>
+          Tổng thanh toán:{" "}
+          <span style={{ color: "#dc2626", fontWeight: 800 }}>
+            {order.total.toLocaleString()} ₫
+          </span>
+        </h3>
       </div>
 
-      {/* Items */}
+      {/* Sản phẩm */}
       <div
         style={{
+          marginTop: 26,
           background: "white",
-          padding: 20,
-          borderRadius: 12,
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-          marginBottom: 24,
+          padding: 24,
+          borderRadius: 20,
+          boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
         }}
       >
-        <h3 style={{ marginTop: 0, marginBottom: 16 }}>Sản phẩm</h3>
+        <h3 style={{ marginTop: 0, marginBottom: 14 }}>🛍️ Sản phẩm</h3>
+
         {order.items.map((i, idx) => (
           <div
             key={idx}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "10px 0",
               borderBottom:
                 idx === order.items.length - 1
                   ? "none"
                   : "1px solid #f3f4f6",
+              padding: "12px 0",
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
             <div>
-              <div style={{ fontWeight: 600 }}>
-                {i.product?.name || "Sản phẩm"}
-              </div>
+              <b>{i.product?.name}</b>
               {i.variantName && (
-                <div style={{ color: "#6b7280", fontSize: 14 }}>
+                <p style={{ margin: 0, color: "#6b7280" }}>
                   Biến thể: {i.variantName}
-                </div>
+                </p>
               )}
-              <div style={{ color: "#4b5563", fontSize: 14 }}>
-                Số lượng: {i.quantity}
-              </div>
+              <span style={{ color: "#4b5563" }}>SL: {i.quantity}</span>
             </div>
 
             <div style={{ textAlign: "right" }}>
-              <div style={{ color: "#6b7280", fontSize: 14 }}>
+              <div style={{ color: "#6b7280" }}>
                 Đơn giá: {i.price.toLocaleString()} ₫
               </div>
-              <div style={{ fontWeight: 600, color: "#b91c1c" }}>
+              <div
+                style={{
+                  marginTop: 6,
+                  fontWeight: 700,
+                  color: "#dc2626",
+                }}
+              >
                 {(i.price * i.quantity).toLocaleString()} ₫
               </div>
             </div>
@@ -237,74 +171,78 @@ export default function OrderDetailPage() {
         ))}
       </div>
 
-      {/* Shipping info */}
+      {/* Địa chỉ */}
       <div
         style={{
+          marginTop: 26,
           background: "white",
-          padding: 20,
-          borderRadius: 12,
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-          marginBottom: 24,
+          padding: 24,
+          borderRadius: 20,
+          boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
         }}
       >
-        <h3 style={{ marginTop: 0, marginBottom: 10 }}>
-          Thông tin nhận hàng
-        </h3>
-        <p style={{ margin: 0 }}>
-          👤 <strong>{order.customer.name}</strong> — {order.customer.phone}
+        <h3 style={{ marginTop: 0, marginBottom: 10 }}>📍 Thông tin giao hàng</h3>
+        <p>
+          <b>{order.customer.name}</b> — {order.customer.phone}
         </p>
-        <p style={{ margin: "4px 0" }}>📍 {order.customer.address}</p>
-        {order.customer.email && (
-          <p style={{ margin: 0 }}>✉️ {order.customer.email}</p>
-        )}
+        <p>{order.customer.address}</p>
+        {order.customer.email && <p>{order.customer.email}</p>}
       </div>
 
-      {/* Status history */}
+      {/* Lịch sử trạng thái */}
       <div
         style={{
+          marginTop: 26,
           background: "white",
-          padding: 20,
-          borderRadius: 12,
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+          padding: 24,
+          borderRadius: 20,
+          boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
         }}
       >
-        <h3 style={{ marginTop: 0, marginBottom: 12 }}>Lịch sử trạng thái</h3>
-        {order.statusHistory && order.statusHistory.length > 0 ? (
-          <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#f3f4f6" }}>
-                <th style={{ textAlign: "left", padding: 8 }}>Trạng thái</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Thời gian cập nhật</th>
-              </tr>
-            </thead>
-            <tbody>
-              {order.statusHistory.map((h, idx) => (
-                <tr key={idx} style={{ borderTop: "1px solid #e5e7eb" }}>
-                  <td style={{ padding: 8 }}>
+        <h3>⏱️ Lịch sử trạng thái</h3>
+
+        <table
+          style={{
+            width: "100%",
+            marginTop: 16,
+            borderCollapse: "collapse",
+            fontSize: 14,
+          }}
+        >
+          <thead>
+            <tr style={{ background: "#f3f4f6" }}>
+              <th style={{ padding: 12, textAlign: "left" }}>Trạng thái</th>
+              <th style={{ padding: 12, textAlign: "left" }}>Thời gian</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {order.statusHistory.map((h, idx) => {
+              const st2 = STATUS_STYLES[h.status];
+              return (
+                <tr key={idx} style={{ borderBottom: "1px solid #e5e7eb" }}>
+                  <td style={{ padding: 10 }}>
                     <span
                       style={{
                         padding: "6px 12px",
                         borderRadius: 999,
-                        fontSize: 13,
+                        background: st2.bg,
+                        color: st2.color,
                         fontWeight: 600,
-                        background: STATUS_COLORS[h.status]?.bg,
-                        color: STATUS_COLORS[h.status]?.color,
                       }}
                     >
-                      {STATUS_LABELS[h.status] || h.status}
+                      {STATUS_LABELS[h.status]}
                     </span>
                   </td>
 
-                  <td style={{ padding: 8 }}>
+                  <td style={{ padding: 10 }}>
                     {new Date(h.updatedAt).toLocaleString("vi-VN")}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p style={{ color: "#6b7280" }}>Chưa có lịch sử trạng thái.</p>
-        )}
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );

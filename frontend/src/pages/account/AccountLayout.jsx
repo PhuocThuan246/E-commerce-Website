@@ -9,17 +9,13 @@ export default function AccountLayout() {
     textDecoration: "none",
     fontWeight: 600,
     fontSize: 15,
-    color: location.pathname === path ? "#0f172a" : "#475569",
+    color: location.pathname === path ? "#b91c1c" : "#475569",
     background:
-      location.pathname === path
-        ? "linear-gradient(135deg,#e2e8f0,#f8fafc)"
-        : "transparent",
-    boxShadow:
-      location.pathname === path
-        ? "0 4px 16px rgba(0,0,0,0.08)"
-        : "none",
+      location.pathname === path ? "#fef2f2" : "transparent",
+    border: location.pathname === path ? "1px solid #fecaca" : "1px solid transparent",
     transition: "all 0.25s ease",
   });
+
 
   return (
     <div style={styles.wrapper}>
@@ -56,24 +52,26 @@ const styles = {
   wrapper: {
     display: "flex",
     maxWidth: 1200,
-    margin: "50px auto",
-    background: "#f8fafc",
+    margin: "40px auto",
+    background: "#ffffff",
     padding: 30,
     borderRadius: 24,
-    boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
+    boxShadow: "0 15px 40px rgba(0,0,0,0.06)",
+    gap: 40,
   },
   sidebar: {
-    width: 280,
+    width: 260,
     paddingRight: 30,
-    borderRight: "1px solid #e5e7eb",
+    borderRight: "2px solid #f1f5f9",
   },
   title: {
-    marginBottom: 25,
-    fontSize: 18,
-    color: "#0f172a",
+    marginBottom: 20,
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#dc2626",
   },
   content: {
     flex: 1,
-    paddingLeft: 40,
+    paddingLeft: 10,
   },
 };

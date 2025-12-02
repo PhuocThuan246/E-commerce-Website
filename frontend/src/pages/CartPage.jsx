@@ -156,8 +156,12 @@ export default function CartPage() {
               (v) => v._id?.toString() === item.variantId?.toString()
             );
 
-          // ✅ Dùng hàm buildImageUrl thay vì ghép thẳng SERVER_URL
-          const image = buildImageUrl(variant?.image || product?.image);
+          // Dùng hàm buildImageUrl thay vì ghép thẳng SERVER_URL
+          const rawImage = product?.images?.[0] || null;
+
+
+          const image = buildImageUrl(rawImage);
+
 
           const price = variant?.price || product?.price || 0;
           const stock = variant?.stock ?? product?.stock ?? 0;

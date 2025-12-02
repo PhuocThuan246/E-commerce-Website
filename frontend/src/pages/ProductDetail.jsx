@@ -30,13 +30,18 @@ useEffect(() => {
   const [reviewForm, setReviewForm] = useState({ name: "", comment: "", rating: 0 });
   const [activeImage, setActiveImage] = useState(0);
 
-  // 🔌 socket
+  // socket
   useEffect(() => {
     const s = io(api.defaults.baseURL);
     s.emit("product:join", id);
     s.on("comment:new", (payload) => {
-      if (payload.productId === id) setReviews((prev) => [...prev, payload.comment]);
+      if (payload.productId === id)
+        setReviews((prev) => [
+          payload.comment,
+          ...prev
+        ]);
     });
+
     s.on("rating:new", (payload) => {
       if (payload.productId === id) {
         setProduct((prev) => ({
@@ -84,21 +89,17 @@ useEffect(() => {
     }
   }, [id]);
 
-  // 🖼️ build gallery
+  // build gallery
   const images = useMemo(() => {
     if (!product) return [];
-    const variantImgs = [
-      ...(selectedVariant?.images || []),
-      ...(selectedVariant?.image ? [selectedVariant.image] : []),
-    ];
-    const productImgs = [
-      ...(product.images || []),
-      ...(product.image ? [product.image] : []),
-    ];
-    const merged = [...variantImgs, ...productImgs].map(buildImageUrl);
-    const uniq = Array.from(new Set(merged));
-    return uniq.length ? uniq : ["/no-image.png"];
-  }, [product, selectedVariant]);
+
+    // chỉ lấy ảnh sản phẩm
+    const productImgs = (product.images || []).map(buildImageUrl);
+
+    // fallback nếu thiếu ảnh
+    return productImgs.length ? productImgs : ["/no-image.png"];
+  }, [product]);
+
 
   // ===================== CART =====================
   const handleAddToCart = async () => {
@@ -134,9 +135,15 @@ useEffect(() => {
         await reviewService.addRating(id, reviewForm, token);
         toast.success("Đã gửi đánh giá!");
         setReviews((prev) => [
-          ...prev,
-          { name: reviewForm.name, rating: reviewForm.rating, comment: reviewForm.comment, createdAt: new Date().toISOString() },
+          {
+            name: reviewForm.name,
+            rating: reviewForm.rating,
+            comment: reviewForm.comment,
+            createdAt: new Date().toISOString(),
+          },
+          ...prev
         ]);
+
       } else {
         await reviewService.addComment(id, {
           name: reviewForm.name,
@@ -144,9 +151,15 @@ useEffect(() => {
         });
         toast.success("Đã gửi bình luận!");
         setReviews((prev) => [
-          ...prev,
-          { name: reviewForm.name || "Khách ẩn danh", rating: 0, comment: reviewForm.comment, createdAt: new Date().toISOString() },
+          { 
+            name: reviewForm.name || "Khách ẩn danh",
+            rating: 0,
+            comment: reviewForm.comment,
+            createdAt: new Date().toISOString()
+          },
+          ...prev
         ]);
+
       }
       setReviewForm((p) => ({ ...p, comment: "", rating: 0 }));
     } catch (err) {
@@ -181,17 +194,21 @@ useEffect(() => {
               position: "relative",
             }}
           >
-            <img
-              src={images[activeImage]}
-              alt={`Ảnh ${activeImage + 1}`}
-              style={{
-                width: "100%",
-                maxWidth: 520,
-                height: 350,
-                objectFit: "cover",
-                borderRadius: 12,
-              }}
-            />
+          <img
+            src={images[activeImage]}
+            alt={`Ảnh ${activeImage + 1}`}
+            style={{
+              width: "100%",
+              maxWidth: 520,
+              maxHeight: 380,      // giới hạn chiều cao
+              objectFit: "contain",// thu nhỏ để vừa khung, không cắt
+              borderRadius: 12,
+              background: "#f9fafb",
+              padding: 10,         // có viền trắng quanh ảnh cho đẹp
+              boxSizing: "border-box",
+            }}
+          />
+
             {images.length > 1 && (
               <>
                 <button

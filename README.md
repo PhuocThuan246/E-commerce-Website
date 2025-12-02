@@ -24,3 +24,4 @@ Quý - Giỏ hàng và thanh toán, Quản lý đơn hàng, Quản lý mã giả
 Thuận - Xác thực bằng Google
 Thuận - Dardboards, chỉnh một số phần lại, chỉnh một số giao diện
 Phúc - Chỉnh lại toàn bộ giao diện.
+Thuận - Cập nhật lần cuối, fix một số lỗi, chỉnh lại ít giao diện

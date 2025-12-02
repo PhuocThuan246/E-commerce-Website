@@ -28,7 +28,8 @@ export default function ResetPasswordPage() {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        background: "linear-gradient(to right, #dbeafe, #f8fafc)",
+        background: "#ffffff", // 🔥 NỀN TRẮNG ĐỒNG BỘ
+        padding: "20px",
       }}
     >
       <form
@@ -36,19 +37,22 @@ export default function ResetPasswordPage() {
         style={{
           background: "white",
           padding: "40px",
-          borderRadius: "12px",
+          borderRadius: "14px",
           boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
           width: "100%",
-          maxWidth: "400px",
+          maxWidth: "420px",
         }}
       >
-        <h2 style={{
-          textAlign: "center",
-          color: "#2563eb",
-          fontWeight: "700",
-          marginBottom: "25px",
-        }}>
-          🔄 Đặt lại mật khẩu
+        {/* TIÊU ĐỀ RED */}
+        <h2
+          style={{
+            textAlign: "center",
+            color: "#dc2626", // 🔴 TIÊU ĐỀ MÀU ĐỎ
+            fontWeight: 700,
+            marginBottom: 25,
+          }}
+        >
+          Đặt lại mật khẩu
         </h2>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
@@ -58,11 +62,18 @@ export default function ResetPasswordPage() {
             onChange={(e) => setOtp(e.target.value)}
             required
             style={{
-              padding: "10px",
+              padding: "12px 14px",
               border: "1px solid #d1d5db",
-              borderRadius: "6px",
+              borderRadius: "8px",
               fontSize: "15px",
+              outline: "none",
             }}
+            onFocus={(e) =>
+              (e.target.style.border = "1px solid #dc2626") // 🔴 FOCUS BORDER
+            }
+            onBlur={(e) =>
+              (e.target.style.border = "1px solid #d1d5db")
+            }
           />
 
           <input
@@ -72,17 +83,25 @@ export default function ResetPasswordPage() {
             onChange={(e) => setNewPassword(e.target.value)}
             required
             style={{
-              padding: "10px",
+              padding: "12px 14px",
               border: "1px solid #d1d5db",
-              borderRadius: "6px",
+              borderRadius: "8px",
               fontSize: "15px",
+              outline: "none",
             }}
+            onFocus={(e) =>
+              (e.target.style.border = "1px solid #dc2626")
+            }
+            onBlur={(e) =>
+              (e.target.style.border = "1px solid #d1d5db")
+            }
           />
 
+          {/* 🔴 NÚT XÁC NHẬN */}
           <button
             type="submit"
             style={{
-              background: "#2563eb",
+              background: "#dc2626", // màu đỏ chính
               color: "white",
               border: "none",
               padding: "12px",
@@ -90,20 +109,43 @@ export default function ResetPasswordPage() {
               fontSize: "16px",
               cursor: "pointer",
               fontWeight: "600",
+              transition: "0.25s",
             }}
+            onMouseOver={(e) =>
+              (e.target.style.background = "#b91c1c") // 🔥 đỏ đậm khi hover
+            }
+            onMouseOut={(e) =>
+              (e.target.style.background = "#dc2626")
+            }
           >
             Xác nhận đổi mật khẩu
           </button>
         </div>
 
-        <p style={{
-          textAlign: "center",
-          marginTop: "20px",
-          fontSize: "14px",
-          color: "#6b7280",
-        }}>
+        {/* LINK LOGIN MÀU ĐỎ */}
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "20px",
+            fontSize: "14px",
+            color: "#6b7280",
+          }}
+        >
           Quay lại?{" "}
-          <Link to="/login" style={{ color: "#2563eb", fontWeight: 500 }}>
+          <Link
+            to="/login"
+            style={{
+              color: "#dc2626", // 🔴 LINK ĐỎ
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+            onMouseEnter={(e) =>
+              (e.target.style.textDecoration = "underline")
+            }
+            onMouseLeave={(e) =>
+              (e.target.style.textDecoration = "none")
+            }
+          >
             Đăng nhập
           </Link>
         </p>
