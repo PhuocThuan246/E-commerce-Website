@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "68f200000000000000000001"
+  },
+  "name": "Laptop",
+  "description": "Các loại laptop văn phòng, gaming và lập trình."
+},
+{
+  "_id": {
+    "$oid": "68f200000000000000000002"
+  },
+  "name": "Màn hình",
+  "description": "Màn hình máy tính, UltraWide, IPS, gaming."
+},
+{
+  "_id": {
+    "$oid": "68f200000000000000000003"
+  },
+  "name": "Ổ cứng",
+  "description": "Các loại ổ cứng SSD và HDD, dung lượng cao, tốc độ tốt."
+},
+{
+  "_id": {
+    "$oid": "692df958e7be51710a61e859"
+  },
+  "name": "Card màn hình",
+  "__v": 0
+}]

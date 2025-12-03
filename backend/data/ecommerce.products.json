@@ -1,0 +1,728 @@
+[{
+  "_id": {
+    "$oid": "68ef6f5633e47af65bc36db6"
+  },
+  "name": "Laptop Dell XPS 13",
+  "category": {
+    "$oid": "68f200000000000000000001"
+  },
+  "image": "/uploads/1764601905152-455377999.jpg",
+  "description": "Sở hữu thiết kế tinh tế cùng sức mạnh vượt trội từ trí tuệ nhân tạo, Dell XPS 13 9350 Ultra 7 258V (PP9H1) là chiếc laptop cao cấp lý tưởng cho học sinh, sinh viên, nhân viên văn phòng và đặc biệt là những người làm thiết kế đồ họa. Máy không chỉ là công cụ làm việc mà còn là tuyên ngôn về phong cách và hiệu suất, hứa hẹn mang đến trải nghiệm đột phá trong mọi tác vụ.",
+  "variants": [
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000001"
+      },
+      "name": "8GB RAM / 256GB SSD",
+      "sku": "XPS13-8-256",
+      "price": 28990000,
+      "stock": 100,
+      "image": "/uploads/1761819836928-355734997.webp"
+    },
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000002"
+      },
+      "name": "16GB RAM / 512GB SSD",
+      "sku": "XPS13-16-512",
+      "price": 32990000,
+      "stock": 48,
+      "image": "/uploads/1761819844261-864325034.jpg"
+    }
+  ],
+  "updatedAt": {
+    "$date": "2025-12-02T09:30:32.192Z"
+  },
+  "__v": 4,
+  "effectivePrice": 28990000,
+  "images": [
+    "/uploads/1764601905152-455377999.jpg",
+    "/uploads/1764601905154-253278975.jpg",
+    "/uploads/1764601905155-803908822.jpg"
+  ],
+  "price": 0,
+  "ratingAverage": 5,
+  "ratingCount": 1,
+  "reviews": [
+    {
+      "user": {
+        "$oid": "692eac02140466c4cb863f4e"
+      },
+      "name": "Thiên Kim",
+      "rating": 5,
+      "comment": "Sản phẩm đẹp quá",
+      "createdAt": {
+        "$date": "2025-12-02T09:14:06.625Z"
+      },
+      "_id": {
+        "$oid": "692eadde140466c4cb8644db"
+      }
+    }
+  ],
+  "tags": [],
+  "brand": "Dell"
+},
+{
+  "_id": {
+    "$oid": "68ef6f5633e47af65bc36db7"
+  },
+  "name": "MacBook Air M2",
+  "category": {
+    "$oid": "68f200000000000000000001"
+  },
+  "image": "/uploads/1764602175493-436183869.jpg",
+  "description": "Apple Macbook Air M2 2024 16GB 256GB – Nội lực siêu việt, ngoại hình đẳng cấp\r\nApple Macbook Air M2 2024 16GB 256GB không chỉ sở hữu ngoại hình siêu mỏng trong thiết kế đẳng cấp và lịch lãm mà còn sở hữu nguồn sức mạnh vượt trội khi được trang bị con chip Apple M2. Đây chính là một thiết bị tuyệt hảo đồng hành cùng bạn trong công việc cũng như giải trí.",
+  "variants": [
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000003"
+      },
+      "name": "8GB RAM / 256GB SSD",
+      "sku": "MBA-M2-8-256",
+      "price": 31990000,
+      "stock": 37,
+      "image": "/uploads/1761820860091-618393256.jpg"
+    },
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000004"
+      },
+      "name": "16GB RAM / 512GB SSD",
+      "sku": "MBA-M2-16-512",
+      "price": 36990000,
+      "stock": 23,
+      "image": "/uploads/1761820870877-984075634.jpeg"
+    }
+  ],
+  "updatedAt": {
+    "$date": "2025-12-01T17:49:04.497Z"
+  },
+  "__v": 10,
+  "images": [
+    "/uploads/1764602175493-436183869.jpg",
+    "/uploads/1764602175494-803689367.jpeg",
+    "/uploads/1764602175506-350381968.jpg"
+  ],
+  "tags": [],
+  "effectivePrice": 31990000,
+  "price": 0,
+  "ratingAverage": 2.6,
+  "ratingCount": 5,
+  "reviews": [
+    {
+      "user": {
+        "$oid": "6906fca67704e1b2c1ee7e2f"
+      },
+      "name": "a",
+      "rating": 5,
+      "comment": "a",
+      "createdAt": {
+        "$date": "2025-11-04T15:40:43.205Z"
+      },
+      "_id": {
+        "$oid": "690a1e7ba8ef2aaee3ebe0a7"
+      }
+    },
+    {
+      "user": {
+        "$oid": "6906fca67704e1b2c1ee7e2f"
+      },
+      "name": "a",
+      "rating": 3,
+      "comment": "a",
+      "createdAt": {
+        "$date": "2025-11-04T15:44:02.924Z"
+      },
+      "_id": {
+        "$oid": "690a1f42a8ef2aaee3ebe13a"
+      }
+    },
+    {
+      "user": {
+        "$oid": "6923f12eab6c19d508565ec6"
+      },
+      "name": "Người dùng",
+      "rating": 5,
+      "comment": "aaaaaaaaaaa",
+      "createdAt": {
+        "$date": "2025-11-24T05:50:02.463Z"
+      },
+      "_id": {
+        "$oid": "6923f20aab6c19d508566019"
+      }
+    },
+    {
+      "name": "No Name",
+      "rating": 0,
+      "comment": "Test comment",
+      "createdAt": {
+        "$date": "2025-12-01T17:42:30.892Z"
+      },
+      "_id": {
+        "$oid": "692dd386b6bfa7e812f7aa91"
+      }
+    },
+    {
+      "name": "Test2",
+      "rating": 0,
+      "comment": "Test3",
+      "createdAt": {
+        "$date": "2025-12-01T17:49:04.494Z"
+      },
+      "_id": {
+        "$oid": "692dd510b6bfa7e812f7ab3a"
+      }
+    }
+  ],
+  "brand": "Apple"
+},
+{
+  "_id": {
+    "$oid": "68ef6f5633e47af65bc36db8"
+  },
+  "name": "Màn hình LG UltraWide 29''",
+  "category": {
+    "$oid": "68f200000000000000000002"
+  },
+  "image": "/uploads/1764601660204-757418821.jpg",
+  "description": "Màn hình máy tính LG UltraWide 29WQ600-W là lựa chọn lý tưởng cho người dùng văn phòng với độ phân giải cao, tốc độ phản hồi nhanh, màu sắc sống động và tần số quét mượt mà.\r\n\r\nThiết kế hiện đại, hiển thị sắc nét\r\nMàn hình LG UltraWide 29WQ600-W.ATV sở hữu kích thước 29 inch, trọng lượng 4.5kg, mang đến sự gọn gàng và dễ dàng di chuyển. Viền bezel siêu mỏng cùng chân đế chắc chắn tạo nên vẻ ngoài hiện đại, sang trọng cho màn hình. Chân đế có thể điều chỉnh độ cao, nghiêng và xoay linh hoạt, giúp bạn dễ dàng tìm được tư thế sử dụng thoải mái nhất.",
+  "variants": [
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000005"
+      },
+      "name": "29 inch / Full HD / 75Hz",
+      "sku": "LG29-FHD75",
+      "price": 5990000,
+      "stock": 43,
+      "image": "/uploads/1761820923766-919199217.jpg"
+    },
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000006"
+      },
+      "name": "29 inch / UltraWide / 100Hz",
+      "sku": "LG29-UW100",
+      "price": 6790000,
+      "stock": 6,
+      "image": "/uploads/1761820935015-370286853.jpg"
+    }
+  ],
+  "updatedAt": {
+    "$date": "2025-12-01T15:07:40.231Z"
+  },
+  "__v": 5,
+  "effectivePrice": 5990000,
+  "images": [
+    "/uploads/1764601660204-757418821.jpg",
+    "/uploads/1764601660205-477176122.png",
+    "/uploads/1764601660227-582314632.jpg"
+  ],
+  "price": 0,
+  "ratingAverage": 2.5,
+  "ratingCount": 2,
+  "reviews": [
+    {
+      "name": "Hồng Phúc",
+      "rating": 5,
+      "comment": "Màn hình quá đẹp",
+      "_id": {
+        "$oid": "690a06788b99a9f24d941640"
+      },
+      "createdAt": {
+        "$date": "2025-11-04T13:58:16.035Z"
+      }
+    },
+    {
+      "name": "phuc",
+      "rating": 0,
+      "comment": "may xin qua",
+      "createdAt": {
+        "$date": "2025-11-24T05:47:33.601Z"
+      },
+      "_id": {
+        "$oid": "6923f175ab6c19d508565f88"
+      }
+    }
+  ],
+  "tags": [],
+  "brand": "LG"
+},
+{
+  "_id": {
+    "$oid": "68ef6f5633e47af65bc36db9"
+  },
+  "name": "Màn hình Dell 24'' IPS",
+  "category": {
+    "$oid": "68f200000000000000000002"
+  },
+  "image": "/uploads/1764601812228-208088023.jpg",
+  "description": "Màn hình Dell UltraSharp U2424H 23.8 inch Full HD đáp ứng trọn vẹn nhu cầu của nhiều đối tượng người dùng, đặc biệt là học sinh, sinh viên và nhân viên văn phòng. Với kích thước vừa phải, màn hình này không chiếm quá nhiều không gian trên bàn làm việc, đồng thời vẫn đảm bảo đủ không gian hiển thị cho các tác vụ học tập, nghiên cứu hay xử lý công việc hàng ngày.",
+  "variants": [
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000007"
+      },
+      "name": "24 inch / Full HD / 60Hz",
+      "sku": "DELL24-FHD60",
+      "price": 3790000,
+      "stock": 50,
+      "image": "/uploads/1761821005008-781387549.jpg"
+    },
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000008"
+      },
+      "name": "24 inch / Full HD / 75Hz",
+      "sku": "DELL24-FHD75",
+      "price": 4190000,
+      "stock": 99,
+      "image": "/uploads/1761821044432-701301006.jpg"
+    }
+  ],
+  "updatedAt": {
+    "$date": "2025-12-02T09:06:10.903Z"
+  },
+  "__v": 2,
+  "effectivePrice": 3790000,
+  "images": [
+    "/uploads/1764601812228-208088023.jpg",
+    "/uploads/1764601812228-809898428.jpg",
+    "/uploads/1764601812229-243874165.jpg"
+  ],
+  "price": 0,
+  "ratingAverage": 0,
+  "ratingCount": 0,
+  "reviews": [],
+  "tags": [],
+  "brand": "Dell"
+},
+{
+  "_id": {
+    "$oid": "68ef6f5633e47af65bc36dba"
+  },
+  "name": "Ổ cứng SSD Samsung 1TB",
+  "category": {
+    "$oid": "68f200000000000000000003"
+  },
+  "image": "/uploads/1764602250057-965561198.png",
+  "description": "Ổ cứng SSD Samsung Portable T9 MU-PG1T0B/WW là một giải pháp lưu trữ đột phá, cung cấp không gian lưu trữ lên tới 1 TB và khả năng truyền tải tốc độ cao, giúp bạn dễ dàng quản lý, lưu trữ và truy xuất dữ liệu mọi lúc, mọi nơi.\r\nTăng tốc quy trình làm việc\r\nSamsung Portable T9 được trang bị giao diện USB 3.2 và sử dụng công nghệ NVMe tiên tiến, đạt tốc độ đọc/ghi là 2000 MB/s và 1950 MB/s, giúp giảm đáng kể thời gian tải dữ liệu và tối ưu hóa quy trình làm việc. Bạn chỉ mất chưa đến 1 giây để truyền một tệp tin dung lượng 2 GB – đây là một bước tiến lớn về tốc độ mà các ổ cứng truyền thống khó có thể theo kịp.",
+  "variants": [
+    {
+      "_id": {
+        "$oid": "68f1a0010000000000000009"
+      },
+      "name": "1TB / PCIe 3.0",
+      "sku": "SSD980-1TB",
+      "price": 1890000,
+      "stock": 12,
+      "image": "/uploads/1761821324601-739928857.jpg"
+    },
+    {
+      "_id": {
+        "$oid": "68f1a001000000000000000a"
+      },
+      "name": "1TB / PCIe 4.0",
+      "sku": "SSD980PRO-1TB",
+      "price": 2290000,
+      "stock": 49,
+      "image": "/uploads/1761821331838-838576342.webp"
+    }
+  ],
+  "updatedAt": {
+    "$date": "2025-12-01T19:32:21.287Z"
+  },
+  "__v": 3,
+  "effectivePrice": 1890000,
+  "images": [
+    "/uploads/1764602250057-965561198.png",
+    "/uploads/1764602250060-58435634.jpg",
+    "/uploads/1764602250061-421960662.jpg"
+  ],
+  "price": 0,
+  "ratingAverage": 5,
+  "ratingCount": 1,
+  "reviews": [
+    {
+      "user": {
+        "$oid": "6929cddf4f5aa37460442e83"
+      },
+      "name": "Phước",
+      "rating": 5,
+      "comment": "Ngon",
+      "createdAt": {
+        "$date": "2025-12-01T19:32:21.279Z"
+      },
+      "_id": {
+        "$oid": "692ded45455469e658971874"
+      }
+    }
+  ],
+  "tags": [],
+  "brand": "Samsung"
+},
+{
+  "_id": {
+    "$oid": "68ef6f5633e47af65bc36dbb"
+  },
+  "name": "Ổ cứng HDD Seagate 2TB",
+  "category": {
+    "$oid": "68f200000000000000000003"
+  },
+  "image": "/uploads/1764610228355-319459584.jpg",
+  "description": "Thiết kế đơn giản và tinh tế\r\nVẻ ngoài Ổ cứng di động HDD 2TB Seagate One Touch STKY2000404 Xám được hoàn thiện tốt, chắc chắn. Với kích thước 11.4 cm x 7.8 cm x 1.1 cm tương đương khoảng 2.5 inch, thiết bị rất gọn gàng và tiện lợi cho bạn mang theo bên người để sử dụng cũng như cất giữ.\r\nTruyền dữ liệu nhanh chóng với chuẩn USB 3.0\r\nTốc độ đọc - ghi có thể lên đến 1 GB/s giúp bạn có thể sao chép, di chuyển các tệp tin có dung lượng lớn mà không tốn quá nhiều thời gian chờ đợi.",
+  "variants": [
+    {
+      "_id": {
+        "$oid": "68f1a001000000000000000b"
+      },
+      "name": "2TB / 5400RPM",
+      "sku": "SGT2TB-5400",
+      "price": 1390000,
+      "stock": 17,
+      "image": "/uploads/1761821357605-659291806.jpeg"
+    },
+    {
+      "_id": {
+        "$oid": "68f1a001000000000000000c"
+      },
+      "name": "2TB / 7200RPM",
+      "sku": "SGT2TB-7200",
+      "price": 1490000,
+      "stock": 50,
+      "image": "/uploads/1761821369008-861394234.jpg"
+    }
+  ],
+  "updatedAt": {
+    "$date": "2025-12-02T09:23:07.970Z"
+  },
+  "__v": 3,
+  "effectivePrice": 1390000,
+  "images": [
+    "/uploads/1764610228355-319459584.jpg",
+    "/uploads/1764610228364-636876057.jpeg",
+    "/uploads/1764610228364-677018449.jpg"
+  ],
+  "price": 0,
+  "ratingAverage": 0,
+  "ratingCount": 0,
+  "reviews": [],
+  "tags": [],
+  "brand": "Seagate"
+},
+{
+  "_id": {
+    "$oid": "692db3b9510a008fdf313e8f"
+  },
+  "name": "Laptop gaming HP VICTUS 15 fb3115AX BX9C9PA",
+  "category": {
+    "$oid": "68f200000000000000000001"
+  },
+  "description": "Laptop HP VICTUS 15 fb3115AX R7 7445HS (BX9C9PA) là cỗ máy chiến game và làm việc đỉnh cao dành cho game thủ, người làm kỹ thuật, dựng video và thiết kế đồ họa chuyên nghiệp. Chiếc laptop này nổi bật với hiệu năng mạnh mẽ, thiết kế đậm chất gaming và màn hình sắc nét. Đây là một lựa chọn đáng giá cho những ai tìm kiếm một chiếc laptop đa năng, đáp ứng mọi nhu cầu từ giải trí đến công việc.",
+  "image": "/uploads/1764603098482-824116850.jpg",
+  "images": [
+    "/uploads/1764603098482-824116850.jpg",
+    "/uploads/1764603098482-155002687.jpg",
+    "/uploads/1764603098483-953412176.jpg",
+    "/uploads/1764603098483-808896674.jpg"
+  ],
+  "brand": "HP",
+  "effectivePrice": 21000000,
+  "ratingAverage": 0,
+  "ratingCount": 0,
+  "tags": [],
+  "variants": [
+    {
+      "name": "Laptop HP Gaming VICTUS 15 R7 7445HS, 16GB, 512GB, RTX4050 6GB",
+      "sku": "12341",
+      "price": 26790000,
+      "stock": 20,
+      "image": "",
+      "_id": {
+        "$oid": "692db3e5510a008fdf313ed4"
+      }
+    },
+    {
+      "name": "Laptop HP Gaming VICTUS 15 R 5 5600HS, 16GB, 512GB, RTX3050 6GB",
+      "sku": "12123",
+      "price": 21000000,
+      "stock": 21,
+      "image": "",
+      "_id": {
+        "$oid": "692db3fb510a008fdf313eef"
+      }
+    }
+  ],
+  "reviews": [],
+  "createdAt": {
+    "$date": "2025-12-01T15:26:49.380Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T15:31:38.486Z"
+  },
+  "__v": 6
+},
+{
+  "_id": {
+    "$oid": "692db595510a008fdf314225"
+  },
+  "name": "Laptop Acer Nitro V 15 ProPanel",
+  "category": {
+    "$oid": "68f200000000000000000001"
+  },
+  "description": "Xứng danh là lựa chọn hàng đầu dành cho giới đam mê eSports, phiên bản ANV15-51-78BG tiếp tục khẳng định vị thế của dòng Acer Nitro V với cấu hình ấn tượng gồm: chip Intel Core i7 thế hệ thứ 13, card đồ họa NVIDIA RTX 4060, màn hình tần số quét 180Hz và hệ thống tản nhiệt tiên tiến. Sản phẩm này là cỗ máy gaming tối ưu cho những ai đam mê chinh phục thế giới ảo.",
+  "image": "/uploads/1764603341112-3174180.png",
+  "images": [
+    "/uploads/1764603341112-3174180.png",
+    "/uploads/1764603341113-886372903.png",
+    "/uploads/1764603341113-118042348.jpg"
+  ],
+  "brand": "Acer",
+  "effectivePrice": 23000000,
+  "ratingAverage": 0,
+  "ratingCount": 0,
+  "tags": [],
+  "variants": [
+    {
+      "name": "Laptop Acer Nitro ANV15-51-78BG i7 13620H AI/16GB/512GB/4060 8GB",
+      "sku": "123123",
+      "price": 29300000,
+      "stock": 11,
+      "image": "",
+      "_id": {
+        "$oid": "692db60f510a008fdf31437e"
+      }
+    },
+    {
+      "name": "Laptop Acer Nitro ANV15-51-78BG i5 13620H AI/16GB/512GB/3060 8GB",
+      "sku": "123123",
+      "price": 23000000,
+      "stock": 23,
+      "image": "",
+      "_id": {
+        "$oid": "692db61f510a008fdf31439b"
+      }
+    }
+  ],
+  "reviews": [],
+  "createdAt": {
+    "$date": "2025-12-01T15:34:45.599Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T08:30:28.590Z"
+  },
+  "__v": 3
+},
+{
+  "_id": {
+    "$oid": "692db6ae510a008fdf3144ec"
+  },
+  "name": "Laptop gaming Lenovo Legion 5 15IRX10 83LY00HWVN",
+  "category": {
+    "$oid": "68f200000000000000000001"
+  },
+  "description": "Lenovo Gaming Legion 5 15IRX10 là chiếc laptop thể hiện đúng tinh thần “Cấu hình khủng thiết kế nhỏ gọn”. Sở hữu chip Intel Core i7-14700HX cùng GPU RTX 5060, máy đủ sức chinh phục mọi tựa game AAA hay làm việc đồ họa chuyên nghiệp. Với thiết kế mỏng nhẹ hơn, màn hình OLED 2.5K siêu thực và hệ thống tản nhiệt Legion Coldfront Hyper, đây là lựa chọn toàn diện cho game thủ, người làm sáng tạo hay nhân viên văn phòng cần một công cụ mạnh mẽ mà vẫn linh hoạt.",
+  "image": "/uploads/1764603662759-517448836.png",
+  "images": [
+    "/uploads/1764603662759-517448836.png",
+    "/uploads/1764603662761-962558207.png",
+    "/uploads/1764603662763-336482303.jpg"
+  ],
+  "brand": "Lenovo",
+  "effectivePrice": 31000000,
+  "ratingAverage": 0,
+  "ratingCount": 0,
+  "tags": [],
+  "variants": [
+    {
+      "name": "Legion 5 (i7 14700HX, 16GB, 512GB, 5060 8GB, WQXGA OLED 165Hz",
+      "sku": "12313",
+      "price": 41690000,
+      "stock": 33,
+      "image": "",
+      "_id": {
+        "$oid": "692db748510a008fdf31462f"
+      }
+    },
+    {
+      "name": "Legion 5 (i5 14600HX, 16GB, 512GB, 4060 8GB, WQXGA OLED 165Hz",
+      "sku": "123",
+      "price": 31000000,
+      "stock": 22,
+      "image": "",
+      "_id": {
+        "$oid": "692db761510a008fdf31464e"
+      }
+    }
+  ],
+  "reviews": [],
+  "createdAt": {
+    "$date": "2025-12-01T15:39:26.594Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T15:42:25.825Z"
+  },
+  "__v": 3
+},
+{
+  "_id": {
+    "$oid": "692df9aae7be51710a61e8fa"
+  },
+  "name": "Card màn hình ASUS ROG Strix GeForce RTX 5070 12GB GDDR7 OC Edition",
+  "category": {
+    "$oid": "692df958e7be51710a61e859"
+  },
+  "description": "Kiến trúc NVIDIA Blackwell và công nghệ DLSS 4 cùng 1044 AI TOPS, mang lại hiệu năng AI đột phá.\r\nThiết kế 3.2 khe cắm với dàn lá tản nhiệt lớn, cùng 3 quạt Axial-tech được nâng cấp.\r\nCông nghệ 0dB đảm bảo hoạt động cực kỳ yên tĩnh khi tải nhẹ.\r\nLớp phủ PCB bảo vệ chống ẩm, bụi và đoản mạch.\r\nTrang bị đèn ARGB Aura Sync trên vỏ và các cạnh.\r\nTấm ốp lưng bằng thép không gỉ 304 và giá đỡ GPU giúp tăng cường độ cứng cáp",
+  "images": [
+    "/uploads/1764620714888-484674428.png",
+    "/uploads/1764620714893-394352293.png",
+    "/uploads/1764620714896-807426672.png"
+  ],
+  "brand": "Asus",
+  "effectivePrice": 21000000,
+  "ratingAverage": 0,
+  "ratingCount": 1,
+  "tags": [],
+  "variants": [
+    {
+      "name": "VGA ASUS ROG Strix GeForce RTX 5070 12GB GDDR7 OC (ROG-STRIX-RTX5070-O12G)",
+      "sku": "CMH01",
+      "price": 24380000,
+      "stock": 100,
+      "image": "",
+      "_id": {
+        "$oid": "692dfa28e7be51710a61e91c"
+      }
+    },
+    {
+      "name": "VGA ASUS ROG Strix GeForce RTX 5070 10GB GDDR7 OC (ROG-STRIX-RTX5070-O10G)",
+      "sku": "CMH02",
+      "price": 21000000,
+      "stock": 100,
+      "image": "",
+      "_id": {
+        "$oid": "692dfa4de7be51710a61e940"
+      }
+    }
+  ],
+  "reviews": [
+    {
+      "name": "Tuấn Anh",
+      "rating": 0,
+      "comment": "Card này mắc vậy",
+      "createdAt": {
+        "$date": "2025-12-02T09:17:20.164Z"
+      },
+      "_id": {
+        "$oid": "692eaea0140466c4cb864760"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-01T20:25:14.904Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T09:17:20.165Z"
+  },
+  "__v": 3
+},
+{
+  "_id": {
+    "$oid": "692e9a89b6e55197711815f6"
+  },
+  "name": "Màn hình ViewSonic VX2882-4KP 28\" IPS 4K 150Hz HDR10 USBC",
+  "category": {
+    "$oid": "68f200000000000000000002"
+  },
+  "description": "Thuộc dòng sản phẩm cao cấp của nhà ViewSonic, chiếc màn hình ViewSonic VX2882-4KP 28\" IPS 4K 150Hz HDR10 USBC cung cấp một chế độ hiệu năng tuyệt đỉnh đến từ chất lượng hình ảnh, tốc độ xử lý dữ liệu và những phần mềm được tạo nên từ những thành phần cao cấp và tiên tiến nhất. Nếu kết hợp với các linh kiện máy tính khác thì sẽ tạo nên một đế chế PC mạnh mẽ, đem đến cho các game thủ độ mượt mà, những trải nghiệm đáng giá cùng các tựa game nặng.\r\nSo với những dòng sản phẩm trước thì bạn chỉ có thể xem hình ảnh qua độ phân giải HD nhưng bây giờ bạn có thể đầu tư thêm một chút để rước em màn hình máy tính 4K UHD đến từ nhà ViewSonic này. Trải nghiệm việc chiến game của bạn sẽ được nâng lên một tầm cao mới cùng với những chi tiết phong phú, độ rõ nét tuyệt đẹp và giúp bạn chìm đắm hơn.",
+  "images": [
+    "/uploads/1764661897627-776781824.jpg",
+    "/uploads/1764661897635-407503104.jpg",
+    "/uploads/1764661897636-305826530.jpg"
+  ],
+  "brand": "Viewsonic",
+  "effectivePrice": 8390000,
+  "ratingAverage": 0,
+  "ratingCount": 0,
+  "tags": [],
+  "variants": [
+    {
+      "name": "4K 150Hz",
+      "sku": "VSN01",
+      "price": 8390000,
+      "stock": 99,
+      "image": "",
+      "_id": {
+        "$oid": "692e9b4ab6e55197711817f5"
+      }
+    },
+    {
+      "name": "8K 150Hz",
+      "sku": "VSN02",
+      "price": 15550000,
+      "stock": 100,
+      "image": "",
+      "_id": {
+        "$oid": "692e9b72b6e5519771181819"
+      }
+    }
+  ],
+  "reviews": [],
+  "createdAt": {
+    "$date": "2025-12-02T07:51:37.670Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T09:15:59.376Z"
+  },
+  "__v": 2
+},
+{
+  "_id": {
+    "$oid": "692e9d26b6e5519771181ca0"
+  },
+  "name": "VGA Gigabyte Geforce RTX 5070 Ti Eagle OC 16GB GV-N507TEAGLEOC-16GD",
+  "category": {
+    "$oid": "692df958e7be51710a61e859"
+  },
+  "description": "VGA Gigabyte GeForce RTX 5070 Ti Eagle OC 16GB là một lựa chọn đáng cân nhắc cho những ai muốn nâng cấp hệ thống của mình. Với thiết kế mạnh mẽ và hiệu suất ấn tượng, thiết bị mang đến trải nghiệm mượt mà.\r\nVGA Gigabyte GeForce được xây dựng trên nền tảng kiến trúc NVIDIA Blackwell, mang đến những cải tiến vượt trội về hiệu suất đồ họa và khả năng xử lý AI. Đây là thế hệ GPU tiên tiến, hỗ trợ DLSS 4, giúp tăng tốc độ khung hình mà vẫn đảm bảo đồ họa sắc nét.\r\nVới lõi Tensor thế hệ thứ năm, GPU này cung cấp khả năng tính toán AI mạnh mẽ, đặc biệt tối ưu hóa với FP4. Những tính năng này giúp VGA Gigabyte GeForce RTX 5070 Ti Eagle OC 16GB mang lại trải nghiệm mượt mà khi chơi game hoặc làm việc với các ứng dụng đồ họa chuyên sâu.\r\nBộ xử lý đa luồng mới trên RTX 5070 Ti không chỉ cải thiện hiệu suất tổng thể mà còn giúp giảm đáng kể độ trễ. Đáng chú ý, GPU cũng được tối ưu hóa cho trình đổ bóng thần kinh, một công nghệ mới giúp tăng hiệu quả trong việc xử lý đồ họa phức tạp.",
+  "images": [
+    "/uploads/1764662566136-704732129.webp",
+    "/uploads/1764662566137-595576094.jpg",
+    "/uploads/1764662566141-618529522.webp"
+  ],
+  "brand": "Gigabyte",
+  "effectivePrice": 22600000,
+  "ratingAverage": 0,
+  "ratingCount": 0,
+  "tags": [],
+  "variants": [
+    {
+      "name": "RTX 5070 Ti Eagle OC 16GB",
+      "sku": "GGB1",
+      "price": 31990000,
+      "stock": 100,
+      "image": "",
+      "_id": {
+        "$oid": "692e9d6cb6e5519771181cc4"
+      }
+    },
+    {
+      "name": "RTX 5070 Ti Eagle OC 8GB",
+      "sku": "GGB2",
+      "price": 22600000,
+      "stock": 100,
+      "image": "",
+      "_id": {
+        "$oid": "692e9d98b6e5519771181cea"
+      }
+    }
+  ],
+  "reviews": [],
+  "createdAt": {
+    "$date": "2025-12-02T08:02:46.147Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T08:04:40.195Z"
+  },
+  "__v": 2
+}]

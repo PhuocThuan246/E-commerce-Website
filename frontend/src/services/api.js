@@ -5,18 +5,12 @@ import axios from "axios";
 //   - Cấu hình trong .env:  VITE_API_URL=http://localhost:5000
 //   - Nếu không có thì mặc định localhost:5000
 // ==============================
-export const SERVER_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000";
-
-// ==============================
-// Axios instance dùng chung
-//   - baseURL = SERVER_URL + "/api"
-//   - timeout 8s
-// ==============================
+export const SERVER_URL = "";
 const api = axios.create({
-  baseURL: `${SERVER_URL}/api`,
+  baseURL: "/api",
   timeout: 8000,
 });
+
 
 // ==============================
 // TỰ ĐỘNG GẮN TOKEN JWT (nếu có)

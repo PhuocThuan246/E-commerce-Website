@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // ================================
-// 📌 DiscountCode Schema
+// DiscountCode Schema
 //   - code: 5 ký tự, duy nhất, viết hoa
 //   - type: kiểu giảm (percent/fixed)
 //   - value: giá trị giảm (10% hoặc 100000 VND)

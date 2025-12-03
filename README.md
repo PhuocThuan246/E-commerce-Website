@@ -1,27 +1,70 @@
 # E-commerce-Website
-link : https://github.com/PhuocThuan246/E-commerce-Website
-Xóa local: git reset --hard
-# Tải bản mới: git pull origin main
-- Tạo dự án trong github web
-- Vào thư mục trên máy tính gõ
-		git clone link của trang dự án
-- Kiểm tra xem bạn đã có repo cục bộ chưa
-		git status
-- Nếu đã có repo nhưng chưa đồng bộ code mới
-                //git fetch origin// 
-                git pull origin main
-- Sau đó vào thư mục được tạo sẵn trên laptop
-		git add .
-		git commit -m "name code push"
-		git push
+=====================================================================
+1. PROJECT OVERVIEW
+=====================================================================
+E-Shop is a full-stack e-commerce website built with:
+  - Backend: Node.js + Express + MongoDB
+  - Frontend: React + Vite
+  - Deployment: Docker Compose
+  - Redis: for asynchronous task queue
+  - Worker: for background email sending
+  - Nginx: reverse proxy and load balancer
+  - Realtime: Socket.IO
+  - Authentication: JWT + Google OAuth
 
+=====================================================================
+2. HOW TO RUN (DOCKER COMPOSE)
+=====================================================================
+# Build images
+docker compose build
 
--- 23:05 - 04/11/2025
-Phúc - cập nhật 3. Product manager
-Phúc - cập nhật thêm websocket và tự động lấy tên người dùng bình luận khi đăng nhập
-Thuận - quản lý hồ sơ người dùng, quản lý nhiều địa chỉ, quên mật khẩu
-Quý - Giỏ hàng và thanh toán, Quản lý đơn hàng, Quản lý mã giảm giá
-Thuận - Xác thực bằng Google
-Thuận - Dardboards, chỉnh một số phần lại, chỉnh một số giao diện
-Phúc - Chỉnh lại toàn bộ giao diện.
-Thuận - Cập nhật lần cuối, fix một số lỗi, chỉnh lại ít giao diện
+# Start all containers
+docker compose up -d
+
+# Build and start in one command
+docker compose up -d --build
+
+# View running containers
+docker ps
+
+# Stop and remove containers
+docker compose down
+
+# Clean all unused images, volumes, and networks
+docker compose down -v --rmi all
+docker system prune -a --volumes -f
+docker volume rm $(docker volume ls -q)
+
+=====================================================================
+3. TESTING FUNCTIONALITY
+=====================================================================
+# Check which port the app is running on
+docker ps
+
+# Access frontend at:
+http://localhost
+
+# Verify backend load balancing
+docker logs -f ecommerce_api_1
+docker logs -f ecommerce_api_2
+
+# Verify asynchronous email worker
+docker logs -f ecommerce_worker
+
+=====================================================================
+4. ACCESS INFORMATION
+=====================================================================
+Frontend: http://localhost
+Backend API: http://localhost:5000/api/products
+MongoDB: internal port 27017
+Redis: internal port 6379
+
+=====================================================================
+5. ADMIN ACCOUNT
+=====================================================================
+Admin Email: admin@gmail.com
+Password: 123456
+
+=====================================================================
+END OF FILE
+=====================================================================

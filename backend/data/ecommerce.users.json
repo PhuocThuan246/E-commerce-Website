@@ -1,0 +1,339 @@
+[{
+  "_id": {
+    "$oid": "6924c2bebcb49de4d0103aae"
+  },
+  "fullName": "Administrator",
+  "email": "admin@gmail.com",
+  "password": "$2b$10$s.SjlpWXbU.DMvmbedZZj.Ifx7.jTwd4rrZPZhb7E7TpOgvT09hky",
+  "role": "admin",
+  "isBanned": false,
+  "addresses": [],
+  "__v": 0,
+  "loyaltyPoints": 0
+},
+{
+  "_id": {
+    "$oid": "6924c310bcb49de4d0103b6f"
+  },
+  "fullName": "Sơn Tùng",
+  "email": "sontung@gmail.com",
+  "password": "$2b$10$NC39lUE2NB73XJwCY5R2U.NiEm5EAepqcrLGQkFVjhuC/mid8VERG",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "fullName": "Sơn Tùng",
+      "phone": "0124558877777",
+      "city": "Thái Bình",
+      "ward": "Thái Bình",
+      "street": "",
+      "isDefault": true,
+      "_id": {
+        "$oid": "6924c310bcb49de4d0103b71"
+      }
+    }
+  ],
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6924c5b6aaeef914af3cb520"
+  },
+  "fullName": "Linh Đàm",
+  "email": "Linhdam@gmail.com",
+  "password": "$2b$10$ONqyxsYh50pX3SNj7QWf7OuXnZHv4K8dTo4IyWOmyQUoLzpIXe9ze",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "fullName": "Linh Đàm",
+      "phone": "03678945",
+      "city": "Hà Nội",
+      "ward": "Long Thnah",
+      "street": "Số 21",
+      "isDefault": true,
+      "_id": {
+        "$oid": "6924c5b6aaeef914af3cb521"
+      }
+    }
+  ],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6924c7cc0c5b6a78b87b70d2"
+  },
+  "fullName": "Chân Thành",
+  "email": "chanthanh@gmail.com",
+  "password": "$2b$10$iqNzNFRwbktW4pWfJVJlJ.ZgD9lrF7CVvR8I0Mwfz7HWn2hAnnxh2",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "fullName": "chan thanh",
+      "phone": "05547894555",
+      "city": "Kiên Giang",
+      "ward": "Kiên Giang",
+      "street": "",
+      "isDefault": true,
+      "_id": {
+        "$oid": "6924c7cc0c5b6a78b87b70d4"
+      }
+    }
+  ],
+  "__v": 1,
+  "loyaltyPoints": 0,
+  "updatedAt": {
+    "$date": "2025-11-29T15:23:24.180Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000001"
+  },
+  "fullName": "Nguyễn Văn An",
+  "email": "nguyenvanan@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000011"
+      },
+      "fullName": "Nguyễn Văn An",
+      "phone": "0901122334",
+      "city": "Hà Nội",
+      "ward": "Cầu Giấy",
+      "street": "12 Trần Thái Tông",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 0,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000002"
+  },
+  "fullName": "Trần Thị Bích",
+  "email": "tranthibich@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000012"
+      },
+      "fullName": "Trần Thị Bích",
+      "phone": "0933887766",
+      "city": "Hồ Chí Minh",
+      "ward": "Bình Thạnh",
+      "street": "25 Điện Biên Phủ",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 15,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000003"
+  },
+  "fullName": "Lê Quốc Hùng",
+  "email": "lequochung@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000013"
+      },
+      "fullName": "Lê Quốc Hùng",
+      "phone": "0912456789",
+      "city": "Đà Nẵng",
+      "ward": "Hải Châu",
+      "street": "89 Nguyễn Văn Linh",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 5,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000004"
+  },
+  "fullName": "Phạm Minh Hoàng",
+  "email": "phamminhhoang@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000014"
+      },
+      "fullName": "Phạm Minh Hoàng",
+      "phone": "0977112233",
+      "city": "Huế",
+      "ward": "Vĩnh Ninh",
+      "street": "56 Lê Lợi",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 0,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000005"
+  },
+  "fullName": "Võ Thị Thanh",
+  "email": "vothithanh@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000015"
+      },
+      "fullName": "Võ Thị Thanh",
+      "phone": "0965778899",
+      "city": "Hải Phòng",
+      "ward": "Lê Chân",
+      "street": "102 Tôn Đức Thắng",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000006"
+  },
+  "fullName": "Đặng Nhật Long",
+  "email": "dangnhatlong@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000016"
+      },
+      "fullName": "Đặng Nhật Long",
+      "phone": "0909988776",
+      "city": "Cần Thơ",
+      "ward": "Ninh Kiều",
+      "street": "45 Nguyễn Trãi",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 12,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000007"
+  },
+  "fullName": "Hoàng Gia Bảo",
+  "email": "hoanggiabao@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000017"
+      },
+      "fullName": "Hoàng Gia Bảo",
+      "phone": "0912334455",
+      "city": "Nha Trang",
+      "ward": "Vĩnh Hòa",
+      "street": "77 Phạm Văn Đồng",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 18,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000008"
+  },
+  "fullName": "Ngô Thị Kim Ngân",
+  "email": "ngothikimngan@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000018"
+      },
+      "fullName": "Ngô Thị Kim Ngân",
+      "phone": "0933456677",
+      "city": "Đồng Nai",
+      "ward": "Biên Hòa",
+      "street": "12 Võ Thị Sáu",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 22,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000009"
+  },
+  "fullName": "Bùi Tiến Dũng",
+  "email": "buitiendung@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000019"
+      },
+      "fullName": "Bùi Tiến Dũng",
+      "phone": "0988223344",
+      "city": "Thanh Hóa",
+      "ward": "Đông Sơn",
+      "street": "66 Lý Thường Kiệt",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 7,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692600000000000000000010"
+  },
+  "fullName": "Phan Ngọc Trâm",
+  "email": "phanngoctram@gmail.com",
+  "password": "$2b$10$eJhj5R8tBqQWQpT1TioK6eJtRMXJ8xg5vbgPNHO0zp0pYFnK7fS4i",
+  "role": "user",
+  "isBanned": false,
+  "addresses": [
+    {
+      "_id": {
+        "$oid": "692600000000000000000020"
+      },
+      "fullName": "Phan Ngọc Trâm",
+      "phone": "0977445566",
+      "city": "Vũng Tàu",
+      "ward": "Phường 2",
+      "street": "90 Hoàng Hoa Thám",
+      "isDefault": true
+    }
+  ],
+  "loyaltyPoints": 9,
+  "__v": 0
+}]

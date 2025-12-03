@@ -4,7 +4,8 @@ const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const DiscountCode = require("../models/Discount");
-const sendEmail = require("../utils/sendEmail");
+const userQueue = require("../queues/userQueue"); // path từ controllers/ tới file userQueue.js
+
 
 // Quy ước Loyalty
 const LOYALTY_RATE = 0.1;       // 10% tổng tiền
@@ -224,103 +225,35 @@ const createOrder = async (req, res) => {
     cart.items = remainingItems;
     await cart.save();
 
-    // 10. Gửi email xác nhận
+    // 10. Đẩy job gửi email xác nhận vào Redis (BullMQ)
     try {
-        const orderItemsHtml = orderItems
-          .map(
-            (i) => `
-              <tr>
-                <td style="padding:8px;border-bottom:1px solid #eee;">
-                  ${i.variantName ? `${i.variantName}` : "Sản phẩm"}
-                </td>
-                <td style="padding:8px;text-align:center;border-bottom:1px solid #eee;">
-                  ${i.quantity}
-                </td>
-                <td style="padding:8px;text-align:right;border-bottom:1px solid #eee;">
-                  ${(i.price * i.quantity).toLocaleString("vi-VN")} ₫
-                </td>
-              </tr>
-            `
-          )
-          .join("");
+      await userQueue.add("order_confirmation", {
+        email,
+        name,
+        phone,
+        address,
+        orderId: order._id.toString(),
+        status: order.status,
+        subtotal,
+        shippingFee: finalShippingFee,
+        tax: finalTax,
+        discountAmount,
+        loyaltyDiscountAmount,
+        total,
+        loyaltyPointsEarned,
+        items: orderItems.map((i) => ({
+          variantName: i.variantName,
+          quantity: i.quantity,
+          lineTotal: i.price * i.quantity,
+        })),
+      });
 
-        await sendEmail({
-          to: email,
-          subject: `🧾 Xác nhận đơn hàng #${order._id.toString().slice(-6).toUpperCase()}`,
-          html: `
-          <div style="font-family:Arial,sans-serif;background:#f9fafb;padding:20px;">
-            <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:10px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,0.05)">
-              
-              <h2 style="color:#111827;text-align:center;margin-bottom:10px;">
-                ✅ Đơn hàng của bạn đã được tạo thành công
-              </h2>
-
-              <p style="text-align:center;color:#6b7280;margin-top:0;">
-                Cảm ơn bạn đã mua sắm tại <strong>E-Shop</strong>!
-              </p>
-
-              <hr style="border:none;border-top:1px solid #eee;margin:16px 0;" />
-
-              <p><strong>Mã đơn:</strong> #${order._id.toString().slice(-6).toUpperCase()}</p>
-              <p><strong>Khách hàng:</strong> ${name}</p>
-              <p><strong>SĐT:</strong> ${phone}</p>
-              <p><strong>Địa chỉ:</strong> ${address}</p>
-
-              <p><strong>Trạng thái hiện tại:</strong>
-                <span style="
-                  padding:4px 10px;
-                  border-radius:20px;
-                  background:#fef3c7;
-                  color:#92400e;
-                  font-weight:600;
-                ">
-                  ${STATUS_LABELS[order.status]}
-                </span>
-              </p>
-
-              <h3 style="margin-top:20px;">📦 Chi tiết sản phẩm</h3>
-
-              <table width="100%" style="border-collapse:collapse;font-size:14px;">
-                <thead>
-                  <tr style="background:#f3f4f6;">
-                    <th style="padding:8px;text-align:left;">Sản phẩm</th>
-                    <th style="padding:8px;text-align:center;">SL</th>
-                    <th style="padding:8px;text-align:right;">Thành tiền</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${orderItemsHtml}
-                </tbody>
-              </table>
-
-              <h3 style="margin-top:20px;">💰 Thanh toán</h3>
-              <p>Tạm tính: ${subtotal.toLocaleString("vi-VN")} ₫</p>
-              <p>Phí ship: ${finalShippingFee.toLocaleString("vi-VN")} ₫</p>
-              <p>Thuế: ${finalTax.toLocaleString("vi-VN")} ₫</p>
-              <p>Giảm giá: -${discountAmount.toLocaleString("vi-VN")} ₫</p>
-              <p>Giảm bằng điểm: -${loyaltyDiscountAmount.toLocaleString("vi-VN")} ₫</p>
-
-              <h2 style="color:#dc2626;">
-                Tổng thanh toán: ${total.toLocaleString("vi-VN")} ₫
-              </h2>
-
-              <p>🎁 Điểm tích lũy từ đơn này: <strong>${loyaltyPointsEarned} điểm</strong></p>
-
-              <hr style="border:none;border-top:1px solid #eee;margin:16px 0;" />
-
-              <p style="font-size:12px;color:#6b7280;text-align:center;">
-                Nếu bạn có thắc mắc, vui lòng liên hệ CSKH qua hotline hoặc trả lời email này.
-                <br/>
-                &copy; ${new Date().getFullYear()} E-Shop. All rights reserved.
-              </p>
-            </div>
-          </div>
-          `,
-        });
-
+      console.log("[QUEUE] Đã đẩy job order_confirmation cho đơn", order._id.toString());
     } catch (e) {
-      console.error("Gửi email đơn hàng thất bại:", e.message);
+      console.error("[QUEUE] Lỗi khi đẩy job email xác nhận đơn:", e.message);
     }
+
+ 
 
     console.log("Đơn hàng đã được tạo:", order._id);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import productService from "../services/productService";
 import ProductCard from "../components/ProductCard";
 
@@ -7,12 +7,14 @@ export default function ProductCatalog() {
   const [loading, setLoading] = useState(true);
 
   // Bộ lọc
-  const [search, setSearch] = useState("");
-  const [brand, setBrand] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [rating, setRating] = useState(0);
-  const [sort, setSort] = useState("default");
+  const [filters, setFilters] = useState({
+    search: "",
+    brand: "",
+    minPrice: "",
+    maxPrice: "",
+    rating: "",
+    sort: "default",
+  });
 
   // Phân trang client
   const [page, setPage] = useState(1);
@@ -20,17 +22,33 @@ export default function ProductCatalog() {
 
   const [brandOptions, setBrandOptions] = useState([]);
 
-  // Lấy toàn bộ sản phẩm từ DB
+  // ====== Hàm lấy giá chuẩn của sản phẩm ======
+  const getPrice = (p) => {
+    if (p.effectivePrice) return p.effectivePrice;
+
+    if (p.variants?.length > 0) {
+      const variantPrices = p.variants.map(
+        (v) => v.effectivePrice || v.price || 0
+      );
+      return Math.min(...variantPrices);
+    }
+
+    return 0;
+  };
+
+  // ===============================
+  // Lấy toàn bộ sản phẩm
+  // ===============================
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         const { data } = await productService.getAll();
+
         setProducts(data);
-        const uniqueBrands = [
-          ...new Set(data.map((p) => p.brand).filter(Boolean)),
-        ];
-        setBrandOptions(uniqueBrands);
+
+        // Lấy danh sách thương hiệu
+        setBrandOptions([...new Set(data.map((p) => p.brand).filter(Boolean))]);
       } catch (err) {
         console.error("Lỗi khi tải sản phẩm:", err);
       } finally {
@@ -39,25 +57,39 @@ export default function ProductCatalog() {
     })();
   }, []);
 
-  // Lọc dữ liệu realtime
-  const filteredProducts = products
-    .filter((p) => {
+  // ===============================
+  // Lọc + Sắp xếp dùng useMemo (tối ưu hiệu năng)
+  // ===============================
+  const filteredProducts = useMemo(() => {
+    const { search, brand, minPrice, maxPrice, rating, sort } = filters;
+
+    let result = products.filter((p) => {
       const nameMatch = p.name.toLowerCase().includes(search.toLowerCase());
       const brandMatch = brand ? p.brand === brand : true;
-      const price = p.effectivePrice || (p.variants?.[0]?.effectivePrice ?? 0);
+
+      const price = getPrice(p);
       const priceMatch =
-        (!minPrice || price >= parseFloat(minPrice)) &&
-        (!maxPrice || price <= parseFloat(maxPrice));
-      // Lọc theo số sao trung bình
-      const ratingMatch = rating ? (p.ratingAverage || 0) >= parseFloat(rating) : true;
+        (!minPrice || price >= Number(minPrice)) &&
+        (!maxPrice || price <= Number(maxPrice));
+
+      const ratingMatch =
+        rating && rating !== ""
+          ? (p.ratingAverage || 0) >= Number(rating)
+          : true;
+
       return nameMatch && brandMatch && priceMatch && ratingMatch;
-    })
-    .sort((a, b) => {
-      switch (sort) {
+    });
+
+    // ====== Sắp xếp ======
+    result = result.sort((a, b) => {
+      const priceA = getPrice(a);
+      const priceB = getPrice(b);
+
+      switch (filters.sort) {
         case "price_asc":
-          return (a.effectivePrice ?? 0) - (b.effectivePrice ?? 0);
+          return priceA - priceB;
         case "price_desc":
-          return (b.effectivePrice ?? 0) - (a.effectivePrice ?? 0);
+          return priceB - priceA;
         case "name_asc":
           return a.name.localeCompare(b.name);
         case "name_desc":
@@ -67,7 +99,12 @@ export default function ProductCatalog() {
       }
     });
 
-  // Phân trang client-side
+    return result;
+  }, [products, filters]);
+
+  // ===============================
+  // Phân trang
+  // ===============================
   const totalPages = Math.ceil(filteredProducts.length / limit);
   const startIndex = (page - 1) * limit;
   const currentPageProducts = filteredProducts.slice(
@@ -75,11 +112,14 @@ export default function ProductCatalog() {
     startIndex + limit
   );
 
-  // Reset page nếu filter thay đổi
+  // Reset page khi filter thay đổi
   useEffect(() => {
     setPage(1);
-  }, [search, brand, minPrice, maxPrice, rating, sort]);
+  }, [filters]);
 
+  // ===============================
+  // Render
+  // ===============================
   return (
     <div style={{ padding: 24 }}>
       <h2
@@ -95,7 +135,7 @@ export default function ProductCatalog() {
         Danh sách sản phẩm
       </h2>
 
-      {/* Bộ lọc */}
+      {/* ====== Bộ lọc ====== */}
       <div
         style={{
           display: "flex",
@@ -105,12 +145,14 @@ export default function ProductCatalog() {
           justifyContent: "space-between",
         }}
       >
-        {/*  Tìm kiếm realtime */}
+        {/* Tìm kiếm */}
         <input
           type="text"
           placeholder="Nhập sản phẩm cần tìm?"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={filters.search}
+          onChange={(e) =>
+            setFilters({ ...filters, search: e.target.value })
+          }
           style={{
             padding: "8px 12px",
             borderRadius: 8,
@@ -119,10 +161,10 @@ export default function ProductCatalog() {
           }}
         />
 
-        {/* Lọc thương hiệu */}
+        {/* Thương hiệu */}
         <select
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
+          value={filters.brand}
+          onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
           style={{
             padding: "8px 12px",
             borderRadius: 8,
@@ -130,20 +172,11 @@ export default function ProductCatalog() {
           }}
         >
           <option value="">Tất cả thương hiệu</option>
-          {brandOptions.length > 0 ? (
-            brandOptions.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))
-          ) : (
-            <>
-              <option value="Apple">Apple</option>
-              <option value="Samsung">Samsung</option>
-              <option value="Xiaomi">Xiaomi</option>
-              <option value="Oppo">Oppo</option>
-            </>
-          )}
+          {brandOptions.map((b) => (
+            <option key={b} value={b}>
+              {b}
+            </option>
+          ))}
         </select>
 
         {/* Giá */}
@@ -151,23 +184,27 @@ export default function ProductCatalog() {
           <input
             type="number"
             placeholder="Giá min"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
+            value={filters.minPrice}
+            onChange={(e) =>
+              setFilters({ ...filters, minPrice: e.target.value })
+            }
             style={{ width: 90, padding: "6px", marginRight: 6 }}
           />
           <input
             type="number"
             placeholder="Giá max"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
+            value={filters.maxPrice}
+            onChange={(e) =>
+              setFilters({ ...filters, maxPrice: e.target.value })
+            }
             style={{ width: 90, padding: "6px" }}
           />
         </div>
 
-        {/* Lọc theo sao */}
+        {/* Rating */}
         <select
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
+          value={filters.rating}
+          onChange={(e) => setFilters({ ...filters, rating: e.target.value })}
           style={{
             padding: "8px 12px",
             borderRadius: 8,
@@ -175,17 +212,17 @@ export default function ProductCatalog() {
           }}
         >
           <option value="">Tất cả xếp hạng</option>
-          <option value="5">⭐ 5 sao </option>
+          <option value="5">⭐ 5 sao</option>
           <option value="4">⭐ 4 sao trở lên</option>
           <option value="3">⭐ 3 sao trở lên</option>
           <option value="2">⭐ 2 sao trở lên</option>
           <option value="1">⭐ 1 sao trở lên</option>
         </select>
 
-        {/* Sắp xếp */}
+        {/* Sort */}
         <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
+          value={filters.sort}
+          onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
           style={{
             padding: "8px 12px",
             borderRadius: 8,
@@ -202,21 +239,20 @@ export default function ProductCatalog() {
         </select>
       </div>
 
-      {/* Danh sách sản phẩm */}
+      {/* ====== Danh sách sản phẩm ====== */}
       {loading ? (
         <p style={{ textAlign: "center" }}>Đang tải...</p>
       ) : currentPageProducts.length > 0 ? (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: 22,                    // khoảng cách sản phẩm
-          paddingLeft: 8,
-          paddingRight: 8,
-          alignItems: "stretch"
-        }}
-      >
-
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: 22,
+            paddingLeft: 8,
+            paddingRight: 8,
+            alignItems: "stretch",
+          }}
+        >
           {currentPageProducts.map((p) => (
             <ProductCard key={p._id} product={p} />
           ))}
@@ -225,7 +261,7 @@ export default function ProductCatalog() {
         <p style={{ textAlign: "center" }}>Không tìm thấy sản phẩm nào.</p>
       )}
 
-      {/* Phân trang client-side */}
+      {/* ====== Phân trang ====== */}
       {totalPages > 1 && (
         <div
           style={{
@@ -239,7 +275,7 @@ export default function ProductCatalog() {
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
             style={{
-              background: "#000000ff",
+              background: "#000",
               color: "white",
               border: "none",
               borderRadius: 6,
@@ -256,7 +292,7 @@ export default function ProductCatalog() {
               key={i}
               onClick={() => setPage(i + 1)}
               style={{
-                background: page === i + 1 ? "#000000ff" : "#e5e7eb",
+                background: page === i + 1 ? "#000" : "#e5e7eb",
                 color: page === i + 1 ? "white" : "#111827",
                 border: "none",
                 borderRadius: 6,
@@ -273,7 +309,7 @@ export default function ProductCatalog() {
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
             style={{
-              background: "#000000ff",
+              background: "#000",
               color: "white",
               border: "none",
               borderRadius: 6,

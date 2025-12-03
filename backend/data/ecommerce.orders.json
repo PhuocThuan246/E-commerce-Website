@@ -1,0 +1,1754 @@
+[{
+  "_id": {
+    "$oid": "6924c310bcb49de4d0103b73"
+  },
+  "sessionId": "88a13416-0487-4c98-8146-3521c0c7e8fb",
+  "userId": {
+    "$oid": "6924c310bcb49de4d0103b6f"
+  },
+  "customer": {
+    "name": "Sơn Tùng",
+    "phone": "0124558877777",
+    "email": "sontung@gmail.com",
+    "address": "Thái Bình"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 1,
+      "price": 5990000,
+      "_id": {
+        "$oid": "6924c310bcb49de4d0103b74"
+      }
+    }
+  ],
+  "total": 5990000,
+  "createdAt": {
+    "$date": "2025-11-24T20:41:52.759Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6924c651aaeef914af3cb6d7"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "6924c5b6aaeef914af3cb520"
+  },
+  "customer": {
+    "name": "Linh Đàm",
+    "phone": "03678945",
+    "email": "Linhdam@gmail.com",
+    "address": "Số 21, Long Thnah, Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "8GB RAM / 256GB SSD",
+      "quantity": 2,
+      "price": 28990000,
+      "_id": {
+        "$oid": "6924c651aaeef914af3cb6d8"
+      }
+    },
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 2,
+      "price": 5990000,
+      "_id": {
+        "$oid": "6924c651aaeef914af3cb6d9"
+      }
+    }
+  ],
+  "total": 69960000,
+  "createdAt": {
+    "$date": "2025-11-24T20:55:45.677Z"
+  },
+  "__v": 1,
+  "loyaltyDiscountAmount": 0,
+  "loyaltyPointsEarned": 0,
+  "loyaltyPointsUsed": 0,
+  "status": "confirmed",
+  "statusHistory": [
+    {
+      "status": "confirmed",
+      "updatedAt": {
+        "$date": "2025-12-01T16:39:09.930Z"
+      },
+      "_id": {
+        "$oid": "692dc4add0fc55196948ede6"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6924c7cc0c5b6a78b87b70d6"
+  },
+  "sessionId": "88a13416-0487-4c98-8146-3521c0c7e8fb",
+  "userId": {
+    "$oid": "6924c7cc0c5b6a78b87b70d2"
+  },
+  "customer": {
+    "name": "chan thanh",
+    "phone": "05547894555",
+    "email": "chanthanh@gmail.com",
+    "address": "Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 1,
+      "price": 5990000,
+      "_id": {
+        "$oid": "6924c7cc0c5b6a78b87b70d7"
+      }
+    }
+  ],
+  "total": 5990000,
+  "createdAt": {
+    "$date": "2025-11-24T21:02:04.373Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6924c9320c5b6a78b87b73ba"
+  },
+  "sessionId": "88a13416-0487-4c98-8146-3521c0c7e8fb",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Dương Phước Thuận",
+    "phone": "0367934564",
+    "email": "ptduong394@gmail.com",
+    "address": "Số 30, Long Thạnh , Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB / PCIe 4.0",
+      "quantity": 1,
+      "price": 2290000,
+      "_id": {
+        "$oid": "6924c9320c5b6a78b87b73bb"
+      }
+    }
+  ],
+  "total": 2290000,
+  "createdAt": {
+    "$date": "2025-11-24T21:08:02.064Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69272215f07af674c2d69f05"
+  },
+  "sessionId": "88a13416-0487-4c98-8146-3521c0c7e8fb",
+  "userId": {
+    "$oid": "69272215f07af674c2d69f00"
+  },
+  "customer": {
+    "name": "Thuận",
+    "phone": "05547894555",
+    "email": "ptduong394@gmail.com@gmail.com",
+    "address": "Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB / PCIe 4.0",
+      "quantity": 1,
+      "price": 2290000,
+      "_id": {
+        "$oid": "69272215f07af674c2d69f06"
+      }
+    }
+  ],
+  "subtotal": 2290000,
+  "shippingFee": 50000,
+  "tax": 7625000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 9965000,
+  "loyaltyPointsEarned": 996,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "delivered",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-11-26T15:51:49.933Z"
+      },
+      "_id": {
+        "$oid": "69272215f07af674c2d69f07"
+      }
+    },
+    {
+      "status": "confirmed",
+      "updatedAt": {
+        "$date": "2025-11-26T15:53:25.910Z"
+      },
+      "_id": {
+        "$oid": "69272275f07af674c2d69fe2"
+      }
+    },
+    {
+      "status": "shipping",
+      "updatedAt": {
+        "$date": "2025-11-26T15:53:29.379Z"
+      },
+      "_id": {
+        "$oid": "69272279f07af674c2d69fe9"
+      }
+    },
+    {
+      "status": "delivered",
+      "updatedAt": {
+        "$date": "2025-11-26T15:53:31.668Z"
+      },
+      "_id": {
+        "$oid": "6927227bf07af674c2d69ff1"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-11-26T15:51:49.935Z"
+  },
+  "__v": 3
+},
+{
+  "_id": {
+    "$oid": "692722fff07af674c2d6a219"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Ba tôi",
+    "phone": "067894551165",
+    "email": "ptduong394@gmail.com",
+    "address": "Núi non, Thành Châu, Kiên Hải"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 2,
+      "price": 5990000,
+      "_id": {
+        "$oid": "692722fff07af674c2d6a21a"
+      }
+    }
+  ],
+  "subtotal": 11980000,
+  "shippingFee": 50000,
+  "tax": 10953000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 22983000,
+  "loyaltyPointsEarned": 2298,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "pending",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-11-26T15:55:43.625Z"
+      },
+      "_id": {
+        "$oid": "692722fff07af674c2d6a21b"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-11-26T15:55:43.626Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69272446f07af674c2d6a4ad"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Thuận",
+    "phone": "067894551165",
+    "email": "ptduong394@gmail.com",
+    "address": "Đà Lạt"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db7"
+      },
+      "variantName": "16GB RAM / 512GB SSD",
+      "quantity": 1,
+      "price": 36990000,
+      "_id": {
+        "$oid": "69272446f07af674c2d6a4ae"
+      }
+    }
+  ],
+  "subtotal": 36990000,
+  "shippingFee": 50000,
+  "tax": 10255000,
+  "discountAmount": 10,
+  "discountCode": {
+    "$oid": "692723d3f07af674c2d6a39d"
+  },
+  "total": 47294990,
+  "loyaltyPointsEarned": 4729,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "delivered",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-11-26T16:01:10.852Z"
+      },
+      "_id": {
+        "$oid": "69272446f07af674c2d6a4af"
+      }
+    },
+    {
+      "status": "delivered",
+      "updatedAt": {
+        "$date": "2025-11-28T17:04:44.006Z"
+      },
+      "_id": {
+        "$oid": "6929d62cf0ae79a6de6dc19d"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-11-26T16:01:10.853Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "69272ed90e5dde25d65d7f67"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Ba tôi",
+    "phone": "067894551165",
+    "email": "ptduong394@gmail.com",
+    "address": "Núi non, Thành Châu, Kiên Hải"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dbb"
+      },
+      "variantName": "2TB / 7200RPM",
+      "quantity": 1,
+      "price": 1490000,
+      "_id": {
+        "$oid": "69272ed90e5dde25d65d7f68"
+      }
+    }
+  ],
+  "subtotal": 1490000,
+  "shippingFee": 50000,
+  "tax": 149000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 1689000,
+  "loyaltyPointsEarned": 168,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "confirmed",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-11-26T16:46:17.902Z"
+      },
+      "_id": {
+        "$oid": "69272ed90e5dde25d65d7f69"
+      }
+    },
+    {
+      "status": "confirmed",
+      "updatedAt": {
+        "$date": "2025-11-29T15:23:41.753Z"
+      },
+      "_id": {
+        "$oid": "692b0ffd0131b4b37907cd8d"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-11-26T16:46:17.904Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "69273991c5ce43858f5165d9"
+  },
+  "sessionId": "aa1efda0-8f4f-4afe-bd10-a5ef878449da",
+  "userId": {
+    "$oid": "69273921c5ce43858f51647f"
+  },
+  "customer": {
+    "name": "Thuận",
+    "phone": "0356478922",
+    "email": "duongphuocthuan2406@gmail.com",
+    "address": "Số 32, Long Thạnh, Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "8GB RAM / 256GB SSD",
+      "quantity": 1,
+      "price": 28990000,
+      "_id": {
+        "$oid": "69273991c5ce43858f5165da"
+      }
+    }
+  ],
+  "subtotal": 28990000,
+  "shippingFee": 50000,
+  "tax": 2899000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 31939000,
+  "loyaltyPointsEarned": 3193,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "pending",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-11-26T17:32:01.833Z"
+      },
+      "_id": {
+        "$oid": "69273991c5ce43858f5165db"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-11-26T17:32:01.834Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6929cbf7ee6675406d8d47d6"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "6929cbf7ee6675406d8d47d1"
+  },
+  "customer": {
+    "name": "Thuận",
+    "phone": "0367944445555",
+    "email": "ptduong394@gmail.com",
+    "address": "Long Thạnh, Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dbb"
+      },
+      "variantName": "2TB / 7200RPM",
+      "quantity": 1,
+      "price": 1490000,
+      "_id": {
+        "$oid": "6929cbf7ee6675406d8d47d7"
+      }
+    }
+  ],
+  "subtotal": 1490000,
+  "shippingFee": 50000,
+  "tax": 149000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 1689000,
+  "loyaltyPointsEarned": 168,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "shipping",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-11-28T16:21:11.315Z"
+      },
+      "_id": {
+        "$oid": "6929cbf7ee6675406d8d47d8"
+      }
+    },
+    {
+      "status": "shipping",
+      "updatedAt": {
+        "$date": "2025-11-28T18:18:09.267Z"
+      },
+      "_id": {
+        "$oid": "6929e76175aa0ce51bbf6edb"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-11-28T16:21:11.317Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000001"
+  },
+  "sessionId": "sess_001",
+  "customer": {
+    "name": "Nguyễn Văn A",
+    "phone": "0900000001",
+    "email": "a@gmail.com",
+    "address": "TP.HCM"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "512GB",
+      "quantity": 2,
+      "price": 1000000
+    }
+  ],
+  "subtotal": 2000000,
+  "shippingFee": 50000,
+  "tax": 200000,
+  "discountAmount": 0,
+  "total": 2250000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-01-12T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000002"
+  },
+  "sessionId": "sess_002",
+  "customer": {
+    "name": "Trần Thị B",
+    "phone": "0900000002",
+    "email": "b@gmail.com",
+    "address": "Hà Nội"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB",
+      "quantity": 1,
+      "price": 3000000
+    }
+  ],
+  "subtotal": 3000000,
+  "shippingFee": 50000,
+  "tax": 300000,
+  "discountAmount": 0,
+  "total": 3350000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-02-10T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000003"
+  },
+  "sessionId": "sess_003",
+  "customer": {
+    "name": "Lê Văn C",
+    "phone": "0900000003",
+    "email": "c@gmail.com",
+    "address": "Cần Thơ"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "2TB",
+      "quantity": 3,
+      "price": 1500000
+    }
+  ],
+  "subtotal": 4500000,
+  "shippingFee": 50000,
+  "tax": 450000,
+  "discountAmount": 0,
+  "total": 5000000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-03-15T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000004"
+  },
+  "sessionId": "sess_004",
+  "customer": {
+    "name": "Phạm Văn D",
+    "phone": "0900000004",
+    "email": "d@gmail.com",
+    "address": "Đà Nẵng"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "256GB",
+      "quantity": 1,
+      "price": 1200000
+    }
+  ],
+  "subtotal": 1200000,
+  "shippingFee": 50000,
+  "tax": 120000,
+  "discountAmount": 0,
+  "total": 1370000,
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-03-20T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000005"
+  },
+  "sessionId": "sess_005",
+  "customer": {
+    "name": "Hoàng Văn E",
+    "phone": "0900000005",
+    "email": "e@gmail.com",
+    "address": "Huế"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "512GB Pro",
+      "quantity": 4,
+      "price": 2000000
+    }
+  ],
+  "subtotal": 8000000,
+  "shippingFee": 50000,
+  "tax": 800000,
+  "discountAmount": 0,
+  "total": 8850000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-04-05T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000101"
+  },
+  "sessionId": "sess_101",
+  "customer": {
+    "name": "Nguyễn Hoàng Lộc",
+    "phone": "0901111001",
+    "email": "loc@gmail.com",
+    "address": "Quận 1, TP.HCM"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB Ultra",
+      "quantity": 10,
+      "price": 5000000
+    }
+  ],
+  "subtotal": 50000000,
+  "shippingFee": 50000,
+  "tax": 5000000,
+  "discountAmount": 0,
+  "total": 55050000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2024-01-10T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000102"
+  },
+  "sessionId": "sess_102",
+  "customer": {
+    "name": "Trần Minh Khang",
+    "phone": "0901111002",
+    "email": "khang@gmail.com",
+    "address": "Quận Bình Thạnh, TP.HCM"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "2TB Enterprise",
+      "quantity": 20,
+      "price": 3000000
+    }
+  ],
+  "subtotal": 60000000,
+  "shippingFee": 50000,
+  "tax": 6000000,
+  "discountAmount": 0,
+  "total": 66050000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2024-02-18T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000103"
+  },
+  "sessionId": "sess_103",
+  "customer": {
+    "name": "Lê Thảo Nhi",
+    "phone": "0901111003",
+    "email": "nhi@gmail.com",
+    "address": "Ninh Kiều, Cần Thơ"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "4TB Pro Max",
+      "quantity": 12,
+      "price": 7000000
+    }
+  ],
+  "subtotal": 84000000,
+  "shippingFee": 50000,
+  "tax": 8400000,
+  "discountAmount": 0,
+  "total": 92450000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2024-03-22T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000104"
+  },
+  "sessionId": "sess_104",
+  "customer": {
+    "name": "Phạm Anh Tú",
+    "phone": "0901111004",
+    "email": "tu@gmail.com",
+    "address": "Hai Bà Trưng, Hà Nội"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB Ultra",
+      "quantity": 15,
+      "price": 5000000
+    }
+  ],
+  "subtotal": 75000000,
+  "shippingFee": 50000,
+  "tax": 7500000,
+  "discountAmount": 2000000,
+  "total": 80550000,
+  "status": "confirmed",
+  "createdAt": {
+    "$date": "2024-04-12T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000105"
+  },
+  "sessionId": "sess_105",
+  "customer": {
+    "name": "Đoàn Thanh Tùng",
+    "phone": "0901111005",
+    "email": "tung@gmail.com",
+    "address": "Đà Nẵng"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "3TB Limited Edition",
+      "quantity": 18,
+      "price": 4000000
+    }
+  ],
+  "subtotal": 72000000,
+  "shippingFee": 50000,
+  "tax": 7200000,
+  "discountAmount": 0,
+  "total": 79250000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2024-05-20T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000106"
+  },
+  "sessionId": "sess_106",
+  "customer": {
+    "name": "Võ Gia Hân",
+    "phone": "0901111006",
+    "email": "han@gmail.com",
+    "address": "Buôn Ma Thuột"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "512GB Pro",
+      "quantity": 25,
+      "price": 2000000
+    }
+  ],
+  "subtotal": 50000000,
+  "shippingFee": 50000,
+  "tax": 5000000,
+  "discountAmount": 500000,
+  "total": 54550000,
+  "status": "shipping",
+  "createdAt": {
+    "$date": "2024-06-28T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000107"
+  },
+  "sessionId": "sess_107",
+  "customer": {
+    "name": "Lý Quốc Thịnh",
+    "phone": "0901111007",
+    "email": "thinh@gmail.com",
+    "address": "Vũng Tàu"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "2TB Edition",
+      "quantity": 30,
+      "price": 3000000
+    }
+  ],
+  "subtotal": 90000000,
+  "shippingFee": 50000,
+  "tax": 9000000,
+  "discountAmount": 0,
+  "total": 99050000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2024-07-05T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000108"
+  },
+  "sessionId": "sess_108",
+  "customer": {
+    "name": "Đỗ Minh Ngọc",
+    "phone": "0901111008",
+    "email": "ngoc@gmail.com",
+    "address": "Hải Phòng"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "1TB Pro",
+      "quantity": 40,
+      "price": 1500000
+    }
+  ],
+  "subtotal": 60000000,
+  "shippingFee": 50000,
+  "tax": 6000000,
+  "discountAmount": 0,
+  "total": 66050000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2024-08-15T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000109"
+  },
+  "sessionId": "sess_109",
+  "customer": {
+    "name": "Bùi Hồng Sơn",
+    "phone": "0901111009",
+    "email": "son@gmail.com",
+    "address": "Long An"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "8TB Ultra Max",
+      "quantity": 10,
+      "price": 12000000
+    }
+  ],
+  "subtotal": 120000000,
+  "shippingFee": 100000,
+  "tax": 12000000,
+  "discountAmount": 1000000,
+  "total": 131100000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2024-09-25T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "660000000000000000000110"
+  },
+  "sessionId": "sess_110",
+  "customer": {
+    "name": "Trương Nhật Hào",
+    "phone": "0901111010",
+    "email": "hao@gmail.com",
+    "address": "Quy Nhơn"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB Business Pack",
+      "quantity": 22,
+      "price": 2500000
+    }
+  ],
+  "subtotal": 55000000,
+  "shippingFee": 50000,
+  "tax": 5500000,
+  "discountAmount": 0,
+  "total": 60550000,
+  "status": "pending",
+  "createdAt": {
+    "$date": "2024-10-10T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695000000000000000000010"
+  },
+  "sessionId": "sess_b010",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Phúc",
+    "phone": "0911223344",
+    "email": "phuc@example.com",
+    "address": "Hà Nội"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB / PCIe 4.0",
+      "quantity": 4,
+      "price": 2290000
+    }
+  ],
+  "subtotal": 9160000,
+  "shippingFee": 50000,
+  "tax": 916000,
+  "total": 10176000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-02-04T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695aaa000000000000000001"
+  },
+  "sessionId": "sess_jan_001",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Nguyễn Văn Lộc",
+    "phone": "0901122334",
+    "email": "loc@gmail.com",
+    "address": "TP. Hồ Chí Minh"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db7"
+      },
+      "variantName": "16GB RAM / 512GB SSD",
+      "quantity": 2,
+      "price": 36990000
+    }
+  ],
+  "subtotal": 73980000,
+  "shippingFee": 50000,
+  "tax": 7398000,
+  "total": 81478000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-01-05T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695aaa000000000000000002"
+  },
+  "sessionId": "sess_jan_002",
+  "userId": {
+    "$oid": "69273921c5ce43858f51647f"
+  },
+  "customer": {
+    "name": "Trần Thị Hòa",
+    "phone": "0912334455",
+    "email": "hoatran@gmail.com",
+    "address": "Hà Nội"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "8GB RAM / 256GB SSD",
+      "quantity": 3,
+      "price": 28990000
+    }
+  ],
+  "subtotal": 86970000,
+  "shippingFee": 50000,
+  "tax": 8697000,
+  "total": 95665000,
+  "status": "shipping",
+  "createdAt": {
+    "$date": "2025-01-14T14:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695aaa000000000000000003"
+  },
+  "sessionId": "sess_jan_003",
+  "userId": {
+    "$oid": "6924c7cc0c5b6a78b87b70d2"
+  },
+  "customer": {
+    "name": "Phạm Quốc Đạt",
+    "phone": "0988112233",
+    "email": "datpq@gmail.com",
+    "address": "Đà Nẵng"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 10,
+      "price": 5990000
+    }
+  ],
+  "subtotal": 59900000,
+  "shippingFee": 50000,
+  "tax": 5990000,
+  "total": 65890000,
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-01-26T17:50:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695bbb000000000000000010"
+  },
+  "sessionId": "sess_feb_010",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Lê Bảo",
+    "phone": "0903344556",
+    "email": "lebao@gmail.com",
+    "address": "Huế"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB / PCIe 4.0",
+      "quantity": 20,
+      "price": 2290000
+    }
+  ],
+  "subtotal": 45800000,
+  "shippingFee": 50000,
+  "tax": 4580000,
+  "total": 50485000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-02-01T11:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695bbb000000000000000011"
+  },
+  "sessionId": "sess_feb_011",
+  "userId": {
+    "$oid": "69273921c5ce43858f51647f"
+  },
+  "customer": {
+    "name": "Hoàng Lam",
+    "phone": "0977332211",
+    "email": "hoanglam@gmail.com",
+    "address": "Quảng Bình"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db7"
+      },
+      "variantName": "16GB RAM / 512GB SSD",
+      "quantity": 2,
+      "price": 36990000
+    }
+  ],
+  "subtotal": 73980000,
+  "shippingFee": 50000,
+  "tax": 7398000,
+  "total": 81478000,
+  "status": "confirmed",
+  "createdAt": {
+    "$date": "2025-02-12T09:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695bbb000000000000000012"
+  },
+  "sessionId": "sess_feb_012",
+  "userId": {
+    "$oid": "6924c7cc0c5b6a78b87b70d2"
+  },
+  "customer": {
+    "name": "Trịnh Huy",
+    "phone": "0989988776",
+    "email": "huytrinh@gmail.com",
+    "address": "Cần Thơ"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "8GB RAM / 256GB SSD",
+      "quantity": 2,
+      "price": 28990000
+    },
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 4,
+      "price": 5990000
+    }
+  ],
+  "subtotal": 68940000,
+  "shippingFee": 50000,
+  "tax": 6894000,
+  "total": 75829000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-02-25T14:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695ccc000000000000000020"
+  },
+  "sessionId": "sess_mar_020",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Văn Kiệt",
+    "phone": "0905566778",
+    "email": "kiet@gmail.com",
+    "address": "Hải Phòng"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db7"
+      },
+      "variantName": "16GB RAM / 512GB SSD",
+      "quantity": 3,
+      "price": 36990000
+    }
+  ],
+  "subtotal": 110970000,
+  "shippingFee": 50000,
+  "tax": 11097000,
+  "total": 122067000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-03-10T09:20:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695ccc000000000000000021"
+  },
+  "sessionId": "sess_mar_021",
+  "userId": {
+    "$oid": "69273921c5ce43858f51647f"
+  },
+  "customer": {
+    "name": "Thanh Hằng",
+    "phone": "0911223344",
+    "email": "hangthanh@gmail.com",
+    "address": "Đồng Nai"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 9,
+      "price": 5990000
+    }
+  ],
+  "subtotal": 53910000,
+  "shippingFee": 50000,
+  "tax": 5391000,
+  "total": 59396000,
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-03-15T13:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695ccc000000000000000022"
+  },
+  "sessionId": "sess_mar_022",
+  "userId": {
+    "$oid": "6924c7cc0c5b6a78b87b70d2"
+  },
+  "customer": {
+    "name": "Đỗ Tường",
+    "phone": "0978445566",
+    "email": "dotuong@gmail.com",
+    "address": "Vũng Tàu"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB / PCIe 4.0",
+      "quantity": 30,
+      "price": 2290000
+    }
+  ],
+  "subtotal": 68700000,
+  "shippingFee": 50000,
+  "tax": 6870000,
+  "total": 75575000,
+  "status": "shipping",
+  "createdAt": {
+    "$date": "2025-03-22T16:40:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695ddd000000000000000030"
+  },
+  "sessionId": "sess_apr_030",
+  "userId": {
+    "$oid": "6924c3adbcb49de4d0103c08"
+  },
+  "customer": {
+    "name": "Phạm Minh",
+    "phone": "0911445566",
+    "email": "phamminh@gmail.com",
+    "address": "Long An"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "8GB RAM / 256GB SSD",
+      "quantity": 2,
+      "price": 28990000
+    },
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db8"
+      },
+      "variantName": "29 inch / Full HD / 75Hz",
+      "quantity": 6,
+      "price": 5990000
+    }
+  ],
+  "subtotal": 76940000,
+  "shippingFee": 50000,
+  "tax": 7694000,
+  "total": 84634000,
+  "status": "delivered",
+  "createdAt": {
+    "$date": "2025-04-05T09:10:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695ddd000000000000000031"
+  },
+  "sessionId": "sess_apr_031",
+  "userId": {
+    "$oid": "69273921c5ce43858f51647f"
+  },
+  "customer": {
+    "name": "Mai Trâm",
+    "phone": "0977332211",
+    "email": "tram@gmail.com",
+    "address": "Quảng Nam"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db7"
+      },
+      "variantName": "16GB RAM / 512GB SSD",
+      "quantity": 2,
+      "price": 36990000
+    }
+  ],
+  "subtotal": 73980000,
+  "shippingFee": 50000,
+  "tax": 7398000,
+  "total": 81478000,
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-04-14T10:40:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695ddd000000000000000032"
+  },
+  "sessionId": "sess_apr_032",
+  "userId": {
+    "$oid": "6924c7cc0c5b6a78b87b70d2"
+  },
+  "customer": {
+    "name": "Lữ Quốc Huy",
+    "phone": "0356778899",
+    "email": "huylq@gmail.com",
+    "address": "Nha Trang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dba"
+      },
+      "variantName": "1TB / PCIe 4.0",
+      "quantity": 25,
+      "price": 2290000
+    }
+  ],
+  "subtotal": 57250000,
+  "shippingFee": 50000,
+  "tax": 5725000,
+  "total": 63075000,
+  "status": "confirmed",
+  "createdAt": {
+    "$date": "2025-04-24T15:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692de4e4b1bd4306b1565342"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "6929cddf4f5aa37460442e83"
+  },
+  "customer": {
+    "name": "Thuận",
+    "phone": "123456789",
+    "email": "ptduong394@gmail.com",
+    "address": "Số 23, Long Thạnh, Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db6"
+      },
+      "variantName": "8GB RAM / 256GB SSD",
+      "quantity": 1,
+      "price": 28990000,
+      "_id": {
+        "$oid": "692de4e4b1bd4306b1565343"
+      }
+    }
+  ],
+  "subtotal": 28990000,
+  "shippingFee": 50000,
+  "tax": 2899000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 31939000,
+  "loyaltyPointsEarned": 3193,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "shipping",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-12-01T18:56:36.553Z"
+      },
+      "_id": {
+        "$oid": "692de4e4b1bd4306b1565344"
+      }
+    },
+    {
+      "status": "confirmed",
+      "updatedAt": {
+        "$date": "2025-12-01T18:57:55.047Z"
+      },
+      "_id": {
+        "$oid": "692de533b1bd4306b1565527"
+      }
+    },
+    {
+      "status": "shipping",
+      "updatedAt": {
+        "$date": "2025-12-01T19:33:30.840Z"
+      },
+      "_id": {
+        "$oid": "692ded8a455469e658971b60"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-01T18:56:36.556Z"
+  },
+  "__v": 2
+},
+{
+  "_id": {
+    "$oid": "692ea3a474cd99b6943a25bc"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "692ea2b274cd99b6943a2522"
+  },
+  "customer": {
+    "name": "Dương Phước Thuận",
+    "phone": "0367934564",
+    "email": "ptduong394@gmail.com",
+    "address": "Đồng Tràm, Long Thạnh, Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "692db595510a008fdf314225"
+      },
+      "variantName": "Laptop Acer Nitro ANV15-51-78BG i7 13620H AI/16GB/512GB/4060 8GB",
+      "quantity": 1,
+      "price": 29300000,
+      "_id": {
+        "$oid": "692ea3a474cd99b6943a25bd"
+      }
+    }
+  ],
+  "subtotal": 29300000,
+  "shippingFee": 50000,
+  "tax": 2930000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 32280000,
+  "loyaltyPointsEarned": 3228,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "pending",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-12-02T08:30:28.617Z"
+      },
+      "_id": {
+        "$oid": "692ea3a474cd99b6943a25be"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-02T08:30:28.621Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692ea679f3164351c853a5c9"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "692ea2b274cd99b6943a2522"
+  },
+  "customer": {
+    "name": "Dương Phước Thuận",
+    "phone": "0367934564",
+    "email": "ptduong394@gmail.com",
+    "address": "Đồng Tràm, Long Thạnh, Kiên Giang"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "692e9a89b6e55197711815f6"
+      },
+      "variantName": "4K 150Hz",
+      "quantity": 1,
+      "price": 8390000,
+      "_id": {
+        "$oid": "692ea679f3164351c853a5ca"
+      }
+    }
+  ],
+  "subtotal": 8390000,
+  "shippingFee": 50000,
+  "tax": 839000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 9279000,
+  "loyaltyPointsEarned": 927,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "confirmed",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-12-02T08:42:33.918Z"
+      },
+      "_id": {
+        "$oid": "692ea679f3164351c853a5cb"
+      }
+    },
+    {
+      "status": "confirmed",
+      "updatedAt": {
+        "$date": "2025-12-02T08:43:26.951Z"
+      },
+      "_id": {
+        "$oid": "692ea6aef3164351c853a73c"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-02T08:42:33.922Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "692eac02140466c4cb863f53"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "692eac02140466c4cb863f4e"
+  },
+  "customer": {
+    "name": "Thiên Kim",
+    "phone": "03145678955",
+    "email": "ptduong394@gmail.com",
+    "address": "Long Thành, Cầu Giấy, Hà Nội"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36db9"
+      },
+      "variantName": "24 inch / Full HD / 75Hz",
+      "quantity": 1,
+      "price": 4190000,
+      "_id": {
+        "$oid": "692eac02140466c4cb863f54"
+      }
+    }
+  ],
+  "subtotal": 4190000,
+  "shippingFee": 50000,
+  "tax": 419000,
+  "discountAmount": 0,
+  "discountCode": null,
+  "total": 4659000,
+  "loyaltyPointsEarned": 465,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "pending",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-12-02T09:06:10.913Z"
+      },
+      "_id": {
+        "$oid": "692eac02140466c4cb863f55"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-02T09:06:10.915Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692eaffb140466c4cb864ddc"
+  },
+  "sessionId": "d37d4d6c-1aea-4c0a-b0e3-5133396555bc",
+  "userId": {
+    "$oid": "692eac02140466c4cb863f4e"
+  },
+  "customer": {
+    "name": "Thiên Kim",
+    "phone": "035466875",
+    "email": "ptduong394@gmail.com",
+    "address": "Số 32, Cầu Giấy, Hà Nội"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "68ef6f5633e47af65bc36dbb"
+      },
+      "variantName": "2TB / 5400RPM",
+      "quantity": 1,
+      "price": 1390000,
+      "_id": {
+        "$oid": "692eaffb140466c4cb864ddd"
+      }
+    }
+  ],
+  "subtotal": 1390000,
+  "shippingFee": 50000,
+  "tax": 139000,
+  "discountAmount": 100000,
+  "discountCode": {
+    "$oid": "692ded0d455469e658971732"
+  },
+  "total": 1479000,
+  "loyaltyPointsEarned": 147,
+  "loyaltyPointsUsed": 0,
+  "loyaltyDiscountAmount": 0,
+  "status": "shipping",
+  "statusHistory": [
+    {
+      "status": "pending",
+      "updatedAt": {
+        "$date": "2025-12-02T09:23:07.990Z"
+      },
+      "_id": {
+        "$oid": "692eaffb140466c4cb864dde"
+      }
+    },
+    {
+      "status": "confirmed",
+      "updatedAt": {
+        "$date": "2025-12-02T09:25:15.313Z"
+      },
+      "_id": {
+        "$oid": "692eb07b140466c4cb864f5c"
+      }
+    },
+    {
+      "status": "shipping",
+      "updatedAt": {
+        "$date": "2025-12-02T09:32:10.523Z"
+      },
+      "_id": {
+        "$oid": "692eb21a140466c4cb865374"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-02T09:23:07.991Z"
+  },
+  "__v": 2
+}]
